@@ -18,9 +18,8 @@ function addSetting(name, default_value, type, stage)
 end
 
 addSetting("unminable-vehicles", true, "bool", "startup")
-addSetting("modify-vehicle-inventories", true, "bool", "startup")
-addSetting("modify-stack-sizes", true, "bool", "startup")
 
+addSetting("modify-vehicle-inventories", true, "bool", "startup")
 addSetting("inventory-size-monowheel", 2, "int", "startup")
 addSetting("inventory-size-heavy-roller", 300, "int", "startup")
 addSetting("inventory-size-heavy-picket", 400, "int", "startup")
@@ -30,6 +29,7 @@ addSetting("inventory-size-hydrogen-airship", 20, "int", "startup")
 addSetting("inventory-size-helium-airship", 40, "int", "startup")
 addSetting("inventory-size-spidertron", 80, "int", "startup")
 
+addSetting("modify-stack-sizes", true, "bool", "startup")
 local tweakStackSizeItems = require("stack-sizes")
 for item, newStackSize in pairs(tweakStackSizeItems) do
 	addSetting("stack-size-" .. item, newStackSize, "int", "startup")

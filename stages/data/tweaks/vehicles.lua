@@ -1,4 +1,4 @@
-require("data.util.settings")
+require("stages.data.util.settings")
 
 -- Tweak vehicle inventory sizes.
 if startupSetting("modify-vehicle-inventories") then

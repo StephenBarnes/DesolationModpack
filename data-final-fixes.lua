@@ -1,8 +1,7 @@
 -- TODO maybe change pairs() to ipairs() in some places
 
-require("data.tweaks.vehicles")
-require("data.tweaks.alien-biomes")
-require("data.tweaks.terrain-preset")
+require("stages.data.tweaks.vehicles")
+require("stages.data.tweaks.terrain-preset")
 
 
 -- Tweak stack sizes for ores etc.
