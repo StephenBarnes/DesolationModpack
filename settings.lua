@@ -29,7 +29,6 @@ addSetting("inventory-size-tank", 60, "int", "startup")
 addSetting("inventory-size-hydrogen-airship", 20, "int", "startup")
 addSetting("inventory-size-helium-airship", 40, "int", "startup")
 addSetting("inventory-size-spidertron", 80, "int", "startup")
--- TODO figure out how to put the vehicle images inside the settings text.
 
 local tweakStackSizeItems = require("stack-sizes")
 for item, newStackSize in pairs(tweakStackSizeItems) do

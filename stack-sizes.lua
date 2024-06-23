@@ -4,7 +4,8 @@ local powderStackSize = 60
 local pureOreStackSize = 40
 local processedStackSize = 100
 local stackedStackSize = 30 -- so a stack of stacks holds 120 ingots, for 20% total space increase from stacking.
--- NOTE this breaks manual unstacking! Eg unstacking 
+-- NOTE this breaks manual unstacking!
+-- TODO rather just infer this from the stack size of the unstacked item.
 
 local tweakStackSizeItems = {
 	["stone"] = oreStackSize,
