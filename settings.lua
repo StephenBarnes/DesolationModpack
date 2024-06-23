@@ -28,9 +28,10 @@ addSetting("inventory-size-tank", 60, "int", "startup")
 addSetting("inventory-size-hydrogen-airship", 20, "int", "startup")
 addSetting("inventory-size-helium-airship", 40, "int", "startup")
 addSetting("inventory-size-spidertron", 80, "int", "startup")
+-- TODO instead of having each of these repeated here and then also in data.tweaks.vehicles, rather make a table in constants.vehicles or something, then require that here.
 
 addSetting("modify-stack-sizes", true, "bool", "startup")
-local tweakStackSizeItems = require("stack-sizes")
+local tweakStackSizeItems = require("constants.stack-sizes")
 for item, newStackSize in pairs(tweakStackSizeItems) do
 	addSetting("stack-size-" .. item, newStackSize, "int", "startup")
 end
