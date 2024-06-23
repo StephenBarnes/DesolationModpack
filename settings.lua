@@ -1,49 +1,39 @@
-local updates = {
-    {
-        type = "bool-setting",
-        name = "Desolation-unminable-vehicles",
-        setting_type = "startup",
-        default_value = true,
-		order = "0-1"
-    },
-    {
-        type = "bool-setting",
-        name = "Desolation-modify-vehicle-inventories",
-        setting_type = "startup",
-        default_value = true,
-		order = "1-1"
-    },
-    {
-        type = "bool-setting",
-        name = "Desolation-modify-stack-sizes",
-        setting_type = "startup",
-        default_value = true,
-		order = "2-1"
-    },
-}
 
-function addStartupIntSetting(name, default_value, order)
-	table.insert(updates, {
-        type = "int-setting",
-        name = name,
-        setting_type = "startup",
+local updates = {}
+local nextOrder = 0
+
+function getNextOrderString()
+    nextOrder = nextOrder + 1
+    return string.format("%04d", nextOrder)
+end
+
+function addSetting(name, default_value, type, stage)
+    table.insert(updates, {
+        type = type.."-setting",
+        name = "Desolation-"..name,
+        setting_type = stage,
         default_value = default_value,
-		order = order
+		order = getNextOrderString(),
     })
 end
 
-addStartupIntSetting("Desolation-inventory-size-monowheel", 2, "1-2")
-addStartupIntSetting("Desolation-inventory-size-heavy-roller", 300, "1-2")
-addStartupIntSetting("Desolation-inventory-size-heavy-picket", 400, "1-2")
-addStartupIntSetting("Desolation-inventory-size-car", 40, "1-2")
-addStartupIntSetting("Desolation-inventory-size-tank", 60, "1-2")
-addStartupIntSetting("Desolation-inventory-size-hydrogen-airship", 20, "1-2")
-addStartupIntSetting("Desolation-inventory-size-helium-airship", 40, "1-2")
-addStartupIntSetting("Desolation-inventory-size-spidertron", 80, "1-2")
+addSetting("unminable-vehicles", true, "bool", "startup")
+addSetting("modify-vehicle-inventories", true, "bool", "startup")
+addSetting("modify-stack-sizes", true, "bool", "startup")
+
+addSetting("inventory-size-monowheel", 2, "int", "startup")
+addSetting("inventory-size-heavy-roller", 300, "int", "startup")
+addSetting("inventory-size-heavy-picket", 400, "int", "startup")
+addSetting("inventory-size-car", 40, "int", "startup")
+addSetting("inventory-size-tank", 60, "int", "startup")
+addSetting("inventory-size-hydrogen-airship", 20, "int", "startup")
+addSetting("inventory-size-helium-airship", 40, "int", "startup")
+addSetting("inventory-size-spidertron", 80, "int", "startup")
+-- TODO figure out how to put the vehicle images inside the settings text.
 
 local tweakStackSizeItems = require("stack-sizes")
 for item, newStackSize in pairs(tweakStackSizeItems) do
-	addStartupIntSetting("Desolation-stack-size-" .. item, newStackSize, "2-2")
+	addSetting("stack-size-" .. item, newStackSize, "int", "startup")
 end
 
 data:extend(updates)
