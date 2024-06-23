@@ -1,13 +1,24 @@
 {
-	"name": "DesolationModpack",
+	"name": "Desolation",
 	"version": "1.0.0",
 	"title": "Desolation Modpack",
 	"author": "StephenB",
 	"factorio_version": "1.1",
-	"dependencies": [
-		"base >= 1.1",
-		"IndustrialRevolution3 >= 3.1.23",
-		"alien-biomes >= 0.6.8"
+	"dependencies":
+	[ "base >= 1.1"
+	, "IndustrialRevolution3 >= 3.1.23"
+	, "IndustrialRevolution3Airships >= 1.0.1"
+	, "IndustrialRevolution3SpaceMining >= 1.0.2"
+	, "IndustrialRevolution3ForestryCombinators >= 1.0.0"
+	, "IndustrialRevolution3Inspiration >= 1.0.4"
+	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
+	, "alien-biomes >= 0.6.8"
+	, "Foundations >= 0.0.6"
+	, "Clockwork >= 1.1.1"
+	, "ArmouredBiters >= 1.1.9"
+	, "BREAM >= 1.2.0"
+	, "DeadlockLargerLamp >= 1.5.1"
+	, "ProductionScrapForIR3 >= 1.0.0"
 	],
 	"description": "A collection of mods, with configurable tweaks."
 }

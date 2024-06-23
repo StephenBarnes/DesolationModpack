@@ -2,15 +2,15 @@
 
 
 -- Tweak vehicle inventory sizes.
-if settings.startup["TweaksForIR3-modify-vehicle-inventories"] then
-	data.raw.car["monowheel"].inventory_size = settings.startup["TweaksForIR3-inventory-size-monowheel"].value
-	data.raw.car["heavy-roller"].inventory_size = settings.startup["TweaksForIR3-inventory-size-heavy-roller"].value
-	data.raw.car["heavy-picket"].inventory_size = settings.startup["TweaksForIR3-inventory-size-heavy-picket"].value
-	data.raw.car["car"].inventory_size = settings.startup["TweaksForIR3-inventory-size-car"].value
-	data.raw.car["tank"].inventory_size = settings.startup["TweaksForIR3-inventory-size-tank"].value
-	data.raw["spider-vehicle"]["hydrogen-airship"].inventory_size = settings.startup["TweaksForIR3-inventory-size-hydrogen-airship"].value
-	data.raw["spider-vehicle"]["helium-airship"].inventory_size = settings.startup["TweaksForIR3-inventory-size-helium-airship"].value
-	data.raw["spider-vehicle"]["spidertron"].inventory_size = settings.startup["TweaksForIR3-inventory-size-spidertron"].value
+if settings.startup["Desolation-modify-vehicle-inventories"] then
+	data.raw.car["monowheel"].inventory_size = settings.startup["Desolation-inventory-size-monowheel"].value
+	data.raw.car["heavy-roller"].inventory_size = settings.startup["Desolation-inventory-size-heavy-roller"].value
+	data.raw.car["heavy-picket"].inventory_size = settings.startup["Desolation-inventory-size-heavy-picket"].value
+	data.raw.car["car"].inventory_size = settings.startup["Desolation-inventory-size-car"].value
+	data.raw.car["tank"].inventory_size = settings.startup["Desolation-inventory-size-tank"].value
+	data.raw["spider-vehicle"]["hydrogen-airship"].inventory_size = settings.startup["Desolation-inventory-size-hydrogen-airship"].value
+	data.raw["spider-vehicle"]["helium-airship"].inventory_size = settings.startup["Desolation-inventory-size-helium-airship"].value
+	data.raw["spider-vehicle"]["spidertron"].inventory_size = settings.startup["Desolation-inventory-size-spidertron"].value
 	-- TODO do cargo ships
 end
 
@@ -20,11 +20,11 @@ function setUnminable(l)
 		v.minable = nil
 	end
 end
-if settings.startup["TweaksForIR3-unminable-vehicles"] then
+if settings.startup["Desolation-unminable-vehicles"] then
 	setUnminable(data.raw.car)
 	setUnminable(data.raw["spider-vehicle"])
 end
-if settings.startup["TweaksForIR3-unminable-trains"] then
+if settings.startup["Desolation-unminable-trains"] then
 	setUnminable(data.raw.locomotive)
 	setUnminable(data.raw["cargo-wagon"])
 	setUnminable(data.raw["fluid-wagon"])
@@ -32,12 +32,12 @@ end
 -- TODO make vehicles more expensive to produce as well, like x10 cost, so you don't just place a new one every time.
 
 -- Tweak stack sizes for ores etc.
-if settings.startup["TweaksForIR3-modify-stack-sizes"] then
+if settings.startup["Desolation-modify-stack-sizes"] then
 	local tweakStackSizeItems = require("stack-sizes")
 	for item, _ in pairs(tweakStackSizeItems) do
 		---@type integer
 		---@diagnostic disable-next-line: assign-type-mismatch
-		local val = settings.startup["TweaksForIR3-stack-size-" .. item].value
+		local val = settings.startup["Desolation-stack-size-" .. item].value
 		data.raw.item[item].stack_size = val
 		data.raw.item[item].default_request_amount = val
 	end
