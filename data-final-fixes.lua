@@ -1,14 +1,12 @@
 -- TODO maybe change pairs() to ipairs() in some places
 
-require("code.tweaks.vehicles")
+require("data.tweaks.vehicles")
 
 
 -- Tweak stack sizes for ores etc.
 if settings.startup["Desolation-modify-stack-sizes"] then
 	local tweakStackSizeItems = require("stack-sizes")
 	for item, _ in pairs(tweakStackSizeItems) do
-		---@type integer
-		---@diagnostic disable-next-line: assign-type-mismatch
 		local val = settings.startup["Desolation-stack-size-" .. item].value
 		data.raw.item[item].stack_size = val
 		data.raw.item[item].default_request_amount = val
