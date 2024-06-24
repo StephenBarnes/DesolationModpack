@@ -6,7 +6,7 @@
 	"factorio_version": "1.1",
 	"dependencies":
 	[ "base >= 1.1"
-	, "IndustrialRevolution3 >= 3.1.23"
+	, "IndustrialRevolution3 >= 3.1.27"
 	, "IndustrialRevolution3Airships >= 1.0.1"
 	, "IndustrialRevolution3SpaceMining >= 1.0.2"
 	, "IndustrialRevolution3ForestryCombinators >= 1.0.0"

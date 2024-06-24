@@ -1,71 +1,17 @@
 -- TODO maybe change pairs() to ipairs() in some places
+-- TODO add settings for everything below
 
 require("stages.data.tweaks.vehicles")
 require("stages.data.tweaks.terrain-preset")
+require("stages.data.tweaks.stack-sizes")
+require("stages.data.tweaks.tech")
+require("stages.data.tweaks.turret-recipes")
+require("stages.data.tweaks.ammo")
+require("stages.data.tweaks.geothermal")
+require("stages.data.tweaks.tile-recipes")
 
 
--- Tweak stack sizes for ores etc.
-if settings.startup["Desolation-modify-stack-sizes"] then
-	local tweakStackSizeItems = require("constants.stack-sizes")
-	for item, _ in pairs(tweakStackSizeItems) do
-		local val = settings.startup["Desolation-stack-size-" .. item].value
-		data.raw.item[item].stack_size = val
-		data.raw.item[item].default_request_amount = val
-	end
-end
 
--- TODO add settings for everything below
-
--- Scattergun turrets now require a large copper frame. Original cost is 19 copper + 16 tin ingots; this makes the cost about 3 times greater
-data.raw.recipe["scattergun-turret"].ingredients = {
-	{"copper-motor", 2}, -- unchanged
-	{"copper-plate", 4}, -- 12->4
-	-- tin-plate 12->0
-	{"tin-gear-wheel", 4}, -- unchanged
-	{"copper-frame-large", 1}, -- added 0->1
-}
-
--- Autogun turrets require a large iron frame, and have electronics 1 as prerequisite for the tech (to unlock large iron frame).
-table.insert(data.raw.technology["gun-turret"].prerequisites, "ir-electronics-1")
-data.raw.recipe["gun-turret"].ingredients = {
-	{"iron-motor", 2}, -- unchanged
-	{"iron-plate-heavy", 4}, -- reinforced iron plate, 10->4
-	-- iron-beam 8->0
-	{"iron-gear-wheel", 16}, -- unchanged
-	{"iron-frame-large", 1}, -- added 0->1
-}
-
--- Add tech requirements to get rid of "dead ends" in the tech tree, and ensure mod compat (eg cargo ships whose recipe requires steel should have steel as prereq).
-function addTechDependency(firstTech, secondTech)
-	table.insert(data.raw.technology[secondTech].prerequisites, firstTech)
-end
-function tryAddTechDependency(firstTech, secondTech)
-	if data.raw.technology[secondTech] ~= nil and data.raw.technology[firstTech] ~= nil then
-		addTechDependency(firstTech, secondTech)
-	end
-end
-addTechDependency("ir-scatterbot", "military")
-addTechDependency("ir-heavy-roller", "ir-heavy-picket")
-addTechDependency("ir-heavy-picket", "spidertron")
-addTechDependency("land-mine", "military-3")
-addTechDependency("ir-bronze-telescope", "gun-turret")
-addTechDependency("ir3-beltbox-steam", "ir3-beltbox")
-addTechDependency("ir3-beltbox-steam", "logistics-2")
-addTechDependency("ir-steambot", "personal-roboport-equipment")
-addTechDependency("heavy-armor", "modular-armor")
-addTechDependency("ir-petro-generator", "ir-petroleum-processing")
-addTechDependency("ir-normal-inserter-capacity-bonus-2", "logistics-3")
-addTechDependency("plastics-2", "logistics-3")
-addTechDependency("logistics-3", "automation-4")
-addTechDependency("effect-transmission", "ir-transmat")
-addTechDependency("ir-geothermal-exchange", "ir-mining-2")
-addTechDependency("gun-turret", "military-2")
-addTechDependency("ir-bronze-forestry", "ir-iron-forestry")
-addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
-addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
-tryAddTechDependency("ir-barrelling", "oversea-energy-distribution")
-tryAddTechDependency("ir-steel-milestone", "automated-water-transport")
--- TODO more of these?
 
 -- Make scatterbots a bit better, by making them slower, so that you can throw them at enemy bases and run away, and they won't follow so fast. Could make them non-following, but that makes them not subject to the follower cap, which makes them too powerful.
 --data.raw["combat-robot"]["scatterbot"].follows_player -- not changing this.
@@ -79,30 +25,9 @@ data.raw.boiler["copper-boiler"].energy_consumption = "300000W" -- changed 15000
 -- Reduce copper pump effectiveness, so you're more eager to upgrade to iron ones.
 data.raw["offshore-pump"]["copper-pump"].pumping_speed = 3.0 -- 8.0 -> 3.0, so water is 480/sec -> 180/sec, can provide water to 16 -> 6 copper boilers (excluding change to copper boilers above).
 
--- Change ammo mag sizes so shotgun ammo doesn't last so long.
-data.raw.ammo["shotgun-shell"].magazine_size = 5 -- 10->5; this is the normal copper cartridge.
-data.raw.ammo["bronze-cartridge"].magazine_size = 5 -- 10->5
-data.raw.ammo["iron-cartridge"].magazine_size = 5 -- 10->5
-data.raw.ammo["piercing-shotgun-shell"].magazine_size = 5 -- 10->5; this is the steel cartridge.
 
 -- Make rubber tree beds require ordinary wood, not rubber wood, in case there's no rubber trees with your map settings.
 data.raw.recipe["tree-planter-ir-rubber-tree"].ingredients = {{"wood", 12}, {"stone-brick", 8}}
-
--- Increase cost of cliff explosives, landfill, waterfill.
--- TODO settings
-function multiplyRecipeCosts(name, factor)
-	local recipe = data.raw.recipe[name]
-	for i = 1, #recipe.ingredients do
-		if recipe.ingredients[i][2] ~= nil then
-			recipe.ingredients[i][2] = recipe.ingredients[i][2] * factor
-		else
-			recipe.ingredients[i].amount = recipe.ingredients[i].amount * factor
-		end
-	end
-end
-multiplyRecipeCosts("landfill", 5)
-multiplyRecipeCosts("cliff-explosives", 5)
--- TODO check - base mod has landfill from 15x gravel and 15x silica.
 
 -- Modify stack size and contents of barrels and canisters?
 -- Copper canisters hold 100 steam and have stack size 50, so 5000/stack, or 400k/cargowagon.
@@ -118,21 +43,9 @@ multiplyRecipeCosts("cliff-explosives", 5)
 -- In summary, I don't think anything here needs changing.
 
 
--- Perhaps we should make geothermal energy available much earlier?
--- TODO
-
--- Should we buff geothermal energy? Because I like the design challenges of trying to build outposts close to geothermal vents.
--- Note polluted steam vents seem to produce between 120/sec polluted steam and zero. When they deplete, they get re-set to 100% -- see replenish_fissure function in control.lua.
--- For one steam vent producing on average 60/sec polluted steam, that supplies ~1 geothermal exchanger, which supplies ~2 electric engines, producing ~2MW, so ~4 electric mining drills. Assuming we filter or vent all of the polluted water.
--- Note polluted steam vents sometimes come in clumps of like 3, which would be 6MW, so 12 electric mining drills.
--- All of this is just not enough power to be relevant.
--- TODO buff them.
-
-
 
 -- TODOS:
 -- Change extra electric pole types - why do they exist??
--- Maybe change geothermal to be more viable?
 -- Disable handcrafting - see https://mods.factorio.com/mod/No_Handcrafting
 -- Tweaks mod should halve resource frequency, if possible. Or, maybe search for map settings mod.
 -- fix resistances etc https://github.com/Deadlock989/IndustrialRevolution/issues/413
@@ -142,3 +55,6 @@ multiplyRecipeCosts("cliff-explosives", 5)
 -- get rid of fish healing, or at least vastly reduce it.
 -- Reduce the output of the electric drill, so that steam is still higher when you're constrained by the size of the resource patch. So it still makes sense to use steam-powered drills sometimes, even into the late game.
 -- Change the amounts needed for IR3's inspirations. Currently it's 12, which is tiny.
+-- Change the map preset to also set pollution absorption modifier to the minimum (10%).
+-- Maybe: make a mod to completely remove terrain pollution absorption. Currently Alien Biomes specifies the absorption of all tiles, so check how it does that, maybe modify those prototypes.
+-- TODO add FunkedOre dependency
