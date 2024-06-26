@@ -18,7 +18,7 @@
 	, "ArmouredBiters >= 1.1.9"
 	, "BREAM >= 1.2.0"
 	, "DeadlockLargerLamp >= 1.5.1"
-	, "ProductionScrapForIR3 >= 1.0.0"
+	, "ProductionScrapForIR3 >= 1.1.0"
 	],
-	"description": "A collection of mods, with configurable tweaks."
+	"description": "A collection of mods, with configurable tweaks. TODO add more description."
 }
