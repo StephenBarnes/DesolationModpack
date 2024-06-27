@@ -32,4 +32,3 @@ require("stages.data.tweaks.electric-poles")
 -- TODO prevent iron from spawning close to spawn. Because I just played a game where there was some iron very nearby.
 -- TODO maybe modify FunkedOre so that you can specify separate rules for close-to-spawn and far-from-spawn. So we can delete all iron near spawn.
 -- TODO halve productivity of all assembling machines, just so you'll build more of them.
--- TODO maybe depend on CleanFloor >= 1.1.0.
