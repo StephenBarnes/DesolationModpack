@@ -31,3 +31,4 @@ require("stages.data.tweaks.electric-poles")
 -- TODO change mapgen settings to multiply tech costs by like 30? Or do it in code, because I want to modify inspirations too, but not eg the inspiration that requires 12 wood.
 -- TODO prevent iron from spawning close to spawn. Because I just played a game where there was some iron very nearby.
 -- TODO maybe modify FunkedOre so that you can specify separate rules for close-to-spawn and far-from-spawn. So we can delete all iron near spawn.
+-- TODO halve productivity of all assembling machines, just so you'll build more of them.
