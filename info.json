@@ -21,6 +21,7 @@
 	, "ProductionScrapForIR3 >= 1.1.0"
 	, "FunkedOre >= 1.1.0"
 	, "Arson >= 0.2.2"
+	, "gore-updated >= 0.19.0"
 	],
 	"description": "A collection of mods, with configurable tweaks. TODO add more description."
 }
