@@ -11,7 +11,6 @@
 	, "IndustrialRevolution3SpaceMining >= 1.0.2"
 	, "IndustrialRevolution3ForestryCombinators >= 1.0.0"
 	, "IndustrialRevolution3Inspiration >= 1.0.4"
-	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 	, "alien-biomes >= 0.6.8"
 	, "Foundations >= 0.0.12"
 	, "Clockwork >= 1.1.1"
@@ -21,6 +20,11 @@
 	, "ProductionScrapForIR3 >= 1.1.0"
 	, "FunkedOre >= 1.1.0"
 	, "gore-updated >= 0.19.0"
+
+	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
+	, "IntermodalContainers >= 2.0.8"
+	, "aai-loaders >= 0.1.4"
+	, "aai-loaders-lubricant-mult >= 0.1.0"
 	],
 	"description": "A collection of mods, with configurable tweaks. TODO add more description."
 }
