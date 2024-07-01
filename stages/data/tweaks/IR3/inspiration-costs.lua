@@ -49,6 +49,10 @@ local inspirationGlobals = require("__IndustrialRevolution3Inspiration__/data/gl
 for techName, techData in pairs(inspirationGlobals.technologies) do
 	if shouldChangeTech(techName, techData) then
 		changeTech(techName)
+
+		-- We could change the data in Inspiration's table, but that doesn't actually propagate to the event handler that uses it.
+		-- Maybe we could rather do this in control?
+		-- techData.IR_schematic_count_needed = techData.IR_schematic_count_needed * inspirationAmountMultiplier
 	end
 end
 -- NOTE currently this code changes the icon, but the tech is still unlocked at the original amount of items. Not sure if that's fixable.
