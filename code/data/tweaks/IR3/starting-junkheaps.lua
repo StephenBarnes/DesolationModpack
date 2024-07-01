@@ -12,7 +12,11 @@ local itemsAmounts = {
 	["gear-wheel"] = {1, 1},
 	["rivet"] = {4, 6},
 }
-data.raw["simple-entity"]["copper-tin-junkpile-scrap"].minable.results = {}
+
+local junkpileName = "copper-tin-junkpile-scrap"
+-- If Inspiration is enabled, this should be "copper-tin-junkpile-scrap", else "copper-tin-junkpile".
+
+data.raw["simple-entity"][junkpileName].minable.results = {}
 for _, metal in pairs(metals) do
 	for item, amounts in pairs(itemsAmounts) do
 		local itemName = metal .. "-" .. item
@@ -23,7 +27,7 @@ for _, metal in pairs(metals) do
 				amount_min = amounts[1],
 				amount_max = amounts[2],
 			}
-			table.insert(data.raw["simple-entity"]["copper-tin-junkpile-scrap"].minable.results, itemData)
+			table.insert(data.raw["simple-entity"][junkpileName].minable.results, itemData)
 		end
 	end
 end

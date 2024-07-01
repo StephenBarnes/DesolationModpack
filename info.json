@@ -25,6 +25,8 @@
 	, "IntermodalContainers >= 2.0.8"
 	, "aai-loaders >= 0.1.4"
 	, "aai-loaders-lubricant-mult >= 0.1.0"
+
+	, "RecipeBook >= 3.5.8"
 	],
 	"description": "A collection of mods, with configurable tweaks. TODO add more description."
 }
