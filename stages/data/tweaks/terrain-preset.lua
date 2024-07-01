@@ -8,7 +8,8 @@ if settings.startup["Desolation-remove-mapgen-presets"] then
     end
 end
 
-data.raw["map-gen-presets"]["default"]["Desolation"] = {
+-- We can't completely remove the already-set mapgen preset. So instead we replace the default one with ours.
+data.raw["map-gen-presets"]["default"]["default"] = {
     order = "__",
     basic_settings = {
         property_expression_names = {
