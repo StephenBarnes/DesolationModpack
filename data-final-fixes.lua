@@ -32,3 +32,4 @@ require("stages.data.tweaks.electric-poles")
 -- TODO prevent iron from spawning close to spawn. Because I just played a game where there was some iron very nearby.
 -- TODO maybe modify FunkedOre so that you can specify separate rules for close-to-spawn and far-from-spawn. So we can delete all iron near spawn.
 -- TODO halve productivity of all assembling machines, just so you'll build more of them.
+-- TODO for some reason Alien Biomes is still spawning "parm tree" (id tree-palm-a) even in the middle of a glacier. Find a way to turn off certain trees.
