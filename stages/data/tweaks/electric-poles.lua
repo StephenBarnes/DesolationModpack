@@ -1,1 +1,1 @@
--- TODO Change extra electric pole types - why do they exist??
+-- TODO Change extra electric pole types - give the player a reason to use them, by setting Power Overload properties and resource requirements etc.

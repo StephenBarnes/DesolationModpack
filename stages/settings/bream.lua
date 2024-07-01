@@ -1,0 +1,2 @@
+-- Make electric poles military targets. Like Power Overload, this heavily discourages connecting outposts into one electric network, encouraging local power generation.
+data.raw["bool-setting"]["BREAM-make-electric-poles-military-targets"].default_value = true
