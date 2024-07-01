@@ -28,7 +28,7 @@ Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "proces
 -- From this mod, we're only using the beltboxes, not the loaders.
 -- We're disabling the loaders via default settings - rather using AAI loaders because they require lubricant.
 -- I don't want IR3 beltboxes to have separate techs, rather just put them in a corresponding logistics tech or motor tech.
--- I also want to remove the circuit requirement. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots.
+-- I also want to remove the circuit requirement for beltboxes. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes over packers when possible.
 
 Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
 Tech.hideTech("ir3-beltbox-steam")
@@ -46,7 +46,6 @@ Tech.hideTech("ir3-express-beltbox")
 Tech.addRecipeToTech("ir3-express-beltbox", "logistics-3")
 Recipe.removeIngredient("ir3-express-beltbox", "advanced-circuit")
 
--- TODO make the beltboxes not require circuits.
 
 -- For AAI Loaders
 ------------------------------------------------------------------------
@@ -80,6 +79,17 @@ Recipe.copyIngredientsAndAdd("ir3-fast-beltbox", "aai-fast-loader", {{name="fast
 Recipe.copyIngredientsAndAdd("ir3-express-beltbox", "aai-express-loader", {{name="express-transport-belt", amount=1}})
 
 -- TODO these currently require assemblers, can't be handcrafted. Remove that.
+
+-- Use the icons from Deadlock's loaders mod, for the AAI loaders, so that they have black belts.
+-- The actual placed entity doesn't look quite like the Deadlock icons, but it's fairly close and at least this way the icons won't have grey belts that stick out.
+for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
+	data.raw.item["aai-"..val].icons = {{
+		icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
+		icon_size = 64,
+		icon_mipmaps = 4
+	}}
+end
+
 
 -- For Intermodal Containers
 ------------------------------------------------------------------------
