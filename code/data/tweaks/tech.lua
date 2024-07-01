@@ -9,6 +9,13 @@ local Tech = require("code.util.tech")
 -- Also, IR3 changes things so that logistics-2 is no longer a prereq for things like cars, like it is in vanilla.
 Tech.addTechDependency("automation-2", "logistics-2")
 
+-- I'm using IR3's tech ir-inserters-3 (stack inserters) as "Robotics 3". That's a dead end, so let's switch some prereqs from ir-electronics-3 to ir-inserters-3.
+Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
+Tech.replacePrereq("ir-mining-2", "ir-electronics-3", "ir-inserters-3")
+
+-- TODO rename "heavy roller" tech to "reinforced bronze" or sth, and add the heavy personal armor to it.
+-- TODO make it depend on bronze, not on bronze furnace.
+
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")
 	Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")

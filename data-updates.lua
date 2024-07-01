@@ -1,0 +1,1 @@
+require("code.data.tweaks.loaders-stacking") -- This is in data-updates so ProductionScrapForIR3 can modify it correctly.

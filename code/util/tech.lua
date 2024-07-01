@@ -1,6 +1,6 @@
-tech = {}
+Tech = {}
 
-tech.addRecipeToTech = function(recipeName, techName)
+Tech.addRecipeToTech = function(recipeName, techName)
 	local unlock = {
 		type = "unlock-recipe",
 		recipe = recipeName,
@@ -13,7 +13,7 @@ tech.addRecipeToTech = function(recipeName, techName)
 	end
 end
 
-tech.hideTech = function(techName)
+Tech.hideTech = function(techName)
 	local tech = data.raw.technology[techName]
 	if tech == nil then
 		log("Couldn't find tech "..techName.." to hide.")
@@ -31,17 +31,17 @@ tech.hideTech = function(techName)
 	tech.hidden = true
 end
 
-tech.addTechDependency = function(firstTech, secondTech)
+Tech.addTechDependency = function(firstTech, secondTech)
 	table.insert(data.raw.technology[secondTech].prerequisites, firstTech)
 end
 
-tech.tryAddTechDependency = function(firstTech, secondTech)
+Tech.tryAddTechDependency = function(firstTech, secondTech)
 	if data.raw.technology[secondTech] ~= nil and data.raw.technology[firstTech] ~= nil then
-		tech.addTechDependency(firstTech, secondTech)
+		Tech.addTechDependency(firstTech, secondTech)
 	end
 end
 
-tech.copyCosts = function(firstTech, secondTech)
+Tech.copyCosts = function(firstTech, secondTech)
 	local first = data.raw.technology[firstTech]
 	local second = data.raw.technology[secondTech]
 	second.unit = first.unit
@@ -54,8 +54,30 @@ tech.copyCosts = function(firstTech, secondTech)
 	end
 end
 
-tech.setPrereqs = function(techName, prereqs)
+Tech.setPrereqs = function(techName, prereqs)
 	data.raw.technology[techName].prerequisites = prereqs
 end
 
-return tech
+Tech.replacePrereqForDifficulty = function(techDifficulty, oldPrereq, newPrereq)
+	for i, prereq in pairs(techDifficulty.prerequisites) do
+		if prereq == oldPrereq then
+			techDifficulty.prerequisites[i] = newPrereq
+			return
+		end
+	end
+end
+
+Tech.replacePrereq = function(techName, oldPrereq, newPrereq)
+	local tech = data.raw.technology[techName]
+	if tech.normal ~= nil then
+		Tech.replacePrereqForDifficulty(tech.normal, oldPrereq, newPrereq)
+	end
+	if tech.expensive ~= nil then
+		Tech.replacePrereqForDifficulty(tech.expensive, oldPrereq, newPrereq)
+	end
+	if tech.normal == nil and tech.expensive == nil then
+		Tech.replacePrereqForDifficulty(tech, oldPrereq, newPrereq)
+	end
+end
+
+return Tech
