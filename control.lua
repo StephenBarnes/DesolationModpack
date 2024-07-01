@@ -1,1 +1,0 @@
-require("stages.control.arson-register-flammables")

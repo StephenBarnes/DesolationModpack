@@ -1,3 +1,13 @@
+if settings.startup["Desolation-remove-mapgen-presets"] then
+	log("Removing all existing mapgen presets!")
+    for k, _ in pairs(data.raw["map-gen-presets"]["default"]) do
+        if k ~= "type" and k ~= "name" then
+            log("Removing mapgen preset: "..k)
+            data.raw["map-gen-presets"]["default"][k] = nil
+        end
+    end
+end
+
 data.raw["map-gen-presets"]["default"]["Desolation"] = {
     order = "__",
     basic_settings = {

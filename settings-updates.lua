@@ -1,2 +1,5 @@
 require("stages.settings.alien-biomes")
 require("stages.settings.clockwork")
+require("stages.settings.ir3-loaders-stacking")
+require("stages.settings.ir3")
+require("stages.settings.foundations")

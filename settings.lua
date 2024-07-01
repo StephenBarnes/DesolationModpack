@@ -17,6 +17,7 @@ function addSetting(name, default_value, type, stage)
     })
 end
 
+addSetting("remove-mapgen-presets", true, "bool", "startup")
 addSetting("unminable-vehicles", true, "bool", "startup")
 
 addSetting("modify-vehicle-inventories", true, "bool", "startup")

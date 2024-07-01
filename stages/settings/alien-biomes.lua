@@ -48,3 +48,6 @@ local toDisable = {
 for _, v in pairs(toDisable) do
 	data.raw["string-setting"]["alien-biomes-include-"..v].default_value = "Disabled"
 end
+
+-- Also enable removing obsolete tiles.
+data.raw["string-setting"]["alien-biomes-remove-obsolete-tiles"].default_value = "Enabled"
