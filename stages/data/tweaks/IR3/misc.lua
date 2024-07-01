@@ -7,7 +7,7 @@ data.raw.boiler["copper-boiler"].energy_consumption = "300000W" -- changed 15000
 -- Reduce copper pump effectiveness, so you're more eager to upgrade to iron ones.
 data.raw["offshore-pump"]["copper-pump"].pumping_speed = 3.0 -- 8.0 -> 3.0, so water is 480/sec -> 180/sec, can provide water to 16 -> 6 copper boilers (excluding change to copper boilers above).
 
--- Make rubber tree beds require ordinary wood, not rubber wood, in case there's no rubber trees with your map settings.
+-- Make rubber tree beds require ordinary wood, not rubber wood, because the Desolation map preset makes rubber trees rare.
 data.raw.recipe["tree-planter-ir-rubber-tree"].ingredients = {{"wood", 12}, {"stone-brick", 8}}
 
 -- TODO make transport belts more expensive, to discourage long-distance belting in the early game, in favor of the heavy roller/picket.
