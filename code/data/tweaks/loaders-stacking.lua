@@ -2,7 +2,7 @@ local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
 
 
--- Tweaks to inserters, because we have these loaders etc
+-- Tweaks to the base IR3 inserters and belts, because we have these loaders etc
 ------------------------------------------------------------------------
 
 -- Remove inserter throughput techs. Rather push the player to use loaders etc.
@@ -21,6 +21,10 @@ Recipe.substituteIngredient("filter-inserter", "electronic-circuit", "advanced-c
 Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
 Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
 Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")
+
+-- Since logistics-2 now has lubricant as prereq, let's add some of it to the recipes, same as vanilla has for blue belts.
+data.raw.recipe["fast-transport-belt"].category = data.raw.recipe["express-transport-belt"].category -- Needed to have a fluid ingredient
+Recipe.addIngredients("fast-transport-belt", {{type="fluid", name="lubricant", amount=5}})
 
 
 -- For IR3 Loaders and Stacking mod

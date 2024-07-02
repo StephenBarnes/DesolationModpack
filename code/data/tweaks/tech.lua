@@ -13,7 +13,7 @@ Tech.addTechDependency("automation-2", "logistics-2")
 Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
 Tech.replacePrereq("ir-mining-2", "ir-electronics-3", "ir-inserters-3")
 
--- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinders" and adding as prereq to military (which is a prereq of autogun turrets).
+-- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinding" and adding as prereq to military (which is a prereq of autogun turrets).
 Tech.addTechDependency("ir-bronze-telescope", "military")
 
 -- To avoid heavy roller and heavy armor from being dead ends, I'm going to merge them into the bronze furnace tech.
@@ -39,6 +39,24 @@ Tech.addTechDependency("ir-lampbot", "defender")
 Tech.addTechDependency("ir-bronze-forestry", "ir-iron-forestry")
 Tech.addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
 
+-- Add logistics-3 as prereq for some higher-tier stuff, to avoid dead end.
+Tech.addTechDependency("logistics-3", "logistic-system")
+
+-- Radar is a dead end. We could remove it, eg:
+-- Tech.addTechDependency("ir-radar", "ir-robotower")
+-- But, I don't think this is actually necessary - surely nobody's going to continue using telescopes into late-game, and if they do, alright, they can get a reduction in evolution.
+
+-- There's several other dead ends that I think are actually fine, because forgoing them could be fun and deserves a reward in lowered evolution. Namely:
+-- Autogun turret
+-- Fluid wagon
+-- Petrochemical generator
+-- Helium airship, and airship station
+-- Heavy picket
+-- Land-mine
+-- Geothermal exchange (once I buff geothermal energy)
+-- Barrelling
+-- Medical pack
+
 
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")
@@ -46,19 +64,12 @@ if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
 	Tech.addTechDependency("ir-bronze-telescope", "gun-turret")
-	Tech.addTechDependency("ir3-beltbox-steam", "ir3-beltbox")
-	Tech.addTechDependency("ir3-beltbox-steam", "logistics-2")
 	Tech.addTechDependency("ir-steambot", "personal-roboport-equipment")
-	Tech.addTechDependency("heavy-armor", "modular-armor")
 	Tech.addTechDependency("ir-petro-generator", "ir-petroleum-processing")
-	Tech.addTechDependency("ir-normal-inserter-capacity-bonus-2", "logistics-3")
 	Tech.addTechDependency("plastics-2", "logistics-3")
 	Tech.addTechDependency("logistics-3", "automation-4")
 	Tech.addTechDependency("effect-transmission", "ir-transmat")
 	Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
-	Tech.addTechDependency("gun-turret", "military-2")
-	Tech.addTechDependency("ir-bronze-forestry", "ir-iron-forestry")
-	Tech.addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
 	Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
 	Tech.tryAddTechDependency("ir-barrelling", "oversea-energy-distribution")
 	Tech.tryAddTechDependency("ir-steel-milestone", "automated-water-transport")
