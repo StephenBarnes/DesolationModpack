@@ -13,8 +13,32 @@ Tech.addTechDependency("automation-2", "logistics-2")
 Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
 Tech.replacePrereq("ir-mining-2", "ir-electronics-3", "ir-inserters-3")
 
--- TODO rename "heavy roller" tech to "reinforced bronze" or sth, and add the heavy personal armor to it.
--- TODO make it depend on bronze, not on bronze furnace.
+-- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinders" and adding as prereq to military (which is a prereq of autogun turrets).
+Tech.addTechDependency("ir-bronze-telescope", "military")
+
+-- To avoid heavy roller and heavy armor from being dead ends, I'm going to merge them into the bronze furnace tech.
+-- Also move the heavy bronze plate recipe, since that makes sense thematically, though it's breaking with all the other material milestone techs.
+Tech.addTechDependency("ir-monowheel", "ir-bronze-furnace")
+Tech.addRecipeToTech("bronze-plate-heavy", "ir-bronze-furnace", 1)
+Tech.removeRecipeFromTech("bronze-plate-heavy", "ir-bronze-milestone")
+Tech.addRecipeToTech("heavy-roller", "ir-bronze-furnace")
+Tech.hideTech("ir-heavy-roller")
+Tech.addRecipeToTech("heavy-armor", "ir-bronze-furnace")
+Tech.hideTech("heavy-armor")
+
+-- Change clockwork scatterbot to depend on the new heavy bronze plate tech.
+Tech.replacePrereq("ir-scatterbot", "ir-bronze-milestone", "ir-bronze-furnace")
+-- Add prereq on telescope, since it makes logical sense.
+Tech.addTechDependency("ir-bronze-telescope", "ir-scatterbot")
+
+-- Make scatterbots and lampbots not dead ends.
+Tech.addTechDependency("ir-scatterbot", "ir-lampbot")
+Tech.addTechDependency("ir-lampbot", "defender")
+
+-- Add forestry => advanced forestry, to avoid a dead end. Except at the chrome forestry - not sure how to prevent that while still being plausible.
+Tech.addTechDependency("ir-bronze-forestry", "ir-iron-forestry")
+Tech.addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
+
 
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")

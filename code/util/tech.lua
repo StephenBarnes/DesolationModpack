@@ -1,6 +1,6 @@
 Tech = {}
 
-Tech.addRecipeToTech = function(recipeName, techName)
+Tech.addRecipeToTech = function(recipeName, techName, index)
 	local unlock = {
 		type = "unlock-recipe",
 		recipe = recipeName,
@@ -9,7 +9,11 @@ Tech.addRecipeToTech = function(recipeName, techName)
 	if not tech.effects then
 		tech.effects = {unlock}
 	else
-		table.insert(tech.effects, unlock)
+		if index == nil then
+			table.insert(tech.effects, unlock)
+		else
+			table.insert(tech.effects, index, unlock)
+		end
 	end
 end
 
@@ -77,6 +81,28 @@ Tech.replacePrereq = function(techName, oldPrereq, newPrereq)
 	end
 	if tech.normal == nil and tech.expensive == nil then
 		Tech.replacePrereqForDifficulty(tech, oldPrereq, newPrereq)
+	end
+end
+
+Tech.removeRecipeFromTechDifficulty = function(recipeName, techDifficulty)
+	for i, effect in pairs(techDifficulty.effects) do
+		if effect.type == "unlock-recipe" and effect.recipe == recipeName then
+			table.remove(techDifficulty.effects, i)
+			return
+		end
+	end
+end
+
+Tech.removeRecipeFromTech = function(recipeName, techName)
+	local tech = data.raw.technology[techName]
+	if tech.normal ~= nil then
+		Tech.removeRecipeFromTechDifficulty(recipeName, tech.normal)
+	end
+	if tech.expensive ~= nil then
+		Tech.removeRecipeFromTechDifficulty(recipeName, tech.expensive)
+	end
+	if tech.normal == nil and tech.expensive == nil then
+		Tech.removeRecipeFromTechDifficulty(recipeName, tech)
 	end
 end
 
