@@ -120,7 +120,7 @@ data:extend({
 		},
 		-- Note that we get scrap when creating the container, so we can't get back all of the raw materials.
 		-- Scrap is 0.55 scrap, though user could set it to like 1.1 or so.
-		-- I think the best solution is to just remove the scrap from the recipe, which I'll do in remove-scrap.lua.
+		-- I think the best solution is to cap the scrap produced by the container recipe, to at most the expected loss when disassembling, which I'm setting at (chance of losing a rivet) * (ingots per rivet) = 0.5 * 0.5 = 0.25. Set it to 0.15 to be safe.
 		results = {
 			{ name = "iron-plate", amount = 5 },
 			{ name = "iron-stick", amount = 12 },

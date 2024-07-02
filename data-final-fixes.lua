@@ -16,4 +16,4 @@ require("code.data.tweaks.IR3.starting-junkheaps")
 require("code.data.tweaks.IR3.misc")
 require("code.data.tweaks.IR3.geothermal")
 
-require("code.data.tweaks.remove-scrap") -- Must be in data-final-fixes.lua, so it runs after the production scrap mod.
+require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so it runs after the production scrap mod.
