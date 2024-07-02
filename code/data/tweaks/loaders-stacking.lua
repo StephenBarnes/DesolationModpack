@@ -100,40 +100,97 @@ end
 -- I think we should move them into the logistics techs too, like for AAI loaders.
 -- Their recipes should use the large frame of corresponding resource tier.
 
-Tech.hideTech("ic-containerization-1")
-Tech.hideTech("ic-containerization-2")
-Tech.hideTech("ic-containerization-3")
-
-Tech.addRecipeToTech("ic-container", "ir-inserters-1")
-Tech.addRecipeToTech("ic-containerization-machine-1", "ir-inserters-1")
-Tech.addRecipeToTech("ic-containerization-machine-2", "ir-inserters-2")
-Tech.addRecipeToTech("ic-containerization-machine-3", "ir-inserters-3")
+data:extend({
+	-- Add a subgroup for containers and containerization machines.
+	{
+		type = "item-subgroup",
+		name = "containerization",
+		group = "logistics",
+		order = "bc", -- After beltboxes row, but before inserter row.
+	},
+	-- Add a recipe to disassemble containers at destination.
+	{
+		type = "recipe",
+		name = "ic-container-disassembly",
+		category = data.raw.recipe["ic-container"].category,
+		subgroup = "containerization",
+		order = "2",
+		ingredients = {
+			{ "ic-container", 1 },
+		},
+		-- Note that we get scrap when creating the container, so we can't get back all of the raw materials.
+		-- Scrap is 0.55 scrap, though user could set it to like 1.1 or so.
+		-- I think the best solution is to just remove the scrap from the recipe, which I'll do in remove-scrap.lua.
+		results = {
+			{ name = "iron-plate", amount = 5 },
+			{ name = "iron-stick", amount = 12 },
+			{ name = "iron-rivet", amount_min = 3, amount_max = 4 }, -- You have a 50% chance of losing 1 of the rivets used to make the container.
+		},
+		main_product = "iron-stick",
+		localised_name = { "recipe-name.ic-container-disassembly" },
+		allow_as_intermediate = false,
+		allow_intermediates = false, -- So it doesn't try something stupid like making and then disassembling a container.
+		allow_decomposition = false, -- Don't break down to "raw ingredients".
+		enabled = false,      -- Not enabled before researched.
+		icons = {
+			-- Empty icon as background layer, because the sub-icons are sized relative to back layer.
+			{
+				icon = "__Desolation__/graphics/empty_icon.png",
+				icon_size = 64,
+				icon_mipmaps = 4,
+				scale = 0.5
+			},
+			{ icon = data.raw.item["ic-container"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.4,  shift = { 0, -4 } },
+			{ icon = data.raw.item["iron-stick"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { -7, 7 } },
+			{ icon = data.raw.item["iron-plate"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { 7, 7 } },
+		},
+	}
+})
 
 Recipe.setIngredients("ic-container", { -- Ingredients chosen bc the box has 12 edges and 5 faces (excluding top), and we want to use IR3's intermediates.
 	{"iron-plate", 5},
 	{"iron-stick", 12},
 	{"iron-rivet", 4}
 })
+data.raw.item["ic-container"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-1"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-2"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-3"].subgroup = "containerization"
+data.raw.item["ic-container"].order = "1"
+data.raw.item["ic-containerization-machine-1"].order = "3"
+data.raw.item["ic-containerization-machine-2"].order = "4"
+data.raw.item["ic-containerization-machine-3"].order = "5"
+
+Tech.hideTech("ic-containerization-1")
+Tech.hideTech("ic-containerization-2")
+Tech.hideTech("ic-containerization-3")
+
+Tech.addRecipeToTech("ic-container", "ir-inserters-1")
+Tech.addRecipeToTech("ic-container-disassembly", "ir-inserters-1")
+Tech.addRecipeToTech("ic-containerization-machine-1", "ir-inserters-1")
+Tech.addRecipeToTech("ic-containerization-machine-2", "ir-inserters-2")
+Tech.addRecipeToTech("ic-containerization-machine-3", "ir-inserters-3")
 
 Recipe.setIngredients("ic-containerization-machine-1", {
 	{"iron-frame-large", 1},
 	{"iron-gear-wheel", 8},
-	{"electronic-circuit", 2},
+	--{"electronic-circuit", 2}, -- No, large frame already has circuits.
 	{"iron-motor", 2}, -- the red (iron) motor
 	{"iron-beam", 2},
 })
 Recipe.setIngredients("ic-containerization-machine-2", {
 	{"steel-frame-large", 1},
 	{"steel-gear-wheel", 8},
-	{"advanced-circuit", 2}, -- red circuit
+	--{"advanced-circuit", 2}, -- red circuit
 	{"electric-engine-unit", 2}, -- the "advanced motor" ie blue/steel motor
 	{"steel-beam", 2},
 })
 Recipe.setIngredients("ic-containerization-machine-3", {
 	{"chromium-frame-large", 1},
 	{"brass-gear-wheel", 8}, -- There's no chromium gear wheel?
-	{"processing-unit", 2}, -- blue circuit
-	{"chromium-engine-unit", 2}, -- the "advanced engine" (looks like blue engine, not motor)
+	--{"processing-unit", 2}, -- blue circuit
+	--{"chromium-engine-unit", 2}, -- the "advanced engine" (looks like blue engine, not motor)
+	{"electric-engine-unit", 2}, -- Decided to rather use this, to match the other recipes. It's a motor, not an engine.
 	{"chromium-beam", 2},
 })
 
