@@ -1,7 +1,7 @@
 -- We want to encourage the use of containers, ingot stacking, and loaders. So make belts and inserters slower.
-data.raw["double-setting"]["HarderBasicLogistics-belt-speed-multiplier"].default_value = 0.2 -- Reduced 1->0.2.
-data.raw["double-setting"]["HarderBasicLogistics-splitter-speed-multiplier"].default_value = 0.2 -- Reduced 1->0.2.
-data.raw["double-setting"]["HarderBasicLogistics-inserter-speed-multiplier"].default_value = 0.2 -- Reduced 1->0.2.
+data.raw["double-setting"]["HarderBasicLogistics-belt-speed-multiplier"].default_value = 1/3
+data.raw["double-setting"]["HarderBasicLogistics-splitter-speed-multiplier"].default_value = 1/3
+data.raw["double-setting"]["HarderBasicLogistics-inserter-speed-multiplier"].default_value = 1/3
 
 -- Only allow the IR3 loaders with bundlers/packers.
 data.raw["string-setting"]["HarderBasicLogistics-special-loaders-inserters"].default_value = "ir3-loader-steam,ir3-loader,ir3-fast-loader,ir3-express-loader"

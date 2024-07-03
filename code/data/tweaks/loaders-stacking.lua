@@ -25,33 +25,40 @@ Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "proces
 -- Since logistics-2 now has lubricant as prereq, let's add some of it to the recipes, same as vanilla has for blue belts.
 data.raw.recipe["fast-transport-belt"].category = data.raw.recipe["express-transport-belt"].category -- Needed to have a fluid ingredient
 Recipe.addIngredients("fast-transport-belt", {{type="fluid", name="lubricant", amount=5}})
-
+Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
+Tech.addRecipeToTech("ir3-loader-steam", "logistics")
 
 -- For IR3 Loaders and Stacking mod
 ------------------------------------------------------------------------
 -- We want to use both the loaders and the bundlers (stacking beltboxes) from this mod. Using HarderBasicLogistics to restrict these loaders to only bundlers/packers.
 -- I don't want IR3 bundlers/loaders to have separate techs, rather just put them in a corresponding logistics tech or motor tech.
--- I also want to remove the circuit requirement for beltboxes. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes.
+-- I also want to remove the circuit requirement for beltboxes and loaders. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes.
 
-Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
 Tech.hideTech("ir3-beltbox-steam")
-Tech.addRecipeToTech("ir3-loader-steam", "logistics")
 Tech.hideTech("ir3-loader-steam")
-
--- TODO The rest of the IR3 loaders
+Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
+Tech.addRecipeToTech("ir3-loader-steam", "logistics")
 
 Tech.hideTech("ir3-beltbox")
+Tech.hideTech("ir3-loader")
 Tech.addRecipeToTech("ir3-beltbox", "ir-iron-motor")
---data.raw.technology["ir-inserters-1"].localised_name = {"technology-name.ir-inserters-1"}
+Tech.addRecipeToTech("ir3-loader", "ir-iron-motor")
 Recipe.removeIngredient("ir3-beltbox", "electronic-circuit")
+Recipe.removeIngredient("ir3-loader", "electronic-circuit")
 
 Tech.hideTech("ir3-fast-beltbox")
+Tech.hideTech("ir3-fast-loader")
 Tech.addRecipeToTech("ir3-fast-beltbox", "logistics-2")
+Tech.addRecipeToTech("ir3-fast-loader", "logistics-2")
 Recipe.removeIngredient("ir3-fast-beltbox", "electronic-circuit")
+Recipe.removeIngredient("ir3-fast-loader", "electronic-circuit")
 
 Tech.hideTech("ir3-express-beltbox")
+Tech.hideTech("ir3-express-loader")
 Tech.addRecipeToTech("ir3-express-beltbox", "logistics-3")
+Tech.addRecipeToTech("ir3-express-loader", "logistics-3")
 Recipe.removeIngredient("ir3-express-beltbox", "advanced-circuit")
+Recipe.removeIngredient("ir3-express-loader", "advanced-circuit")
 
 -- Move the bundlers to the next row, so we don't have an overlong row.
 local function setSubgroupOrder(itemName, subgroup, order)
@@ -63,8 +70,40 @@ setSubgroupOrder("ir3-beltbox", "containerization", "0-2")
 setSubgroupOrder("ir3-fast-beltbox", "containerization", "0-3")
 setSubgroupOrder("ir3-express-beltbox", "containerization", "0-4")
 
-
--- TODO rename the item stacks to bundles
+-- Change the icons for IR3 loaders, to distinguish from AAI loaders.
+data.raw.item["ir3-loader-steam"].icons = {
+	{
+		icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-loader-steam.png",
+		icon_size = 64,
+		icon_mipmaps = 4
+	},
+	{
+		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
+		icon_size = 64,
+		icon_mipmaps = 4,
+		scale = 0.25,
+		shift = {-7, 10},
+	},
+}
+-- Could add electric lines to the unlubricated loaders, but I think it looks better without them.
+if false then
+	for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
+		data.raw.item["ir3-"..val].icons = {
+			{
+				icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
+				icon_size = 64,
+				icon_mipmaps = 4
+			},
+			{
+				icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/heating-overlay-electric.png",
+				icon_size = 64,
+				icon_mipmaps = 4,
+				scale = 0.25,
+				shift = {-7, 10},
+			},
+		}
+	end
+end
 
 
 -- For AAI Loaders
@@ -94,22 +133,28 @@ Tech.copyCosts("lubricant", "logistics-2") -- We don't want logistics 2 (after l
 -- For first loader, the only tech we have is the beltbox tech plus lubricant, and some irrelevant stuff (concrete, oil). So just copy the recipe from beltbox to loader.
 -- It's fairly realistic too. Add one more belt too, for realism and a bit of extra expense.
 -- From looking it over, the same rule can be applied to the other 2 loaders.
-Recipe.copyIngredientsAndAdd("ir3-beltbox", "aai-loader", {{name="transport-belt", amount=1}})
-Recipe.copyIngredientsAndAdd("ir3-fast-beltbox", "aai-fast-loader", {{name="fast-transport-belt", amount=1}})
-Recipe.copyIngredientsAndAdd("ir3-express-beltbox", "aai-express-loader", {{name="express-transport-belt", amount=1}})
+Recipe.copyIngredients("ir3-loader", "aai-loader")
+Recipe.copyIngredients("ir3-fast-loader", "aai-fast-loader")
+Recipe.copyIngredients("ir3-express-loader", "aai-express-loader")
 
--- TODO these currently require assemblers, can't be handcrafted. Remove that.
-
--- Use the icons from Deadlock's loaders mod, for the AAI loaders, so that they have black belts.
+-- Use the icons from Deadlock's loaders mod, for the AAI loaders, so that they have black belts and look the same as the others.
 -- The actual placed entity doesn't look quite like the Deadlock icons, but it's fairly close and at least this way the icons won't have grey belts that stick out.
 for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
-	data.raw.item["aai-"..val].icons = {{
-		icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
-		icon_size = 64,
-		icon_mipmaps = 4
-	}}
+	data.raw.item["aai-"..val].icons = {
+		{
+			icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
+			icon_size = 64,
+			icon_mipmaps = 4
+		},
+		{
+			icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/lubricant.png",
+			icon_size = 64,
+			icon_mipmaps = 4,
+			scale = 0.25,
+			shift = {-7, 10},
+		},
+	}
 end
--- TODO rather add mini-icon with lubricant or container.
 
 
 -- For Intermodal Containers
@@ -214,8 +259,3 @@ Recipe.setIngredients("ic-containerization-machine-3", {
 	{"electric-engine-unit", 2}, -- Decided to rather use this, to match the other recipes. It's a motor, not an engine.
 	{"chromium-beam", 2},
 })
-
--- TODO move the containerization machines to the logistics tab, not production.
--- TODO move the container recipe from components tab to logistics.
-
--- TODO
