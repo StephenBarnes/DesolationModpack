@@ -29,13 +29,16 @@ Recipe.addIngredients("fast-transport-belt", {{type="fluid", name="lubricant", a
 
 -- For IR3 Loaders and Stacking mod
 ------------------------------------------------------------------------
--- From this mod, we're only using the beltboxes, not the loaders.
--- We're disabling the loaders via default settings - rather using AAI loaders because they require lubricant.
--- I don't want IR3 beltboxes to have separate techs, rather just put them in a corresponding logistics tech or motor tech.
--- I also want to remove the circuit requirement for beltboxes. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes over packers when possible.
+-- We want to use both the loaders and the bundlers (stacking beltboxes) from this mod. Using HarderBasicLogistics to restrict these loaders to only bundlers/packers.
+-- I don't want IR3 bundlers/loaders to have separate techs, rather just put them in a corresponding logistics tech or motor tech.
+-- I also want to remove the circuit requirement for beltboxes. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes.
 
 Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
 Tech.hideTech("ir3-beltbox-steam")
+Tech.addRecipeToTech("ir3-loader-steam", "logistics")
+Tech.hideTech("ir3-loader-steam")
+
+-- TODO The rest of the IR3 loaders
 
 Tech.hideTech("ir3-beltbox")
 Tech.addRecipeToTech("ir3-beltbox", "ir-iron-motor")
@@ -49,6 +52,19 @@ Recipe.removeIngredient("ir3-fast-beltbox", "electronic-circuit")
 Tech.hideTech("ir3-express-beltbox")
 Tech.addRecipeToTech("ir3-express-beltbox", "logistics-3")
 Recipe.removeIngredient("ir3-express-beltbox", "advanced-circuit")
+
+-- Move the bundlers to the next row, so we don't have an overlong row.
+local function setSubgroupOrder(itemName, subgroup, order)
+	data.raw.item[itemName].subgroup = subgroup
+	data.raw.item[itemName].order = order
+end
+setSubgroupOrder("ir3-beltbox-steam", "containerization", "0-1")
+setSubgroupOrder("ir3-beltbox", "containerization", "0-2")
+setSubgroupOrder("ir3-fast-beltbox", "containerization", "0-3")
+setSubgroupOrder("ir3-express-beltbox", "containerization", "0-4")
+
+
+-- TODO rename the item stacks to bundles
 
 
 -- For AAI Loaders
@@ -93,6 +109,7 @@ for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
 		icon_mipmaps = 4
 	}}
 end
+-- TODO rather add mini-icon with lubricant or container.
 
 
 -- For Intermodal Containers
@@ -118,7 +135,7 @@ data:extend({
 		name = "ic-container-disassembly",
 		category = data.raw.recipe["ic-container"].category,
 		subgroup = "containerization",
-		order = "2",
+		order = "2-2",
 		ingredients = {
 			{ "ic-container", 1 },
 		},
@@ -160,10 +177,10 @@ data.raw.item["ic-container"].subgroup = "containerization"
 data.raw.item["ic-containerization-machine-1"].subgroup = "containerization"
 data.raw.item["ic-containerization-machine-2"].subgroup = "containerization"
 data.raw.item["ic-containerization-machine-3"].subgroup = "containerization"
-data.raw.item["ic-container"].order = "1"
-data.raw.item["ic-containerization-machine-1"].order = "3"
-data.raw.item["ic-containerization-machine-2"].order = "4"
-data.raw.item["ic-containerization-machine-3"].order = "5"
+data.raw.item["ic-container"].order = "2-1"
+data.raw.item["ic-containerization-machine-1"].order = "1-1"
+data.raw.item["ic-containerization-machine-2"].order = "1-2"
+data.raw.item["ic-containerization-machine-3"].order = "1-3"
 
 Tech.hideTech("ic-containerization-1")
 Tech.hideTech("ic-containerization-2")

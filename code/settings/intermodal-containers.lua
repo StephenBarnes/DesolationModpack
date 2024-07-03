@@ -1,0 +1,1 @@
+data.raw["string-setting"]["ic-machine-size"].default_value = "3×3" -- Change from 4x4 to 3x3.
