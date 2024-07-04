@@ -65,18 +65,13 @@ local function setSubgroupOrder(itemName, subgroup, order)
 	data.raw.item[itemName].subgroup = subgroup
 	data.raw.item[itemName].order = order
 end
-setSubgroupOrder("ir3-beltbox-steam", "containerization", "0-1")
-setSubgroupOrder("ir3-beltbox", "containerization", "0-2")
-setSubgroupOrder("ir3-fast-beltbox", "containerization", "0-3")
-setSubgroupOrder("ir3-express-beltbox", "containerization", "0-4")
+for i, val in pairs({"beltbox-steam", "beltbox", "fast-beltbox", "express-beltbox"}) do
+	setSubgroupOrder("ir3-"..val, "containerization", "0"..i)
+end
 
 -- Change the icons for IR3 loaders, to distinguish from AAI loaders.
 data.raw.item["ir3-loader-steam"].icons = {
-	{
-		icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-loader-steam.png",
-		icon_size = 64,
-		icon_mipmaps = 4
-	},
+	data.raw.item["ir3-loader-steam"].icons[1] or data.raw.item["ir3-loader-steam"].icon,
 	{
 		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
 		icon_size = 64,
@@ -86,27 +81,50 @@ data.raw.item["ir3-loader-steam"].icons = {
 	},
 }
 -- Could add electric lines to the unlubricated loaders, but I think it looks better without them.
-if false then
-	for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
-		data.raw.item["ir3-"..val].icons = {
-			{
-				icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
-				icon_size = 64,
-				icon_mipmaps = 4
-			},
-			{
-				icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/heating-overlay-electric.png",
-				icon_size = 64,
-				icon_mipmaps = 4,
-				scale = 0.25,
-				shift = {-7, 10},
-			},
-		}
-	end
+--if false then
+--	for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
+--		data.raw.item["ir3-"..val].icons = {
+--			data.raw.item["ir3-"..val].icons[1] or data.raw.item["ir3-"..val].icon,
+--			{
+--				icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/heating-overlay-electric.png",
+--				icon_size = 64,
+--				icon_mipmaps = 4,
+--				scale = 0.25,
+--				shift = {-7, 10},
+--			},
+--		}
+--	end
+--end
+
+-- Change the icon for IR3's steam bundler, to match the steam loader.
+data.raw.item["ir3-beltbox-steam"].icons = {
+	data.raw.item["ir3-beltbox-steam"].icons[1] or data.raw.item["ir3-beltbox-steam"].icon,
+	{
+		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
+		icon_size = 64,
+		icon_mipmaps = 4,
+		scale = 0.25,
+		shift = {-7, 10},
+	},
+}
+
+-- Change the localised_description fields to point to the same shared description, so I don't have to repeat them in the locale file.
+for name, beltTier in pairs({["beltbox-steam"] = 1, ["beltbox"] = 1, ["fast-beltbox"] = 2, ["express-beltbox"] = 3}) do
+	local sharedDescription = {
+		"shared-description.ir3-beltbox-ALL",
+		{"belt-tier-name.tier-"..beltTier},
+	}
+	data.raw.item["ir3-"..name].localised_description = sharedDescription
+	data.raw.furnace["ir3-"..name].localised_description = sharedDescription -- The entities are registered as furnaces.
 end
-
--- TODO: change the localised_description field of these, instead of what I'm currently doing (repeating the description for each tier, etc.). Same for IR3 loaders, IR3 bundlers, AAI loaders, and IC containerization machines.
-
+for name, beltTier in pairs({["loader-steam"] = 1, ["loader"] = 1, ["fast-loader"] = 2, ["express-loader"] = 3}) do
+	local sharedDescription = {
+		"shared-description.ir3-loader-ALL",
+		{"belt-tier-name.tier-"..beltTier},
+	}
+	data.raw.item["ir3-"..name].localised_description = sharedDescription
+	data.raw["loader-1x1"]["ir3-"..name].localised_description = sharedDescription
+end
 
 -- For AAI Loaders
 ------------------------------------------------------------------------
@@ -155,7 +173,8 @@ for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
 			scale = 0.25,
 			shift = {-7, 10},
 		},
-	}
+	}calised_description = sharedDescription
+	data.raw["loader-1x1"]["aai-"..val].localised_description = sharedDescription
 end
 
 
@@ -261,3 +280,8 @@ Recipe.setIngredients("ic-containerization-machine-3", {
 	{"electric-engine-unit", 2}, -- Decided to rather use this, to match the other recipes. It's a motor, not an engine.
 	{"chromium-beam", 2},
 })
+
+-- Change the localised_description fields to point to the same shared description, so I don't have to repeat them in the locale file.
+for i = 1, 3 do
+	data.raw.item["ic-containerization-machine-"..i].localised_description = {"shared-description.ic-containerization-machine-ALL", {"belt-tier-name."..i}}
+end
