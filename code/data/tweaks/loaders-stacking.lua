@@ -105,6 +105,8 @@ if false then
 	end
 end
 
+-- TODO: change the localised_description field of these, instead of what I'm currently doing (repeating the description for each tier, etc.). Same for IR3 loaders, IR3 bundlers, AAI loaders, and IC containerization machines.
+
 
 -- For AAI Loaders
 ------------------------------------------------------------------------
