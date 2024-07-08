@@ -159,7 +159,7 @@ Recipe.copyIngredients("ir3-express-loader", "aai-express-loader")
 
 -- Use the icons from Deadlock's loaders mod, for the AAI loaders, so that they have black belts and look the same as the others.
 -- The actual placed entity doesn't look quite like the Deadlock icons, but it's fairly close and at least this way the icons won't have grey belts that stick out.
-for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
+for i, val in pairs({"loader", "fast-loader", "express-loader"}) do
 	data.raw.item["aai-"..val].icons = {
 		{
 			icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
@@ -173,7 +173,12 @@ for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
 			scale = 0.25,
 			shift = {-7, 10},
 		},
-	}calised_description = sharedDescription
+	}
+	local sharedDescription = {
+		"shared-description.ir3-loader-ALL",
+		{"belt-tier-name.tier-"..i},
+	}
+	data.raw.item["aai-"..val].localised_description = sharedDescription
 	data.raw["loader-1x1"]["aai-"..val].localised_description = sharedDescription
 end
 

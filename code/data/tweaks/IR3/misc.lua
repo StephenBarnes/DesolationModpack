@@ -1,3 +1,4 @@
+local Recipe = require("code.util.recipe")
 
 -- Considered: Make all small and large frames cost twice as much, to make infrastructure more expensive. Decided against because current costs already seem pretty expensive.
 
@@ -11,3 +12,10 @@ data.raw["offshore-pump"]["copper-pump"].pumping_speed = 3.0 -- 8.0 -> 3.0, so w
 data.raw.recipe["tree-planter-ir-rubber-tree"].ingredients = {{"wood", 12}, {"stone-brick", 8}}
 
 -- TODO make transport belts more expensive, to discourage long-distance belting in the early game, in favor of the heavy roller/picket.
+
+-- Make starting furnaces cost less wood, bc it's hard to come by.
+-- And make them produce only the furnaces, not the wood chip scrap.
+Recipe.setIngredients("stone-furnace", {"stone-brick", 32})
+data.raw.recipe["stone-furnace"].results = {{"stone-furnace", 1}}
+Recipe.setIngredients("stone-charcoal-kiln", {"stone-brick", 24})
+data.raw.recipe["stone-charcoal-kiln"].results = {{"stone-charcoal-kiln", 1}}

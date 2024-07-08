@@ -6,7 +6,7 @@
 
 local metals = {"copper", "tin"}
 local itemsAmounts = {
-	["scrap"] = {40, 60},
+	["scrap"] = {80, 120},
 	["plate"] = {1, 1},
 	["rod"] = {4, 6},
 	["gear-wheel"] = {1, 1},
