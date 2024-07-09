@@ -15,7 +15,7 @@ data.raw.recipe["tree-planter-ir-rubber-tree"].ingredients = {{"wood", 12}, {"st
 
 -- Make starting furnaces cost less wood, bc it's hard to come by.
 -- And make them produce only the furnaces, not the wood chip scrap.
-Recipe.setIngredients("stone-furnace", {"stone-brick", 32})
-data.raw.recipe["stone-furnace"].results = {{"stone-furnace", 1}}
-Recipe.setIngredients("stone-charcoal-kiln", {"stone-brick", 24})
-data.raw.recipe["stone-charcoal-kiln"].results = {{"stone-charcoal-kiln", 1}}
+Recipe.setIngredients("stone-furnace", {{"stone-brick", 32}})
+Recipe.setResults("stone-furnace", {{"stone-furnace", 1}})
+Recipe.setIngredients("stone-charcoal-kiln", {{"stone-brick", 24}})
+Recipe.setResults("stone-charcoal-kiln", {{"stone-charcoal-kiln", 1}})

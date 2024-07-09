@@ -86,4 +86,17 @@ Recipe.substituteIngredient = function(recipeName, ingredientName, newIngredient
 	end
 end
 
+Recipe.setResults = function(recipeName, results)
+	local recipe = data.raw.recipe[recipeName]
+	if recipe.normal ~= nil then
+		recipe.normal.results = results
+	end
+	if recipe.expensive ~= nil then
+		recipe.expensive.results = results
+	end
+	if recipe.normal == nil and recipe.expensive == nil then
+		recipe.results = results
+	end
+end
+
 return Recipe
