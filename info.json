@@ -28,6 +28,8 @@
 	, "aai-loaders-lubricant-mult >= 0.1.0"
 
 	, "RecipeBook >= 3.5.8"
+	, "extended-descriptions >= 1.2.3"
+	, "creative-mod >= 1.8.2"
 	],
 	"description": "A collection of mods, with configurable tweaks. TODO add more description."
 }
