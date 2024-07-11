@@ -29,7 +29,8 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 			-- Resources
             coal = {
                 frequency = 1/6,
-                size = 1,
+                size = 3,
+                richness = 2,
             },
             ["copper-ore"] = {
                 frequency = 1/6,
@@ -68,17 +69,26 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
                 frequency = 1/3,
                 size = 1,
             },
+
 			trees = {
 				frequency = 2, -- Inverse of scale
 				size = 1/6, -- Coverage
 			},
             ["enemy-base"] = {
 				frequency = 1/6,
-                size = 1
+                size = 1,
             },
 
-            -- For IR3: remove rubber trees. TODO.
+            -- For IR3: minimize rubber trees. Seems I can't actually remove them completely in the mapgen preset, so just make them rare.
+            ["ir-rubber-trees"] = {
+                frequency = 1/6,
+                --size = 1/6,
+            },
         },
+
+        --default_enable_all_autoplace_controls = false,
+        -- Wanted to use this to disable rubber trees, but, it seems to cause issues with showing terrain, so rather not using.
+
         terrain_segmentation = 1/3, -- Inverse of water scale
         water = 6, -- Water coverage
     },
