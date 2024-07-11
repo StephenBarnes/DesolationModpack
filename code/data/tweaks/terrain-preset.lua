@@ -1,15 +1,14 @@
 if settings.startup["Desolation-remove-mapgen-presets"] then
 	log("Removing all existing mapgen presets!")
     for k, _ in pairs(data.raw["map-gen-presets"]["default"]) do
-        if k ~= "type" and k ~= "name" then
+        if k ~= "type" and k ~= "name" and k ~= "default" then
             log("Removing mapgen preset: "..k)
             data.raw["map-gen-presets"]["default"][k] = nil
         end
     end
 end
 
--- We can't completely remove the already-set mapgen preset. So instead we replace the default one with ours.
-data.raw["map-gen-presets"]["default"]["default"] = {
+data.raw["map-gen-presets"]["default"]["Desolation"] = {
     order = "__",
     basic_settings = {
         property_expression_names = {
@@ -77,6 +76,8 @@ data.raw["map-gen-presets"]["default"]["default"] = {
 				frequency = 1/6,
                 size = 1
             },
+
+            -- For IR3: remove rubber trees. TODO.
         },
         terrain_segmentation = 1/3, -- Inverse of water scale
         water = 6, -- Water coverage
