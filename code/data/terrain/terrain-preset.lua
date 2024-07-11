@@ -87,11 +87,11 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 				size = 4, -- Coverage
 			},
 
-            -- For IR3: minimize rubber trees. Seems I can't actually remove them completely in the mapgen preset, so just make them rare.
-            ["ir-rubber-trees"] = {
-                frequency = 1/6,
-                --size = 1/6,
-            },
+            -- For IR3: minimize rubber trees. Seems I can't actually remove them completely in the mapgen preset.
+            -- I'm rather removing the control completely, see rubber-trees-edit.lua.
+            --["ir-rubber-trees"] = {
+            --    frequency = 1/6,
+            --},
         },
 
         --default_enable_all_autoplace_controls = false,
