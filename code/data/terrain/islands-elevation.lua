@@ -1,15 +1,16 @@
 local noise = require "noise"
 
-local simpleElevationFunc = {
-	type = "literal-number",
-	literal_value = 100,
-}
+local elevationFunc = noise.define_noise_function(function(x, y, tile, map)
+	local scaleVar = noise.var("control-setting:Desolation-scale:frequency:multiplier")
+	local scaledDistance = tile.distance / scaleVar
+	return noise.ridge(scaledDistance, -20, 20)
+end)
 
 data:extend{
 	{
 		type = "noise-expression",
 		name = "Desolation-islands-elevation",
 		intended_property = "elevation",
-		expression = simpleElevationFunc,
+		expression = elevationFunc,
 	},
 }

@@ -72,6 +72,11 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
                 size = 1,
             },
 
+            -- Desolation scale; using smaller value for debug, increase when releasing.
+            ["Desolation-scale"] = {
+                frequency = 1/3,
+            },
+
 			-- Temperature controls for Alien Biomes
 			hot = {
 				frequency = 2, -- Inverse of scale

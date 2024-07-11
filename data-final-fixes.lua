@@ -3,6 +3,7 @@
 
 require("code.data.terrain.islands-elevation")
 require("code.data.terrain.terrain-preset")
+require("code.data.terrain.autoplace-controls")
 
 require("code.data.tweaks.vehicles")
 require("code.data.tweaks.stack-sizes")
