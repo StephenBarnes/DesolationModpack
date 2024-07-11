@@ -42,6 +42,12 @@ Tech.addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
 -- Add logistics-3 as prereq for some higher-tier stuff, to avoid dead end.
 Tech.addTechDependency("logistics-3", "logistic-system")
 
+-- Move petrochemical generator to crude oil processing, bc it's a dead end.
+-- Also add dependency combustion engine => crude oil processing, bc combustion engine is needed to make the petrochemical generator.
+Tech.hideTech("ir-petro-generator")
+Tech.addTechDependency("engine", "ir-crude-oil-processing")
+Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing")
+
 -- Radar is a dead end. We could remove it, eg:
 -- Tech.addTechDependency("ir-radar", "ir-robotower")
 -- But, I don't think this is actually necessary - surely nobody's going to continue using telescopes into late-game, and if they do, alright, they can get a reduction in evolution.
@@ -49,7 +55,6 @@ Tech.addTechDependency("logistics-3", "logistic-system")
 -- There's several other dead ends that I think are actually fine, because forgoing them could be fun and deserves a reward in lowered evolution. Namely:
 -- Autogun turret
 -- Fluid wagon
--- Petrochemical generator
 -- Helium airship, and airship station
 -- Heavy picket
 -- Land-mine
