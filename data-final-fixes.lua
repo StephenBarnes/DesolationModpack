@@ -1,8 +1,10 @@
 -- TODO maybe change pairs() to ipairs() in some places
 -- TODO add settings for everything below
 
+require("code.data.terrain.islands-elevation")
+require("code.data.terrain.terrain-preset")
+
 require("code.data.tweaks.vehicles")
-require("code.data.tweaks.terrain-preset")
 require("code.data.tweaks.stack-sizes")
 require("code.data.tweaks.tech")
 require("code.data.tweaks.turret-recipes")

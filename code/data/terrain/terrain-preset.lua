@@ -9,23 +9,16 @@ if settings.startup["Desolation-remove-mapgen-presets"] then
 end
 
 data.raw["map-gen-presets"]["default"]["Desolation"] = {
-    order = "__",
+    order = "Desolation",
     basic_settings = {
         property_expression_names = {
 			--["control-setting:moisture:bias"] = 0.05, -- Moisture bias
 			--["control-setting:aux:bias"] = -0.35, -- Terrain bias
+
+            -- Use the custom noise expression for elevation.
+            elevation = "Desolation-islands-elevation",
 		},
         autoplace_controls = {
-			-- Temperature controls for Alien Biomes
-			hot = {
-				frequency = 2, -- Inverse of scale
-				size = 0.5, -- Coverage
-			},
-			cold = {
-				frequency = 2, -- Inverse of scale
-				size = 4, -- Coverage
-			},
-
 			-- Resources
             coal = {
                 frequency = 1/6,
@@ -78,6 +71,16 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 				frequency = 1/6,
                 size = 1,
             },
+
+			-- Temperature controls for Alien Biomes
+			hot = {
+				frequency = 2, -- Inverse of scale
+				size = 0.5, -- Coverage
+			},
+			cold = {
+				frequency = 2, -- Inverse of scale
+				size = 4, -- Coverage
+			},
 
             -- For IR3: minimize rubber trees. Seems I can't actually remove them completely in the mapgen preset, so just make them rare.
             ["ir-rubber-trees"] = {
