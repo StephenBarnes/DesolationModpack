@@ -67,19 +67,26 @@ local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
 	return d - rad
 end
 
+local function makeStartIslandMinRadMinElevation(scale, centerX, centerY, x, y)
+	local d = dist(centerX, centerY, x, y) / scale
+	local inIsland = noise.less_than(d, C.startIslandMinRad)
+	return noise.if_else_chain(inIsland, 10, -100)
+end
+
 local function desolationOverallElevation(x, y, tile, map)
 	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
-	local basic = makeBasisNoise(scale / 3) + 8
+	local basic = makeBasisNoise(scale / 3) - 10
 	local startIslandCenter = getStartIslandCenter(scale)
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
-	local elevation = correctWaterLevel(noise.min(basic, markerLakeMax1, markerLakeMax2), map)
+	local startIslandMinRadMinElevation = makeStartIslandMinRadMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
+	local basicPlusStartIsland = noise.max(startIslandMinRadMinElevation, basic)
+	local elevation = correctWaterLevel(noise.min(basicPlusStartIsland, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
 
 data:extend {
 	{
-		--similar to vanilla, but with a bigger minimum starting area
 		type = "noise-expression",
 		name = "Desolation-islands-elevation",
 		intended_property = "elevation",
