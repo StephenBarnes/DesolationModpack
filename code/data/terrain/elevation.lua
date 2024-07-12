@@ -1,6 +1,8 @@
 local noise = require "noise"
 local tne = noise.to_noise_expression
 
+local C = require("code.data.terrain.constants")
+
 -- Some notes:
 -- map.wlc_elevation_offset (wlc = water level correction) -- This should be added to water level, to account for the water level set by the "coverage" slider.
 -- map.wlc_elevation_minimum -- This is the minimum, so you should clamp elevation to be above this.
@@ -23,7 +25,7 @@ local function getNextSeed1()
 end
 
 local function makeBasisNoise(scale)
-	return {
+	return tne{
 		type = "function-application",
 		function_name = "factorio-basis-noise",
 		arguments =
@@ -38,10 +40,34 @@ local function makeBasisNoise(scale)
 	}
 end
 
+local function mapRandBetween(a, b, seed, steps)
+	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
+	return a + (b - a) * (noise.fmod(seed, steps) / steps)
+end
+
+local getStartIslandCenter = function()
+	local angle = mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 20)
+	local x = C.startIslandMinRad * noise.cos(angle) + C.xShift
+	local y = C.startIslandMinRad * noise.sin(angle)
+	--local x = tne(200) + C.xShift
+	--local y = tne(100)
+	return {x, y}
+end
+
+local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
+	local dist = noise.absolute_value(centerX - x) + noise.absolute_value(centerY - y)
+	--local dist = ((x - centerX) ^ 2 + (y - centerY) ^ 2) ^ 0.5
+	return (dist * scale) - rad
+end
+
 local function desolationOverallElevation(x, y, tile, map)
 	local scale = scaleSlider * map.segmentation_multiplier
-	local basic = makeBasisNoise(scale / 10)
-	local elevation = correctWaterLevel(basic, map)
+	--local basic = makeBasisNoise(scale / 3) + 10
+	local basic = noise.ridge(x+y, 0, 20)
+	local startIslandCenter = getStartIslandCenter()
+	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale / 3, startIslandCenter[1], startIslandCenter[2], x, y, 10)
+	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale / 3, 0 + C.xShift, 0, x, y, 5)
+	local elevation = correctWaterLevel(noise.min(basic, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
 
@@ -52,9 +78,7 @@ data:extend {
 		name = "Desolation-islands-elevation",
 		intended_property = "elevation",
 		expression = noise.define_noise_function(function(x, y, tile, map)
-			x = x + 20000 -- Move the point where 'fractal similarity' is obvious off into the boonies
-			y = y
-			return desolationOverallElevation(x, y, tile, map)
+			return desolationOverallElevation(x + C.xShift, y, tile, map)
 		end),
 	},
 }
