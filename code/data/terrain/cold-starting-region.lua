@@ -8,7 +8,7 @@ local Util = require("code.data.terrain.util")
 local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
 
 local function clamp_temperature(raw_temperature)
-	return noise.clamp(raw_temperature, -20, 150)
+	return noise.clamp(raw_temperature, -20, 150) -- Alien Biomes seems to use this range.
 end
 
 local originalTempExpr = data.raw["noise-expression"].temperature.expression

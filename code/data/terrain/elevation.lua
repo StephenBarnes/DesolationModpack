@@ -26,7 +26,7 @@ local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
 end
 
 local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
-	local basis = Util.multiBasisNoise(6, 2, 2, 1 / (scale * 200), tne(13))
+	local basis = Util.multiBasisNoise(7, 2, 2, 1 / (scale * 200), tne(13))
 	local d = Util.dist(centerX, centerY, x, y) / scale
 	local ramp1 = Util.ramp(d, C.startIslandMinRad, C.startIslandMaxRad, 25, -30)
 	local minToPreventPuddles = Util.ramp(d, C.startIslandMinRad - C.puddleMargin, C.startIslandMinRad, 10, -10)
@@ -37,11 +37,16 @@ local function desolationOverallElevation(x, y, tile, map)
 	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
 	local basic = Util.basisNoise(scale / 3) - 10
 	local startIslandCenter = Util.getStartIslandCenter(scale)
-	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
-	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
 	local basicPlusStartIsland = noise.max(startIslandMinElevation, basic)
-	local elevation = correctWaterLevel(noise.min(basicPlusStartIsland, markerLakeMax1, markerLakeMax2), map)
+
+	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
+	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
+	local ironCenter = Util.getStartIslandIronCenter(scale)
+	local markerLakeMax3 = makeMarkerLakeMaxElevation(scale, ironCenter[1], ironCenter[2], x, y, 15)
+	local markedElevation = noise.min(basicPlusStartIsland, markerLakeMax1, markerLakeMax2, markerLakeMax3)
+
+	local elevation = correctWaterLevel(markedElevation, map)
 	return elevation
 end
 

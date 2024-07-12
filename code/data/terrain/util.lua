@@ -58,9 +58,20 @@ Export.dist = function(x1, y1, x2, y2)
 	-- No idea why the absolute value is necessary, but it seems to be necessary.
 end
 
+local function getSpawnToStartIslandCenterAngle()
+	return Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
+end
+
 Export.getStartIslandCenter = function(scale)
-	local angle = Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
+	local angle = getSpawnToStartIslandCenterAngle()
 	return Export.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
+end
+
+Export.getStartIslandIronCenter = function(scale)
+	local baseAngle = getSpawnToStartIslandCenterAngle() -- Use this angle, so it's on the other side of the island from where player spawns.
+	local angle = baseAngle + Export.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
+	local islandCenter = Export.getStartIslandCenter(scale)
+	return Export.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToIron * scale)
 end
 
 Export.ramp = function(v, v1, v2, out1, out2)
