@@ -61,50 +61,50 @@ data.raw.resource["copper-ore"].autoplace = resource_autoplace.resource_autoplac
 	name = "copper-ore",
 	order = "b1",
 	base_density = 10,
-	starting_amount = 80000,
+	starting_amount = 40000,
 	has_starting_area_placement = true,
 	regular_rq_factor_multiplier = 1.1,
 	starting_rq_factor_multiplier = 1.3,
 	candidate_spot_count = 22, -- To match 0.17.50 placement
 	ideal_aux = 0.8,
-	aux_range = 0.05,
+	aux_range = 0.1,
 }
 data.raw.resource["tin-ore"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "tin-ore",
 	order = "b2",
 	base_density = 10,
-	starting_amount = 80000,
+	starting_amount = 40000,
 	has_starting_area_placement = true,
 	regular_rq_factor_multiplier = 1.1,
 	starting_rq_factor_multiplier = 1.3,
 	candidate_spot_count = 22, -- To match 0.17.50 placement
 	ideal_aux = 0.15,
-	aux_range = 0.05,
+	aux_range = 0.1,
 }
 data.raw.resource["coal"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "coal",
 	order = "b3",
 	base_density = 12,
-	starting_amount = 160000,
+	starting_amount = 80000,
 	has_starting_area_placement = true,
 	regular_rq_factor_multiplier = 1.0,
 	starting_rq_factor_multiplier = 1.2,
 	ideal_aux = 0.4,
-	aux_range = 0.05,
+	aux_range = 0.1,
 }
 data.raw.resource["stone"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "stone",
 	order = "b4",
 	base_density = 12,
-	starting_amount = 160000,
+	starting_amount = 80000,
 	has_starting_area_placement = true,
 	regular_rq_factor_multiplier = 1.0,
 	starting_rq_factor_multiplier = 1.1,
 	ideal_aux = 0.6,
-	aux_range = 0.05,
+	aux_range = 0.1,
 }
 
-local empty_radius = 2200
+local empty_radius = 1800
 
 data.raw.resource["iron-ore"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "iron-ore",
@@ -114,34 +114,32 @@ data.raw.resource["iron-ore"].autoplace = resource_autoplace.resource_autoplace_
 	has_starting_area_placement = true,
 	regular_rq_factor_multiplier = 1.2,
 	starting_rq_factor_multiplier = 1.7,
-	starting_resource_placement_ring_radius = 1500, -- Spawns the starting patch somewhere at distance from the center
-	starting_resource_placement_radius = 2000, -- Keep it reasonably above starting_resource_placement_ring_radius?
-	regular_patch_fade_in_distance_start = 2000,
-	regular_patch_fade_in_distance = 2000,
+	starting_resource_placement_ring_radius = 775, -- Spawns the starting patch somewhere at distance from the center
+	starting_resource_placement_radius = 1200, -- Keep it reasonably above starting_resource_placement_ring_radius?
+	regular_patch_fade_in_distance_start = 1200,
+	regular_patch_fade_in_distance = 1200,
 	ideal_aux = 0.7,
 }
 
 data.raw.resource["uranium-ore"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "uranium-ore",
 	order = "b6",
-	base_density = 3,
+	base_density = 0.9,
 	base_spots_per_km2 = 1.25,
 	has_starting_area_placement = false,
 	random_spot_size_minimum = 2,
 	random_spot_size_maximum = 4,
 	regular_rq_factor_multiplier = 1,
+	regular_patch_fade_in_distance_start = empty_radius,
+	regular_patch_fade_in_distance = empty_radius + 100,
 	ideal_aux = 0.3,
-	starting_resource_placement_radius = 3000,
-	regular_patch_fade_in_distance_start = 3000,
-	regular_patch_fade_in_distance = 3000,
 }
 
 
 data.raw.resource["gold-ore"].autoplace = resource_autoplace.resource_autoplace_settings {
 	name = "gold-ore",
 	order = "b7",
-	base_density = 0.9,
-	base_spots_per_km2 = 1.25,
+	base_density = 3,
 	has_starting_area_placement = false,
 	regular_rq_factor_multiplier = 0.7,
 	regular_patch_fade_in_distance_start = empty_radius,
@@ -152,7 +150,7 @@ data.raw.resource["gold-ore"].autoplace = resource_autoplace.resource_autoplace_
 
 -- TODO controls for the gemstone rocks
 -- TODO controls for oil wells
--- TODO controls for the gas fissures.
+-- TODO controls for gas fissures
 
 
 -- Lava pools
