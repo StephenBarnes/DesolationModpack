@@ -1,9 +1,10 @@
 -- TODO maybe change pairs() to ipairs() in some places
 -- TODO add settings for everything below
 
-require("code.data.terrain.islands-elevation")
-require("code.data.terrain.terrain-preset")
+require("code.data.terrain.map-gen")
+require("code.data.terrain.resource-placing")
 require("code.data.terrain.autoplace-controls")
+require("code.data.terrain.terrain-preset")
 require("code.data.terrain.rubber-trees-edit")
 
 require("code.data.tweaks.vehicles")
