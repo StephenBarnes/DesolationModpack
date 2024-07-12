@@ -357,8 +357,15 @@ local function resource_autoplace_settings(params)
     }
   }
 
+  local startingAndEdge = { -- Resources that should appear in the starting area and at the edge of the starting island.
+    ["copper-ore"] = true,
+    ["tin-ore"] = true,
+    ["coal"] = true,
+    ["stone"] = true,
+  }
+
   local starting_ring_spots = -1000000
-  if params.name == "iron-ore" then
+  if startingAndEdge[params.name] == true then
     starting_resource_placement_ring_radius = 775
     starting_resource_placement_radius = 1200  -- Keep it reasonably above starting_resource_placement_ring_radius?
     regular_patch_fade_in_distance_start = 1200

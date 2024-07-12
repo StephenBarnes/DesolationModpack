@@ -21,45 +21,45 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
         autoplace_controls = {
 			-- Resources
             coal = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 3,
                 richness = 2,
             },
             ["copper-ore"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
 				richness = 0.5,
             },
             ["iron-ore"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
 				richness = 0.5,
             },
             ["tin-ore"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
 				richness = 0.5,
             },
             ["gold-ore"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
 				richness = 0.5,
             },
             stone = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
 				richness = 2,
             },
             ["crude-oil"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
             },
             ["uranium-ore"] = {
-                frequency = 1/6,
+                frequency = 1,
                 size = 1,
             },
             ["ir-fissures"] = {
-                frequency = 1/3,
+                frequency = 1,
                 size = 1,
             },
 
@@ -74,7 +74,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 
             -- Desolation scale; using smaller value for debug, increase when releasing.
             ["Desolation-scale"] = {
-                frequency = 2, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
+                frequency = 1, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
             },
             ["Desolation-roughness"] = {
                 frequency = 1, -- Inverse of the "scale" value that controls roughness. So setting this number higher makes the island smoother.
