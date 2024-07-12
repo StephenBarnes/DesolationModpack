@@ -57,23 +57,22 @@ local function dist(x1, y1, x2, y2)
 	-- No idea why the absolute value is necessary, but it seems to be necessary.
 end
 
-local getStartIslandCenter = function()
-	local angle = mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 20)
-	return moveInDirection(tne(C.xShift), tne(0), angle, C.startIslandMinRad)
+local getStartIslandCenter = function(scale)
+	local angle = mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
+	return moveInDirection(tne(C.xShift), tne(0), angle, C.startIslandMinRad * scale)
 end
 
 local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
-	local d = dist(centerX, centerY, x, y)
-	return (d * scale) - rad
+	local d = dist(centerX, centerY, x, y) / scale
+	return d - rad
 end
 
 local function desolationOverallElevation(x, y, tile, map)
-	local scale = scaleSlider * map.segmentation_multiplier
-	--local basic = makeBasisNoise(scale / 3) + 10
-	local basic = noise.ridge(x+y, 0, 20)
-	local startIslandCenter = getStartIslandCenter()
-	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale / 3, startIslandCenter[1], startIslandCenter[2], x, y, 5)
-	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale / 3, C.xShift, 0, x, y, 3)
+	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
+	local basic = makeBasisNoise(scale / 3) + 8
+	local startIslandCenter = getStartIslandCenter(scale)
+	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
+	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, C.xShift, 0, x, y, 5)
 	local elevation = correctWaterLevel(noise.min(basic, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
