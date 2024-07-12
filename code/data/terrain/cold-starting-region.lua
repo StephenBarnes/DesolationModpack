@@ -2,7 +2,8 @@
 -- Some of this code is copied from Factorio's core code.
 
 local noise = require "noise"
-local tne = noise.to_noise_expression
+
+local C = require("code.data.terrain.constants")
 
 local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
 
@@ -10,10 +11,10 @@ local function clamp_temperature(raw_temperature)
 	return noise.clamp(raw_temperature, -20, 150)
 end
 
-local C = require("code.data.terrain.constants")
 local originalTempExpr = data.raw["noise-expression"].temperature.expression
 local newTempExpr = noise.define_noise_function(function(x, y, tile, map)
-	local startColdPatchRadius = C.startingRegionSize / scaleSlider
+	local scale = scaleSlider * map.segmentation_multiplier
+	local startColdPatchRadius = C.coldRegionSize / scale
 	local dist = noise.distance_from(x, y, noise.var("starting_lake_positions"), 1024)
 	local startPatchInfluence = (startColdPatchRadius - dist) / startColdPatchRadius
 	local startPatchInfluenceClamped = noise.clamp(startPatchInfluence, 0, 1)

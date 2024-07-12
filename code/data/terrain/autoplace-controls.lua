@@ -1,5 +1,6 @@
 data:extend{
-	{ -- Create autoplace control for scale. Not using water scale, bc it's annoying to make that also scale resource patches.
+	{ -- Create autoplace control for scale.
+		-- Not using water scale, bc that's for the scale of the water, not also the resources etc.
 		type = "autoplace-control",
 		name = "Desolation-scale",
 		richness = true,

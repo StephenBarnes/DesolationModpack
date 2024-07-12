@@ -1,5 +1,5 @@
-local startingRegionSize = 1800
+local Export = {}
 
-return {
-	startingRegionSize = startingRegionSize
-}
+Export.coldRegionSize = 1800
+
+return Export
