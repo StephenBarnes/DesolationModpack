@@ -1,4 +1,4 @@
-local startingRegionSize = 1800
+local startingRegionSize = 2000
 
 return {
 	startingRegionSize = startingRegionSize
