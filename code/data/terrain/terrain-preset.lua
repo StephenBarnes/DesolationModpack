@@ -74,10 +74,10 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 
             -- Desolation scale; using smaller value for debug, increase when releasing.
             ["Desolation-scale"] = {
-                frequency = 1/2, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
+                frequency = 2, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
             },
             ["Desolation-roughness"] = {
-                frequency = 1/3, -- Inverse of the "scale" value that controls roughness. So setting this number higher makes the island smoother.
+                frequency = 1, -- Inverse of the "scale" value that controls roughness. So setting this number higher makes the island smoother.
             },
 
 			-- Temperature controls for Alien Biomes

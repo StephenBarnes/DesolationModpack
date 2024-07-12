@@ -6,6 +6,9 @@ local tne = noise.to_noise_expression
 
 local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
 
+data.raw.resource["iron-ore"].map_color = {r=1, g=0, b=0}  -- For debug
+data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}  -- For debug
+
 local function make_multioctave_noise_function(seed0, seed1, octaves, octave_output_scale_multiplier,
 												octave_input_scale_multiplier, output_scale0, input_scale0)
 	octave_output_scale_multiplier = octave_output_scale_multiplier or 2
@@ -16,8 +19,8 @@ local function make_multioctave_noise_function(seed0, seed1, octaves, octave_out
 			function_name = "factorio-quick-multioctave-noise",
 			arguments =
 			{
-				x = tne(x),
-				y = tne(y),
+				x = tne(x) * scaleSlider,
+				y = tne(y) * scaleSlider,
 				seed0 = tne(seed0),
 				seed1 = tne(seed1),
 				input_scale = tne((inscale or 1) * (input_scale0 or 1)),

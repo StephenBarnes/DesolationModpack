@@ -8,6 +8,8 @@ local noise  = require ".noise"
 local tne    = noise.to_noise_expression
 local litexp = noise.literal_expression
 
+local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
+
 ---------------------------------------------------------------------------------------------------
 -- -- Helper functions
 ---------------------------------------------------------------------------------------------------
@@ -137,7 +139,7 @@ local function resource_autoplace_settings(params)
   local starting_rq_factor = (params.starting_rq_factor_multiplier or default.starting_rq_factor_multiplier) * 1 / 7  * (params.starting_rq_factor_coefficient or default.starting_rq_factor_coefficient)
 
   local elevation = noise.var("elevation")
-  local distance  = noise.var("distance")
+  local distance  = noise.var("distance") * scaleSlider
   local aux = noise.var("resource-spread")
 
   -- > I just realized because of the new rule of "keep ores outside the
@@ -282,8 +284,8 @@ local function resource_autoplace_settings(params)
     function_name = "spot-noise",
     arguments =
     {
-      x = noise.var("x") / 1.15,  -- Make resources more spread out but bigger
-      y = noise.var("y") / 1.15,
+      x = noise.var("x") * scaleSlider / 1.15,  -- Make resources more spread out but bigger
+      y = noise.var("y") * scaleSlider / 1.15,
       seed0 = noise.var("map_seed"),
       seed1 = tne(seed1),
       region_size = tne(1024),
@@ -336,8 +338,8 @@ local function resource_autoplace_settings(params)
     function_name = "spot-noise",
     arguments =
     {
-      x = noise.var("x"),
-      y = noise.var("y"),
+      x = noise.var("x") * scaleSlider,
+      y = noise.var("y") * scaleSlider,
       seed0 = noise.var("map_seed"),
       seed1 = tne(seed1+1),
       skip_span = noise.var("starting-resource-patch-set-count"),
@@ -375,8 +377,8 @@ local function resource_autoplace_settings(params)
       function_name = "spot-noise",
       arguments =
       {
-        x = noise.var("x"),
-        y = noise.var("y"),
+        x = noise.var("x") * scaleSlider,
+        y = noise.var("y") * scaleSlider,
         seed0 = noise.var("map_seed"),
         seed1 = tne(seed1+2),
         skip_span = noise.var("starting-resource-patch-set-count"),
@@ -416,8 +418,8 @@ local function resource_autoplace_settings(params)
     function_name = "factorio-basis-noise",
     arguments =
     {
-      x = noise.var("x"),
-      y = noise.var("y"),
+      x = noise.var("x") * scaleSlider,
+      y = noise.var("y") * scaleSlider,
       seed0 = noise.var("map_seed"),
       seed1 = tne(seed1),
       input_scale = tne(1/8),
@@ -428,8 +430,8 @@ local function resource_autoplace_settings(params)
     function_name = "factorio-basis-noise",
     arguments =
     {
-      x = noise.var("x"),
-      y = noise.var("y"),
+      x = noise.var("x") * scaleSlider,
+      y = noise.var("y") * scaleSlider,
       seed0 = noise.var("map_seed"),
       seed1 = tne(seed1),
       input_scale = tne(1/24),
@@ -443,8 +445,8 @@ local function resource_autoplace_settings(params)
     function_name = "factorio-basis-noise",
     arguments =
     {
-      x = noise.var("x"),
-      y = noise.var("y"),
+      x = noise.var("x") * scaleSlider,
+      y = noise.var("y") * scaleSlider,
       seed0 = noise.var("map_seed"),
       seed1 = tne(seed1),
       input_scale = tne(1/64),
@@ -476,8 +478,8 @@ local function resource_autoplace_settings(params)
       arguments =
       {
         source = tne(1),
-        x = noise.var("x"),
-        y = noise.var("y"),
+        x = noise.var("x") * scaleSlider,
+        y = noise.var("y") * scaleSlider,
         amplitude = tne(1/random_probability) -- put random_probability points with probability < 0
       }
     }
