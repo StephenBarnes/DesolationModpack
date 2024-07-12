@@ -75,6 +75,12 @@ Export.ramp01 = function(v, v1, v2)
 	return noise.if_else_chain(vBelow, 0, vAbove, 1, interpolated)
 end
 
+Export.between = function(v, v1, v2, ifTrue, ifFalse)
+	-- Assumes v1 < v2.
+	return noise.if_else_chain(Export.lessThan(v, v1), ifFalse,
+		noise.if_else_chain(Export.lessThan(v2, v), ifFalse, ifTrue))
+end
+
 ------------------------------------------------------------------------
 
 local function getSpawnToStartIslandCenterAngle()
@@ -102,17 +108,30 @@ Export.getDistToIronArc = function(scale, x, y)
 
 	-- If the angle of the point to the arc center is within the arc, then distance to the arc depends on distance to the center.
 	-- Otherwise, it's the min of the distances to the start and end.
-	local angleToArcCenter = noise.atan2(arcCenter[2] - y, arcCenter[1] - x)
 
 	local distToArcStart = Export.dist(x, y, arcStart[1], arcStart[2])
 	local distToArcEnd = Export.dist(x, y, arcEnd[1], arcEnd[2])
 	local distToArcCenter = Export.dist(x, y, arcCenter[1], arcCenter[2])
 
 	local endpointDist = noise.min(distToArcStart, distToArcEnd)
-	local arcBodyDist = noise.absolute_value(distToArcCenter - C.ironArcRad)
+	local arcBodyDist = noise.absolute_value(distToArcCenter - C.ironArcRad * scale)
 
-	-- TODO check if angle is within the arc.
-	return noise.min(arcBodyDist, endpointDist)
+	--local angleToArcCenter = noise.atan2(arcCenter[2] - y, arcCenter[1] - x)
+	--local angleWithinArg = noise.less_than(angleToArcCenter, 3.1416 / 2)
+
+	-- Instead of checking the angle, since these are always half-circles, we can just check what side the point is on from the islandCenter-ironCenter line.
+	-- This is easier than checking angle, since angle could be negative or go over 2pi if we adjust it, etc.
+
+	local dx1 = x - arcEnd[1]
+	local dy1 = y - arcEnd[2]
+	local dx2 = x - islandCenter[1]
+	local dy2 = y - islandCenter[2]
+	local whichSide = noise.less_than(0.5, Export.mapRandBetween(0, 1, noise.var("map_seed"), 7))
+	local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
+	local isLeftSide = 1 - isRightSide
+	local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
+
+	return noise.if_else_chain(isCorrectSide, arcBodyDist, endpointDist)
 end
 
 Export.getStartIslandIronCenter = function(scale)

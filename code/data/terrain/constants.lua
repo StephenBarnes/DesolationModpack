@@ -22,6 +22,5 @@ Export.ironArcRad = Export.distCenterToIron - Export.distCenterToIronArcCenter -
 Export.ironArcWidth = 40 -- Approximate width of terrain along the circular arc leading to the first iron ore patch.
 Export.ironBlobMinRad = 50 -- Approximate width of terrain around the iron ore patch.
 Export.ironBlobMaxRad = 100
--- TODO for iron, add the circular arc and blob, so iron falls on land
 
 return Export
