@@ -4,6 +4,8 @@ local resource_autoplace = require "code.resource-autoplace.resource-autoplace"
 local noise = require "code.resource-autoplace.noise"
 local tne = noise.to_noise_expression
 
+local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
+
 local function make_multioctave_noise_function(seed0, seed1, octaves, octave_output_scale_multiplier,
 												octave_input_scale_multiplier, output_scale0, input_scale0)
 	octave_output_scale_multiplier = octave_output_scale_multiplier or 2
