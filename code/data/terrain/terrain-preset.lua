@@ -72,10 +72,6 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
                 size = 1,
             },
 
-            -- Desolation scale; using smaller value for debug, increase when releasing.
-            ["Desolation-scale"] = {
-                frequency = 1/2, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
-            },
             ["Desolation-roughness"] = {
                 frequency = 1/3, -- Inverse of the "scale" value that controls roughness. So setting this number higher makes the island smoother.
             },
@@ -100,7 +96,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
         --default_enable_all_autoplace_controls = false,
         -- Wanted to use this to disable rubber trees, but, it seems to cause issues with showing terrain, so rather not using.
 
-        terrain_segmentation = 1, -- Inverse of water scale
+        terrain_segmentation = 3, -- Inverse of water scale. Setting this high for debug, decrease when releasing.
         water = 1, -- Water coverage; increasing will hide most of the islands.
     },
     advanced_settings = {

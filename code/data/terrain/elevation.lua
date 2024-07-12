@@ -3,14 +3,12 @@
 -- Code copied from Freight Forwarding modpack by Xorimuth, RedRafe, and other contributors.
 -- That code was itself a modified version of the code from IslandStart mod by Yehn, which was itself taken from vanilla.
 
--- TODO modify this to use water scale.
-
 local noise = require "noise"
 local util = require "util"
 local tne = noise.to_noise_expression
 
 local roughnessSlider = noise.var("control-setting:Desolation-roughness:frequency:multiplier")
-local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
+-- For scale slider, we use map.segmentation_multiplier, which is the inverse of water scale.
 
 local function make_basis_noise_function(seed0, seed1, outscale0, inscale0)
 	outscale0 = outscale0 or 1
@@ -146,7 +144,7 @@ local function simple_amplitude_corrected_multioctave_noise(params)
 end
 
 local standard_starting_lake_elevation_expression = noise.define_noise_function(function(x, y, tile, map)
-	local starting_lake_distance = noise.distance_from(x, y, noise.var("starting_lake_positions"), 1024) * scaleSlider
+	local starting_lake_distance = noise.distance_from(x, y, noise.var("starting_lake_positions"), 1024) * map.segmentation_multiplier
 	local minimal_starting_lake_depth = 7
 	local minimal_starting_lake_bottom =
 		starting_lake_distance / 4 - minimal_starting_lake_depth +
@@ -261,7 +259,7 @@ local function IS_make_lakes(x, y, tile, map, options)
 	-- 10 default.
 	local island_scale = 2.1
 	local starting_plateau = starting_plateau_basis + starting_plateau_bias + map.finite_water_level * IS_wlc_mult -
-	(tile.distance * scaleSlider) / (island_scale * 15)
+	(tile.distance * map.segmentation_multiplier) / (island_scale * 15)
 
 	-- Set elevation to -4.5 in a radius around the center so that any generated continents don't merge with the starting island.
 	local empty_radius = 850
@@ -269,7 +267,7 @@ local function IS_make_lakes(x, y, tile, map, options)
 		return noise.clamp((dist - empty_radius) / (empty_radius + 400), 0, 1) ^ 3
 	end
 	--return noise.max((lakes + bias) / 4, starting_plateau)
-	return noise.max((((lakes + bias + 80) * avoid_starting_island(tile.distance * scaleSlider) - 80) / 8), starting_plateau)
+	return noise.max((((lakes + bias + 80) * avoid_starting_island(tile.distance * map.segmentation_multiplier) - 80) / 8), starting_plateau)
 end
 
 data:extend {
