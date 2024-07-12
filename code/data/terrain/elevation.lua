@@ -8,6 +8,7 @@ local C = require("code.data.terrain.constants")
 -- map.wlc_elevation_minimum -- This is the minimum, so you should clamp elevation to be above this.
 -- map.segmentation_multiplier -- this is the inverse of the water scale. Generally, you should multiply distances by this, and then divide the elevation output by this.
 -- Basis noise arguments: seed0 should be map seed, seed1 should be any arbitrary number. Input scale should be var "segmentation_multiplier" divided by like 20, output scale should be the inverse of that.
+-- For basis noise, setting output scale to 20 should give values roughly between -20 and +20.
 
 local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
 
@@ -24,7 +25,8 @@ local function getNextSeed1()
 	return nextSeed1
 end
 
-local function makeBasisNoise(scale)
+local function makeBasisNoise(inScale, outScale)
+	if outScale == nil then outScale = 1 / inScale end
 	return tne{
 		type = "function-application",
 		function_name = "factorio-basis-noise",
@@ -34,8 +36,8 @@ local function makeBasisNoise(scale)
 			y = noise.var("y"),
 			seed0 = noise.var("map_seed"),
 			seed1 = tne(getNextSeed1()),
-			input_scale = scale,
-			output_scale = 1 / scale,
+			input_scale = inScale,
+			output_scale = outScale,
 		}
 	}
 end
@@ -67,10 +69,34 @@ local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
 	return d - rad
 end
 
-local function makeStartIslandMinRadMinElevation(scale, centerX, centerY, x, y)
+local function ramp(v, v1, v2, out1, out2)
+	-- We should have v1 < v2, but not necessarily out1 < out2.
+	local vBelow = noise.less_than(v, v1)
+	local vAbove = noise.less_than(v2, v)
+	local interpolationFrac = (v - v1) / (v2 - v1)
+	local interpolated = interpolationFrac * out2 + (1 - interpolationFrac) * out1
+	return noise.if_else_chain(vBelow, out1, vAbove, out2, interpolated)
+end
+
+local function ramp01(v, v1, v2)
+	local vBelow = noise.less_than(v, v1)
+	local vAbove = noise.less_than(v2, v)
+	local interpolationFrac = (v - v1) / (v2 - v1)
+	local interpolated = interpolationFrac
+	return noise.if_else_chain(vBelow, 0, vAbove, 1, interpolated)
+end
+
+local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
+	local basis1 = makeBasisNoise(1 / (scale * 160), tne(20)) -- should range between -20 and +20
+	local basis2 = makeBasisNoise(1 / (scale * 80), tne(8))
+	local basis3 = makeBasisNoise(1 / (scale * 40), tne(4))
+	local basis4 = makeBasisNoise(1 / (scale * 20), tne(1.8))
+	local basis5 = makeBasisNoise(1 / (scale * 10), tne(0.8))
+	local basis = basis1 + basis2 + basis3 + basis4 + basis5
 	local d = dist(centerX, centerY, x, y) / scale
-	local inIsland = noise.less_than(d, C.startIslandMinRad)
-	return noise.if_else_chain(inIsland, 10, -100)
+	local ramp1 = ramp(d, C.startIslandMinRad, C.startIslandMaxRad, 25, -30)
+	local minToPreventPuddles = ramp(d, C.startIslandMinRad - C.puddleMargin, C.startIslandMinRad, 10, -10)
+	return noise.max(ramp1 + basis, minToPreventPuddles)
 end
 
 local function desolationOverallElevation(x, y, tile, map)
@@ -79,8 +105,8 @@ local function desolationOverallElevation(x, y, tile, map)
 	local startIslandCenter = getStartIslandCenter(scale)
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
-	local startIslandMinRadMinElevation = makeStartIslandMinRadMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
-	local basicPlusStartIsland = noise.max(startIslandMinRadMinElevation, basic)
+	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
+	local basicPlusStartIsland = noise.max(startIslandMinElevation, basic)
 	local elevation = correctWaterLevel(noise.min(basicPlusStartIsland, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
