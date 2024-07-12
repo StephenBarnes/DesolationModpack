@@ -21,8 +21,8 @@ local function make_basis_noise_function(seed0, seed1, outscale0, inscale0)
 				function_name = "factorio-basis-noise",
 				arguments =
 				{
-					x = tne(x) / roughnessSlider,
-					y = tne(y) / roughnessSlider,
+					x = tne(x) * scaleSlider / roughnessSlider,
+					y = tne(y) * scaleSlider / roughnessSlider,
 					seed0 = tne(seed0),
 					seed1 = tne(seed1),
 					input_scale = tne((inscale or 1) * inscale0),
@@ -65,8 +65,8 @@ local function multioctave_noise(params)
 		function_name = "factorio-quick-multioctave-noise",
 		arguments =
 		{
-			x = tne(x) / roughnessSlider,
-			y = tne(y) / roughnessSlider,
+			x = tne(x) * scaleSlider / roughnessSlider,
+			y = tne(y) * scaleSlider / roughnessSlider,
 			seed0 = tne(seed0),
 			seed1 = tne(seed1),
 			input_scale = tne(octave0_input_scale),
@@ -103,8 +103,8 @@ local function simple_variable_persistence_multioctave_noise(params)
 			type = "function-application",
 			function_name = "factorio-basis-noise",
 			arguments = {
-				x = tne(x) / roughnessSlider,
-				y = tne(y) / roughnessSlider,
+				x = tne(x) * scaleSlider / roughnessSlider,
+				y = tne(y) * scaleSlider / roughnessSlider,
 				seed0 = tne(seed0),
 				seed1 = tne(seed1),
 				input_scale = tne(inscale),

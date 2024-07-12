@@ -22,7 +22,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 			-- Resources
             coal = {
                 frequency = 1,
-                size = 3,
+                size = 1,
                 richness = 2,
             },
             ["copper-ore"] = {
