@@ -25,7 +25,7 @@ local function getNextSeed1()
 	return nextSeed1
 end
 
-local function makeBasisNoise(inScale, outScale)
+local function basisNoise(inScale, outScale)
 	if outScale == nil then outScale = 1 / inScale end
 	return tne{
 		type = "function-application",
@@ -40,6 +40,19 @@ local function makeBasisNoise(inScale, outScale)
 			output_scale = outScale,
 		}
 	}
+end
+
+local function multiBasisNoise(levels, inScaleMultiplier, outScaleDivisor, inScale, outScale)
+	-- Makes multioctave noise function by layering multiple basis noise functions.
+	-- Output of first (strongest) layer will generally be between -outScale and +outScale. So all layers together will be like double that range, very roughly.
+	local result = basisNoise(inScale, outScale)
+	for i = 2, levels do
+		inScale = inScale * inScaleMultiplier
+		outScale = outScale / outScaleDivisor
+		local basis = basisNoise(inScale, outScale)
+		result = result + basis
+	end
+	return result
 end
 
 local function mapRandBetween(a, b, seed, steps)
@@ -87,12 +100,7 @@ local function ramp01(v, v1, v2)
 end
 
 local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
-	local basis1 = makeBasisNoise(1 / (scale * 160), tne(20)) -- should range between -20 and +20
-	local basis2 = makeBasisNoise(1 / (scale * 80), tne(8))
-	local basis3 = makeBasisNoise(1 / (scale * 40), tne(4))
-	local basis4 = makeBasisNoise(1 / (scale * 20), tne(1.8))
-	local basis5 = makeBasisNoise(1 / (scale * 10), tne(0.8))
-	local basis = basis1 + basis2 + basis3 + basis4 + basis5
+	local basis = multiBasisNoise(6, 2, 2, 1 / (scale * 200), tne(13))
 	local d = dist(centerX, centerY, x, y) / scale
 	local ramp1 = ramp(d, C.startIslandMinRad, C.startIslandMaxRad, 25, -30)
 	local minToPreventPuddles = ramp(d, C.startIslandMinRad - C.puddleMargin, C.startIslandMinRad, 10, -10)
@@ -101,7 +109,7 @@ end
 
 local function desolationOverallElevation(x, y, tile, map)
 	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
-	local basic = makeBasisNoise(scale / 3) - 10
+	local basic = basisNoise(scale / 3) - 10
 	local startIslandCenter = getStartIslandCenter(scale)
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)

@@ -14,7 +14,7 @@ end
 local originalTempExpr = data.raw["noise-expression"].temperature.expression
 local newTempExpr = noise.define_noise_function(function(x, y, tile, map)
 	local scale = scaleSlider * map.segmentation_multiplier
-	local startColdPatchRadius = C.startIslandMaxRad / scale -- TODO this should rather be centered on the start island center, not the lake
+	local startColdPatchRadius = C.startIslandMaxRad / scale
 	local dist = noise.distance_from(x, y, noise.var("starting_lake_positions"), 1024)
 	local startPatchInfluence = (startColdPatchRadius - dist) / startColdPatchRadius
 	local startPatchInfluenceClamped = noise.clamp(startPatchInfluence, 0, 1)
