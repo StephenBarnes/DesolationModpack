@@ -30,7 +30,7 @@ local function makeBasisNoise(scale)
 		function_name = "factorio-basis-noise",
 		arguments =
 		{
-			x = noise.var("x"),
+			x = noise.var("x") + C.artifactShift,
 			y = noise.var("y"),
 			seed0 = noise.var("map_seed"),
 			seed1 = tne(getNextSeed1()),
@@ -59,7 +59,7 @@ end
 
 local getStartIslandCenter = function(scale)
 	local angle = mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
-	return moveInDirection(tne(C.xShift), tne(0), angle, C.startIslandMinRad * scale)
+	return moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
 end
 
 local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
@@ -72,7 +72,7 @@ local function desolationOverallElevation(x, y, tile, map)
 	local basic = makeBasisNoise(scale / 3) + 8
 	local startIslandCenter = getStartIslandCenter(scale)
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
-	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, C.xShift, 0, x, y, 5)
+	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
 	local elevation = correctWaterLevel(noise.min(basic, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
@@ -84,7 +84,7 @@ data:extend {
 		name = "Desolation-islands-elevation",
 		intended_property = "elevation",
 		expression = noise.define_noise_function(function(x, y, tile, map)
-			return desolationOverallElevation(x + C.xShift, y, tile, map)
+			return desolationOverallElevation(x, y, tile, map)
 		end),
 	},
 }
