@@ -45,19 +45,26 @@ local function mapRandBetween(a, b, seed, steps)
 	return a + (b - a) * (noise.fmod(seed, steps) / steps)
 end
 
+local function moveInDirection(x, y, angle, distance)
+	return {
+		x + distance * noise.cos(angle),
+		y + distance * noise.sin(angle),
+	}
+end
+
+local function dist(x1, y1, x2, y2)
+	return ((noise.absolute_value(x1 - x2) ^ 2) + (noise.absolute_value(y1 - y2) ^ 2)) ^ tne(0.5)
+	-- No idea why the absolute value is necessary, but it seems to be necessary.
+end
+
 local getStartIslandCenter = function()
 	local angle = mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 20)
-	local x = C.startIslandMinRad * noise.cos(angle) + C.xShift
-	local y = C.startIslandMinRad * noise.sin(angle)
-	--local x = tne(200) + C.xShift
-	--local y = tne(100)
-	return {x, y}
+	return moveInDirection(tne(C.xShift), tne(0), angle, C.startIslandMinRad)
 end
 
 local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
-	local dist = noise.absolute_value(centerX - x) + noise.absolute_value(centerY - y)
-	--local dist = ((x - centerX) ^ 2 + (y - centerY) ^ 2) ^ 0.5
-	return (dist * scale) - rad
+	local d = dist(centerX, centerY, x, y)
+	return (d * scale) - rad
 end
 
 local function desolationOverallElevation(x, y, tile, map)
@@ -65,8 +72,8 @@ local function desolationOverallElevation(x, y, tile, map)
 	--local basic = makeBasisNoise(scale / 3) + 10
 	local basic = noise.ridge(x+y, 0, 20)
 	local startIslandCenter = getStartIslandCenter()
-	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale / 3, startIslandCenter[1], startIslandCenter[2], x, y, 10)
-	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale / 3, 0 + C.xShift, 0, x, y, 5)
+	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale / 3, startIslandCenter[1], startIslandCenter[2], x, y, 5)
+	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale / 3, C.xShift, 0, x, y, 3)
 	local elevation = correctWaterLevel(noise.min(basic, markerLakeMax1, markerLakeMax2), map)
 	return elevation
 end
