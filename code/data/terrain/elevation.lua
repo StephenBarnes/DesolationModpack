@@ -33,21 +33,36 @@ local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
 	return noise.max(ramp1 + basis, minToPreventPuddles)
 end
 
+local function makeIronArcMinElevation(scale, x, y)
+	local distToIronArc = Util.getDistToIronArc(scale, x, y) / scale
+	return Util.ramp(distToIronArc, 0, C.ironArcWidth, 10, -10)
+end
+
+local function makeIronBlobMinElevation(scale, x, y)
+	local blobCenter = Util.getStartIslandIronCenter(scale)
+	local distToBlobCenter = Util.dist(x, y, blobCenter[1], blobCenter[2]) / scale
+	return Util.ramp(distToBlobCenter, C.ironBlobMinRad, C.ironBlobMaxRad, 10, -10)
+end
+
 local function desolationOverallElevation(x, y, tile, map)
 	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
-	local basic = Util.basisNoise(scale / 3) - 10
+	local elevation = Util.basisNoise(scale / 3) - 10
+
 	local startIslandCenter = Util.getStartIslandCenter(scale)
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
-	local basicPlusStartIsland = noise.max(startIslandMinElevation, basic)
+	elevation = noise.max(startIslandMinElevation, elevation)
+
+	local ironArcMinElevation = makeIronArcMinElevation(scale, x, y)
+	local ironBlobMinElevation = makeIronBlobMinElevation(scale, x, y)
+	elevation = noise.max(ironArcMinElevation, ironBlobMinElevation, elevation)
 
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
 	local ironCenter = Util.getStartIslandIronCenter(scale)
 	local markerLakeMax3 = makeMarkerLakeMaxElevation(scale, ironCenter[1], ironCenter[2], x, y, 15)
-	local markedElevation = noise.min(basicPlusStartIsland, markerLakeMax1, markerLakeMax2, markerLakeMax3)
+	elevation = noise.min(elevation, markerLakeMax1, markerLakeMax2, markerLakeMax3)
 
-	local elevation = correctWaterLevel(markedElevation, map)
-	return elevation
+	return correctWaterLevel(elevation, map)
 end
 
 data:extend {

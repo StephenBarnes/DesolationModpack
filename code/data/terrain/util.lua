@@ -58,22 +58,6 @@ Export.dist = function(x1, y1, x2, y2)
 	-- No idea why the absolute value is necessary, but it seems to be necessary.
 end
 
-local function getSpawnToStartIslandCenterAngle()
-	return Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
-end
-
-Export.getStartIslandCenter = function(scale)
-	local angle = getSpawnToStartIslandCenterAngle()
-	return Export.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
-end
-
-Export.getStartIslandIronCenter = function(scale)
-	local baseAngle = getSpawnToStartIslandCenterAngle() -- Use this angle, so it's on the other side of the island from where player spawns.
-	local angle = baseAngle + Export.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
-	local islandCenter = Export.getStartIslandCenter(scale)
-	return Export.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToIron * scale)
-end
-
 Export.ramp = function(v, v1, v2, out1, out2)
 	-- We should have v1 < v2, but not necessarily out1 < out2.
 	local vBelow = noise.less_than(v, v1)
@@ -90,5 +74,53 @@ Export.ramp01 = function(v, v1, v2)
 	local interpolated = interpolationFrac
 	return noise.if_else_chain(vBelow, 0, vAbove, 1, interpolated)
 end
+
+------------------------------------------------------------------------
+
+local function getSpawnToStartIslandCenterAngle()
+	return Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
+end
+
+Export.getStartIslandCenter = function(scale)
+	local angle = getSpawnToStartIslandCenterAngle()
+	return Export.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
+end
+
+------------------------------------------------------------------------
+
+local function getCenterToIronAngle()
+	local baseAngle = getSpawnToStartIslandCenterAngle() -- Use this angle, so it's on the other side of the island from where player spawns.
+	return baseAngle + Export.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
+end
+
+Export.getDistToIronArc = function(scale, x, y)
+	local ironAngle = getCenterToIronAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	local arcStart = Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcStart * scale)
+	local arcCenter = Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
+	local arcEnd = Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIron * scale)
+
+	-- If the angle of the point to the arc center is within the arc, then distance to the arc depends on distance to the center.
+	-- Otherwise, it's the min of the distances to the start and end.
+	local angleToArcCenter = noise.atan2(arcCenter[2] - y, arcCenter[1] - x)
+
+	local distToArcStart = Export.dist(x, y, arcStart[1], arcStart[2])
+	local distToArcEnd = Export.dist(x, y, arcEnd[1], arcEnd[2])
+	local distToArcCenter = Export.dist(x, y, arcCenter[1], arcCenter[2])
+
+	local endpointDist = noise.min(distToArcStart, distToArcEnd)
+	local arcBodyDist = noise.absolute_value(distToArcCenter - C.ironArcRad)
+
+	-- TODO check if angle is within the arc.
+	return noise.min(arcBodyDist, endpointDist)
+end
+
+Export.getStartIslandIronCenter = function(scale)
+	local ironAngle = getCenterToIronAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	return Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIron * scale)
+end
+
+------------------------------------------------------------------------
 
 return Export
