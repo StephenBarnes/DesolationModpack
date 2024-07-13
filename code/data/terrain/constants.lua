@@ -100,9 +100,9 @@ Export.startIronPatchCenterWeight = ironCenterWeightSlider * 6
 
 -- Map resource name to minimum distance from starting island, and fade-in max distance from starting island.
 Export.resourceMinDist = {
-	["crude-oil"] = {800, 1600},
-	["gold-ore"] = {900, 1800},
-	["uranium-ore"] = {1400, 2800},
+	["crude-oil"] = {700, 1200, 2000},
+	["gold-ore"] = {800, 1400, 2300},
+	["uranium-ore"] = {1800, 2400, 3000},
 }
 
 return Export

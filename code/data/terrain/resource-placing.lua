@@ -14,6 +14,8 @@ end)
 ------------------------------------------------------------------------
 -- Iron
 
+data.raw.resource["iron-ore"].map_color = {r=0, g=0, b=1} -- To make it more obvious against the white/greyblue background.
+
 -- Define a starting patch iron factor, between 0 and 1. This is used for both probability and richness.
 local startingPatchIronFactor = noise.define_noise_function(function(x, y, tile, map)
 	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
@@ -49,6 +51,22 @@ data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise
 	local richness = 400 * startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier")
 	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
 end)
+
+------------------------------------------------------------------------
+-- All resources that fade in at a certain distance from the starting island.
+
+for resourceName, fadeDistances in pairs(C.resourceMinDist) do
+	local originalProb = data.raw.resource[resourceName].autoplace.probability_expression
+	data.raw.resource[resourceName].autoplace.probability_expression = noise.define_noise_function(function(x, y, tile, map)
+		-- TODO: This is completely inadequate. Results in spray-paint style resource patches. I should rather just completely re-create the resource patch distribution functions.
+		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+		local dist = Util.minDistToStartIslandCenterOrIronArcCenter(scale, x, y)
+		local probMult = Util.rampDouble(dist,
+			fadeDistances[1], fadeDistances[2], fadeDistances[3],
+			0, 0.7, 1)
+		return originalProb * probMult
+	end)
+end
 
 ------------------------------------------------------------------------
 

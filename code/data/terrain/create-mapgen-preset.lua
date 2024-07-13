@@ -31,7 +31,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 				richness = 0.5,
             },
             ["gold-ore"] = {
-                frequency = 1,
+                frequency = 6,
                 size = 1,
 				richness = 0.5,
             },
@@ -41,11 +41,11 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 				richness = 2,
             },
             ["crude-oil"] = {
-                frequency = 1,
+                frequency = 6,
                 size = 1,
             },
             ["uranium-ore"] = {
-                frequency = 1,
+                frequency = 6,
                 size = 1,
             },
             ["ir-fissures"] = {
