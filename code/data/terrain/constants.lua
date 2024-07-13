@@ -20,10 +20,11 @@ Export.distCenterToIronArcStart = Export.startIslandMinRad -- Distance from cent
 Export.distCenterToIronArcCenter = (Export.distCenterToIron + Export.distCenterToIronArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first iron ore patch.
 Export.ironArcRad = Export.distCenterToIron - Export.distCenterToIronArcCenter -- Radius of the circular arc around the center.
 Export.ironArcMinWidth = 10 -- Min width of terrain along the circular arc leading to the first iron ore patch.
-Export.ironArcMaxWidth = 200
+Export.ironArcMaxWidth = 140
 Export.ironArcNoiseAmplitude = 15
 Export.ironArcMinWidthHeightMin = 5
 Export.ironBlobMinRad = 30 -- Approximate width of terrain around the iron ore patch.
-Export.ironBlobMaxRad = 80
+Export.ironBlobMidRad = 100
+Export.ironBlobMaxRad = 150
 
 return Export
