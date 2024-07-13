@@ -215,8 +215,8 @@ data:extend({
 		-- I think the best solution is to cap the scrap produced by the container recipe, to at most the expected loss when disassembling, which I'm setting at (chance of losing a rivet) * (ingots per rivet) = 0.5 * 0.5 = 0.25. Set it to 0.15 to be safe.
 		results = {
 			{ name = "iron-plate", amount = 5 },
-			{ name = "iron-stick", amount = 12 },
-			{ name = "iron-rivet", amount_min = 3, amount_max = 4 }, -- You have a 50% chance of losing 1 of the rivets used to make the container.
+			{ name = "iron-stick", amount_min = 0, amount_max = 12 },
+			{ name = "iron-rivet", amount_min = 0, amount_max = 4 }, -- You have a 50% chance of losing 1 of the rivets used to make the container.
 		},
 		main_product = "iron-stick",
 		localised_name = { "recipe-name.ic-container-disassembly" },
