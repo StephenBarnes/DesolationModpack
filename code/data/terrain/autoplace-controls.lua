@@ -12,14 +12,17 @@ local newAutoplaceControlNames = {
 		-- For overall terrain scale.
 		-- Not using water scale, bc that's for the scale of the water, not also the resources etc.
 		-- TODO maybe remove this, rather just use the water scale.
+
 	-- TODO create autoplaces for the starting island.
+
 	"Desolation-iron-arc",
 	"Desolation-iron-blob",
 	"Desolation-iron-arcblob-noise",
+
+	"Desolation-resource-noise",
+
 	"Desolation-iron-patch",
-	"Desolation-iron-prob-noise",
 	"Desolation-iron-prob-center-weight",
-	"Desolation-iron-richness-noise",
 }
 
 local newAutoplaceControls = {}

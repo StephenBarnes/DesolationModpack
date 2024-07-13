@@ -74,23 +74,35 @@ Export.ironBlobMidRad = Export.ironBlobSizeSlider * 200
 Export.ironBlobMaxRad = Export.ironBlobSizeSlider * 300
 
 ------------------------------------------------------------------------
+-- Resource patches
+
+local resourceNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-resource-noise:frequency:multiplier")
+local resourceNoiseAmplitudeSlider = noise.var("control-setting:Desolation-resource-noise:size:multiplier")
+
+-- Noise amplitude and input scale for starting island's resource patches. Shared between resource probability and richness.
+Export.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 3
+Export.resourceNoiseInputScale = resourceNoiseScaleSlider * 30
+
+------------------------------------------------------------------------
 -- First iron patch
 
 local ironPatchMinRadSlider = tne(1) / noise.var("control-setting:Desolation-iron-patch:frequency:multiplier")
 local ironPatchMinMaxSlider = noise.var("control-setting:Desolation-iron-patch:size:multiplier")
-local ironProbNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-iron-prob-noise:frequency:multiplier")
-local ironProbNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-prob-noise:size:multiplier")
-local ironRichnessNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-iron-richness-noise:frequency:multiplier")
-local ironRichnessNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-richness-noise:size:multiplier")
 local ironCenterWeightSlider = tne(1) / noise.var("control-setting:Desolation-iron-prob-center-weight:frequency:multiplier")
 
 Export.startIronPatchMinRad = ironPatchMinRadSlider * 20 -- Approximate radius of the starting iron patch.
 Export.startIronPatchMidRad = Export.startIronPatchMinRad + ironPatchMinMaxSlider * 5
 Export.startIronPatchMaxRad = Export.startIronPatchMinRad + ironPatchMinMaxSlider * 25
-Export.startIronPatchProbNoiseAmplitude = ironProbNoiseAmplitudeSlider * 3 -- Noise amplitude for the probability of each tile in the starting iron patch.
-Export.startIronPatchProbNoiseInputScale = ironProbNoiseScaleSlider * 30 -- Noise input scale for the probability of each tile in the starting iron patch.
-Export.startIronPatchRichnessNoiseAmplitude = ironRichnessNoiseAmplitudeSlider * 1000
-Export.startIronPatchRichnessNoiseInputScale = ironRichnessNoiseScaleSlider * 40
 Export.startIronPatchCenterWeight = ironCenterWeightSlider * 6
+
+------------------------------------------------------------------------
+-- Distance-minimum resources
+
+-- Map resource name to minimum distance from starting island, and fade-in max distance from starting island.
+Export.resourceMinDist = {
+	["crude-oil"] = {800, 1600},
+	["gold-ore"] = {900, 1800},
+	["uranium-ore"] = {1400, 2800},
+}
 
 return Export

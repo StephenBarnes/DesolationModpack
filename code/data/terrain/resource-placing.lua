@@ -4,6 +4,16 @@ local tne = noise.to_noise_expression
 local Util = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
 
+-- Define a single basis noise function shared between all resources, since they don't overlap anyway.
+local resourceNoise = noise.define_noise_function(function(x, y, tile, map)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+	return Util.multiBasisNoise(2, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
+end)
+
+
+------------------------------------------------------------------------
+-- Iron
+
 -- Define a starting patch iron factor, between 0 and 1. This is used for both probability and richness.
 local startingPatchIronFactor = noise.define_noise_function(function(x, y, tile, map)
 	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
@@ -12,8 +22,7 @@ local startingPatchIronFactor = noise.define_noise_function(function(x, y, tile,
 	local factor = Util.rampDouble(distFromStartIron,
 		C.startIronPatchMinRad, C.startIronPatchMidRad, C.startIronPatchMaxRad,
 		C.startIronPatchCenterWeight, 0, -C.startIronPatchCenterWeight)
-	local factorNoise = Util.multiBasisNoise(2, 2, 2, 1 / (scale * C.startIronPatchProbNoiseInputScale), C.startIronPatchProbNoiseAmplitude)
-	return factor + factorNoise
+	return factor + resourceNoise
 end)
 
 local originalIronProb = data.raw.resource["iron-ore"].autoplace.probability_expression
@@ -41,6 +50,7 @@ data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise
 	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
 end)
 
+------------------------------------------------------------------------
 
 -- TODO handle the starting patch resources with extra patches at edges: copper, tin, coal, stone.
 -- TODO handle gas fissures.
