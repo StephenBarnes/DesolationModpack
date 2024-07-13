@@ -69,12 +69,12 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 
 			-- Temperature controls for Alien Biomes
 			hot = {
-				frequency = 2, -- Inverse of scale
+				frequency = 4, -- Inverse of scale
 				size = 0.5, -- Coverage
 			},
 			cold = {
-				frequency = 2, -- Inverse of scale
-				size = 4, -- Coverage
+				frequency = 4, -- Inverse of scale
+				size = 3, -- Coverage
 			},
 
             -- For IR3: minimize rubber trees. Seems I can't actually remove them completely in the mapgen preset.

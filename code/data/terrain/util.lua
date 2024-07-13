@@ -61,6 +61,8 @@ Export.multiBasisNoiseSlow = function(levels, inScaleMultiplier, outScaleDivisor
 	return result
 end
 
+------------------------------------------------------------------------
+
 Export.mapRandBetween = function(a, b, seed, steps)
 	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
 	return a + (b - a) * (noise.fmod(seed, steps) / steps)

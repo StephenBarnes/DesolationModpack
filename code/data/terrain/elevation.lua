@@ -96,7 +96,7 @@ end
 
 local function getOtherIslandsMinElevation(scale, x, y, tile, map)
 	-- This line creates all of the other islands.
-	local elevation = Util.multiBasisNoise(8, 2, 2, (1 / 1000) / scale, tne(13)) - 12.2
+	local elevation = Util.multiBasisNoise(8, 2, 2, (1 / 1000) / scale, tne(13)) - 11.8
 	-- TODO move these to sliders.
 
 	-- Cut off elevation from other islands close to the starting island.
