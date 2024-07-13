@@ -15,12 +15,15 @@ Export.startIslandAngleToCenterMin = 0.25 * pi
 Export.startIslandAngleToCenterMax = 0.75 * pi
 Export.startIslandIronMaxDeviationAngle = 0.25 * pi -- On starting island, iron ore spawns on the other side of the island center, with this big of an angle in either direction.
 
-Export.distCenterToIron = 800 -- Distance from center of starting island to the center of the first iron ore patch.
+Export.distCenterToIron = 700 -- Distance from center of starting island to the center of the first iron ore patch.
 Export.distCenterToIronArcStart = Export.startIslandMinRad -- Distance from center of starting island to the start of the arc leading to the first iron ore patch.
 Export.distCenterToIronArcCenter = (Export.distCenterToIron + Export.distCenterToIronArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first iron ore patch.
 Export.ironArcRad = Export.distCenterToIron - Export.distCenterToIronArcCenter -- Radius of the circular arc around the center.
-Export.ironArcWidth = 40 -- Approximate width of terrain along the circular arc leading to the first iron ore patch.
-Export.ironBlobMinRad = 50 -- Approximate width of terrain around the iron ore patch.
-Export.ironBlobMaxRad = 100
+Export.ironArcMinWidth = 10 -- Min width of terrain along the circular arc leading to the first iron ore patch.
+Export.ironArcMaxWidth = 200
+Export.ironArcNoiseAmplitude = 15
+Export.ironArcMinWidthHeightMin = 5
+Export.ironBlobMinRad = 30 -- Approximate width of terrain around the iron ore patch.
+Export.ironBlobMaxRad = 80
 
 return Export

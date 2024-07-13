@@ -35,7 +35,18 @@ end
 
 local function makeIronArcMinElevation(scale, x, y)
 	local distToIronArc = Util.getDistToIronArc(scale, x, y) / scale
-	return Util.ramp(distToIronArc, 0, C.ironArcWidth, 10, -10)
+
+	--local arcRamp = Util.ramp(distToIronArc, 0, C.ironArcWidth * 2, 30, -80)
+	--return arcRamp + basis
+
+	-- Minimum elevation to ensure the minimum width of the arc is always reached.
+	local arcMinElevation = Util.ramp(distToIronArc, C.ironArcMinWidth, C.ironArcMaxWidth, C.ironArcMinWidthHeightMin, -200)
+
+	local basis = Util.multiBasisNoise(7, 2, 2, 1 / (scale * 200), tne(C.ironArcNoiseAmplitude))
+	--local noiseElevation = basis - (distToIronArc / C.ironArcMaxWidth) * C.ironArcNoiseAmplitude
+	local noiseElevation = basis + Util.ramp(distToIronArc, C.ironArcMinWidth, C.ironArcMaxWidth, C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude * 1.5)
+
+	return noise.max(arcMinElevation, noiseElevation)
 end
 
 local function makeIronBlobMinElevation(scale, x, y)
