@@ -44,7 +44,9 @@ local function makeIronArcMinElevation(scale, x, y)
 
 	local basis = Util.multiBasisNoise(7, 2, 2, 1 / (scale * 200), tne(C.ironArcNoiseAmplitude))
 	--local noiseElevation = basis - (distToIronArc / C.ironArcMaxWidth) * C.ironArcNoiseAmplitude
-	local noiseElevation = basis + Util.ramp(distToIronArc, C.ironArcMinWidth, C.ironArcMaxWidth, C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude * 1.5)
+	local noiseRamp = Util.rampDouble(distToIronArc, C.ironArcMinWidth, C.ironArcMaxWidth, C.ironArcMaxWidth * 2,
+		C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude * 1.5, -200)
+	local noiseElevation = basis + noiseRamp
 
 	return noise.max(arcMinElevation, noiseElevation)
 end
