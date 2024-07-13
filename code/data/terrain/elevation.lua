@@ -44,7 +44,10 @@ local function makeIronArcMinElevation(scale, x, y, ironNoise)
 		C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude * 1.5, -200)
 	local noiseElevation = ironNoise + noiseRamp
 
-	return noise.max(arcMinElevation, noiseElevation)
+	local overallMinElevation = noise.max(arcMinElevation, noiseElevation)
+	return noise.if_else_chain(
+		noise.less_or_equal(noise.var("control-setting:Desolation-iron-arc:size:multiplier"), 1/6),
+		-100, overallMinElevation)
 end
 
 local function makeIronBlobMinElevation(scale, x, y, ironNoise)
@@ -53,12 +56,15 @@ local function makeIronBlobMinElevation(scale, x, y, ironNoise)
 	local blobMinElevation = Util.rampDouble(distToBlobCenter, 0, C.ironBlobMinRad * 2, C.ironBlobMinRad * 3, 10, -10, -100)
 	local blobNoise = ironNoise + Util.rampDouble(distToBlobCenter, C.ironBlobMinRad, C.ironBlobMidRad, C.ironBlobMaxRad * 2,
 		C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude, -100)
-	return noise.max(blobMinElevation, blobNoise)
+	local overallMinElevation = noise.max(blobMinElevation, blobNoise)
+	return noise.if_else_chain(
+		noise.less_or_equal(noise.var("control-setting:Desolation-iron-blob:size:multiplier"), 1/6),
+		-100, overallMinElevation)
 end
 
 local function desolationOverallElevation(x, y, tile, map)
 	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
-	local elevation = Util.basisNoise(scale / 3) - 10
+	local elevation = tne(-10)
 
 	local startIslandCenter = Util.getStartIslandCenter(scale)
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
@@ -68,7 +74,6 @@ local function desolationOverallElevation(x, y, tile, map)
 	local ironArcMinElevation = makeIronArcMinElevation(scale, x, y, ironNoise)
 	local ironBlobMinElevation = makeIronBlobMinElevation(scale, x, y, ironNoise)
 	elevation = noise.max(ironArcMinElevation, ironBlobMinElevation, elevation)
-	elevation = noise.max(ironBlobMinElevation, elevation)
 
 	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)

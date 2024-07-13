@@ -16,4 +16,20 @@ data:extend{
 		can_be_disabled = false,
 		category = "terrain",
 	},
+	{
+		type = "autoplace-control",
+		name = "Desolation-iron-arc",
+		richness = true,
+		order = "a3",
+		can_be_disabled = true,
+		category = "terrain",
+	},
+	{
+		type = "autoplace-control",
+		name = "Desolation-iron-blob",
+		richness = true,
+		order = "a4",
+		can_be_disabled = true,
+		category = "terrain",
+	},
 }
