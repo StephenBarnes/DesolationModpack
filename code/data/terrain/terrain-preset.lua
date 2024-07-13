@@ -1,7 +1,10 @@
 local noise = require "noise"
 
--- Adjust the default map preset to make it generate basically only water, so people don't accidentally pick it.
-data.raw["noise-expression"]["elevation"].expression = noise.to_noise_expression(-10)
+-- Adjust the default map preset to make it generate almost only water, so people don't accidentally pick it.
+data.raw["noise-expression"]["elevation"].expression = noise.define_noise_function(function(x, y, tile, map)
+    local dist = noise.absolute_value(x) + noise.absolute_value(y)
+	return noise.if_else_chain(noise.less_than(dist, 10), 10, -10)
+end)
 
 if settings.startup["Desolation-remove-mapgen-presets"] then
 	log("Removing all existing mapgen presets!")
