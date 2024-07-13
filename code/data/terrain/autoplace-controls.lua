@@ -1,43 +1,36 @@
+-- I'm creating a lot of autoplace controls here, mostly not for users to fiddle with, but rather so that I can fine-tune what values to use.
+-- We could hide these controls when releasing.
+
 local nextOrder = 0
 local function getNextOrderString()
     nextOrder = nextOrder + 1
     return string.format("a%02d", nextOrder)
 end
 
-data:extend{
-	{ -- Create autoplace control for scale.
+local newAutoplaceControlNames = {
+	"Desolation-scale",
+		-- For overall terrain scale.
 		-- Not using water scale, bc that's for the scale of the water, not also the resources etc.
 		-- TODO maybe remove this, rather just use the water scale.
-		type = "autoplace-control",
-		name = "Desolation-scale",
-		richness = false,
-		order = getNextOrderString(),
-		can_be_disabled = false,
-		category = "terrain",
-	},
 	-- TODO create autoplaces for the starting island.
-	{
-		type = "autoplace-control",
-		name = "Desolation-iron-arc",
-		richness = false,
-		order = getNextOrderString(),
-		can_be_disabled = true,
-		category = "terrain",
-	},
-	{
-		type = "autoplace-control",
-		name = "Desolation-iron-blob",
-		richness = false,
-		order = getNextOrderString(),
-		can_be_disabled = true,
-		category = "terrain",
-	},
-	{
-		type = "autoplace-control",
-		name = "Desolation-iron-arcblob-noise",
-		richness = false,
-		order = getNextOrderString(),
-		can_be_disabled = false,
-		category = "terrain",
-	},
+	"Desolation-iron-arc",
+	"Desolation-iron-blob",
+	"Desolation-iron-arcblob-noise",
+	"Desolation-iron-patch",
+	"Desolation-iron-prob-noise",
+	"Desolation-iron-prob-center-weight",
+	"Desolation-iron-richness-noise",
 }
+
+local newAutoplaceControls = {}
+for _, name in pairs(newAutoplaceControlNames) do
+	table.insert(newAutoplaceControls, {
+		type = "autoplace-control",
+		name = name,
+		richness = false,
+		order = getNextOrderString(),
+		can_be_disabled = true,
+		category = "terrain",
+	})
+end
+data:extend(newAutoplaceControls)

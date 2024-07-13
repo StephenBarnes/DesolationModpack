@@ -76,9 +76,21 @@ Export.ironBlobMaxRad = Export.ironBlobSizeSlider * 300
 ------------------------------------------------------------------------
 -- First iron patch
 
-Export.startIronPatchMinRad = 20 -- Approximate radius of the starting iron patch.
-Export.startIronPatchMaxRad = 40
-Export.startIronPatchProbNoiseAmplitude = 1 -- Noise amplitude for the probability of each tile in the starting iron patch.
-Export.startIronPatchProbNoiseInputScale = 20 -- Noise input scale for the probability of each tile in the starting iron patch.
+local ironPatchMinRadSlider = tne(1) / noise.var("control-setting:Desolation-iron-patch:frequency:multiplier")
+local ironPatchMinMaxSlider = noise.var("control-setting:Desolation-iron-patch:size:multiplier")
+local ironProbNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-iron-prob-noise:frequency:multiplier")
+local ironProbNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-prob-noise:size:multiplier")
+local ironRichnessNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-iron-richness-noise:frequency:multiplier")
+local ironRichnessNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-richness-noise:size:multiplier")
+local ironCenterWeightSlider = tne(1) / noise.var("control-setting:Desolation-iron-prob-center-weight:frequency:multiplier")
+
+Export.startIronPatchMinRad = ironPatchMinRadSlider * 20 -- Approximate radius of the starting iron patch.
+Export.startIronPatchMidRad = Export.startIronPatchMinRad + ironPatchMinMaxSlider * 5
+Export.startIronPatchMaxRad = Export.startIronPatchMinRad + ironPatchMinMaxSlider * 25
+Export.startIronPatchProbNoiseAmplitude = ironProbNoiseAmplitudeSlider * 3 -- Noise amplitude for the probability of each tile in the starting iron patch.
+Export.startIronPatchProbNoiseInputScale = ironProbNoiseScaleSlider * 30 -- Noise input scale for the probability of each tile in the starting iron patch.
+Export.startIronPatchRichnessNoiseAmplitude = ironRichnessNoiseAmplitudeSlider * 1000
+Export.startIronPatchRichnessNoiseInputScale = ironRichnessNoiseScaleSlider * 40
+Export.startIronPatchCenterWeight = ironCenterWeightSlider * 6
 
 return Export
