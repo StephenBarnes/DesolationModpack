@@ -38,6 +38,12 @@ local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
 	return noise.max(ramp1 + basis, minToPreventPuddles)
 end
 
+local function makeStartIslandMaxElevation(scale, centerX, centerY, x, y)
+	-- Just pushes the starting island max elevation down far away from the center, so that we don't have tiny isles far away from weird noise.
+	local d = Util.dist(centerX, centerY, x, y) / scale
+	return Util.ramp(d, C.startIslandMaxRad, C.startIslandMaxRad * 2, 100, -1000)
+end
+
 local function makeIronArcMinElevation(scale, x, y, ironNoise)
 	local distToIronArc = Util.getDistToIronArc(scale, x, y) / scale
 
@@ -46,13 +52,11 @@ local function makeIronArcMinElevation(scale, x, y, ironNoise)
 
 	-- Add noise from the min width to the max width, to make the arc look natural.
 	local noiseRamp = Util.rampDouble(distToIronArc, C.ironArcMinWidth, C.ironArcMaxWidth, C.ironArcMaxWidth * 2,
-		C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude * 1.5, -200)
+		C.ironArcBlobNoiseAmplitude * 2, -C.ironArcBlobNoiseAmplitude * 1.5, -200)
 	local noiseElevation = ironNoise + noiseRamp
 
 	local overallMinElevation = noise.max(arcMinElevation, noiseElevation)
-	return noise.if_else_chain(
-		noise.less_or_equal(noise.var("control-setting:Desolation-iron-arc:size:multiplier"), 1/6),
-		-100, overallMinElevation)
+	return noise.if_else_chain(C.ironArcEnabled, -100, overallMinElevation)
 end
 
 local function makeIronBlobMinElevation(scale, x, y, ironNoise)
@@ -60,11 +64,9 @@ local function makeIronBlobMinElevation(scale, x, y, ironNoise)
 	local distToBlobCenter = Util.dist(x, y, blobCenter[1], blobCenter[2]) / scale
 	local blobMinElevation = Util.rampDouble(distToBlobCenter, 0, C.ironBlobMinRad * 2, C.ironBlobMinRad * 3, 10, -10, -100)
 	local blobNoise = ironNoise + Util.rampDouble(distToBlobCenter, C.ironBlobMinRad, C.ironBlobMidRad, C.ironBlobMaxRad * 2,
-		C.ironArcNoiseAmplitude * 2, -C.ironArcNoiseAmplitude, -100)
+		C.ironArcBlobNoiseAmplitude * 2, -C.ironArcBlobNoiseAmplitude, -100)
 	local overallMinElevation = noise.max(blobMinElevation, blobNoise)
-	return noise.if_else_chain(
-		noise.less_or_equal(noise.var("control-setting:Desolation-iron-blob:size:multiplier"), 1/6),
-		-100, overallMinElevation)
+	return noise.if_else_chain(C.ironBlobEnabled, -100, overallMinElevation)
 end
 
 local function desolationOverallElevation(x, y, tile, map)
@@ -75,10 +77,14 @@ local function desolationOverallElevation(x, y, tile, map)
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
 	elevation = noise.max(startIslandMinElevation, elevation)
 
-	local ironNoise = Util.multiBasisNoise(7, 2, 2, 1 / (scale * 200), tne(C.ironArcNoiseAmplitude))
+	local startIslandMaxElevation = makeStartIslandMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
+	elevation = noise.min(startIslandMaxElevation, elevation)
+
+	local ironNoise = Util.multiBasisNoise(7, 2, 2, C.ironArcBlobNoiseScale / scale, C.ironArcBlobNoiseAmplitude)
 	local ironArcMinElevation = makeIronArcMinElevation(scale, x, y, ironNoise)
 	local ironBlobMinElevation = makeIronBlobMinElevation(scale, x, y, ironNoise)
-	elevation = noise.max(ironArcMinElevation, ironBlobMinElevation, elevation)
+	local ironMinElevation = noise.max(ironArcMinElevation, ironBlobMinElevation)
+	elevation = noise.max(elevation, ironMinElevation)
 
 	elevation = addMarkerLake(elevation, scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	elevation = addMarkerLake(elevation, scale, 0, 0, x, y, 5)
