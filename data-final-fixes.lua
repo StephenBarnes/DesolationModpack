@@ -3,7 +3,8 @@
 
 require("code.data.terrain.elevation")
 require("code.data.terrain.autoplace-controls")
-require("code.data.terrain.terrain-preset")
+require("code.data.terrain.remove-existing-mapgen-presets")
+require("code.data.terrain.create-mapgen-preset")
 require("code.data.terrain.rubber-trees-edit")
 require("code.data.terrain.cold-starting-region")
 require("code.data.terrain.resource-placing")
