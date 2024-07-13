@@ -181,6 +181,12 @@ Export.getStartIslandIronCenter = function(scale)
 	return Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIron * scale)
 end
 
+Export.getStartIslandIronArcCenter = function(scale)
+	local ironAngle = getCenterToIronAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	return Export.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
+end
+
 ------------------------------------------------------------------------
 
 return Export

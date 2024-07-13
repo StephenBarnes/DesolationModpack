@@ -14,7 +14,6 @@ Export.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal sym
 Export.startIslandMinRad = 300 -- Distance from center of starting island to the closest ocean
 Export.startIslandMaxRad = 600 -- Distance from center of starting island to the furthest end of the starting island
 Export.startIslandAndOffshootsMaxRad = 1200 -- Distance from center of starting island to the furthest end of the furthest "offshoot", currently just the iron.
-Export.coldStartRegionRad = Export.startIslandAndOffshootsMaxRad -- How big of a "cold patch" to put around the center of the starting island.
 Export.puddleMargin = 70 -- Distance before minRad where puddles start to appear.
 Export.spawnToStartIslandCenter = 200 -- Distance from center of starting island to spawn point.
 
@@ -25,7 +24,21 @@ Export.startIslandAngleToCenterMax = 0.75 * pi
 Export.startIslandIronMaxDeviationAngle = 0.25 * pi -- On starting island, iron ore spawns on the other side of the island center, with this big of an angle in either direction.
 
 ------------------------------------------------------------------------
--- Land arc leading to first iron patch
+-- Other islands, around the starting island
+-- These are also used for the starting cold patch.
+
+-- We don't place other islands too close to the center of the starting island.
+Export.otherIslandsMinDistFromStartIslandCenter = 600
+Export.otherIslandsFadeInMidFromStartIslandCenter = 900
+Export.otherIslandsFadeInEndFromStartIslandCenter = 1200
+
+-- We don't place other islands too close to the center of the arc that leads to the iron ore.
+Export.otherIslandsMinDistFromIronArcCenter = 550
+Export.otherIslandsFadeInMidFromIronArcCenter = 800
+Export.otherIslandsFadeInEndFromIronArcCenter = 1100
+
+------------------------------------------------------------------------
+-- Iron arc and blob noise
 
 -- Rule of thumb: For terrain autocontrols, first slider (labelled "scale") is :frequency:multiplier but inverted. Second slider is :size:multiplier, not inverted.
 
@@ -33,6 +46,9 @@ Export.ironArcBlobNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolat
 Export.ironArcBlobNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-arcblob-noise:size:multiplier")
 Export.ironArcBlobNoiseAmplitude = Export.ironArcBlobNoiseAmplitudeSlider * 15
 Export.ironArcBlobNoiseScale = Export.ironArcBlobNoiseScaleSlider * (1/200)
+
+------------------------------------------------------------------------
+-- Land arc leading to first iron patch
 
 Export.ironArcSizeSlider = tne(1) / noise.var("control-setting:Desolation-iron-arc:frequency:multiplier")
 Export.ironArcWidthSlider = noise.var("control-setting:Desolation-iron-arc:size:multiplier")
@@ -53,9 +69,9 @@ Export.ironArcMinWidthHeightMin = 5
 Export.ironBlobSizeSlider = tne(1) / noise.var("control-setting:Desolation-iron-blob:frequency:multiplier")
 Export.ironBlobEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-iron-blob:size:multiplier"), 1/6)
 
-Export.ironBlobMinRad = Export.ironBlobSizeSlider * 50 -- Approximate width of terrain around the iron ore patch.
-Export.ironBlobMidRad = Export.ironBlobSizeSlider * 110
-Export.ironBlobMaxRad = Export.ironBlobSizeSlider * 150
+Export.ironBlobMinRad = Export.ironBlobSizeSlider * 100 -- Approximate width of terrain around the iron ore patch.
+Export.ironBlobMidRad = Export.ironBlobSizeSlider * 200
+Export.ironBlobMaxRad = Export.ironBlobSizeSlider * 300
 
 ------------------------------------------------------------------------
 -- First iron patch

@@ -41,7 +41,7 @@ end
 local function makeStartIslandMaxElevation(scale, centerX, centerY, x, y)
 	-- Just pushes the starting island max elevation down far away from the center, so that we don't have tiny isles far away from weird noise.
 	local d = Util.dist(centerX, centerY, x, y) / scale
-	return Util.ramp(d, C.startIslandMaxRad, C.startIslandMaxRad * 2, 100, -1000)
+	return Util.ramp(d, C.startIslandMaxRad, C.startIslandAndOffshootsMaxRad, 100, -1000)
 end
 
 local function makeIronArcMinElevation(scale, x, y, ironNoise)
@@ -69,9 +69,8 @@ local function makeIronBlobMinElevation(scale, x, y, ironNoise)
 	return noise.if_else_chain(C.ironBlobEnabled, -100, overallMinElevation)
 end
 
-local function desolationOverallElevation(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	local elevation = tne(-10)
+local function getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
+	local elevation = tne(-10) -- starting elevation
 
 	local startIslandCenter = Util.getStartIslandCenter(scale)
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y)
@@ -92,7 +91,52 @@ local function desolationOverallElevation(x, y, tile, map)
 	local ironCenter = Util.getStartIslandIronCenter(scale)
 	elevation = addMarkerLake(elevation, scale, ironCenter[1], ironCenter[2], x, y, 5)
 
-	-- TODO add the starting river.
+	return elevation
+end
+
+local function getOtherIslandsMinElevation(scale, x, y, tile, map)
+	-- This line creates all of the other islands.
+	local elevation = Util.multiBasisNoise(8, 2, 2, (1 / 1000) / scale, tne(13)) - 12.2
+	-- TODO move these to sliders.
+
+	-- Cut off elevation from other islands close to the starting island.
+	local startIslandCenter = Util.getStartIslandCenter(scale)
+	local distFromStartIslandCenter = Util.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
+	local maxElevationToAvoidStartIslandCenter = Util.ramp(distFromStartIslandCenter,
+		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter,
+		-100, 100)
+	elevation = noise.min(elevation, maxElevationToAvoidStartIslandCenter)
+	-- In addition to this min to hard-cutoff the elevation around the start island, we also add a constant to fade in islands gradually.
+	local fadeAdjustmentForStartIslandCenter = Util.rampDouble(distFromStartIslandCenter,
+		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter, C.otherIslandsFadeInEndFromStartIslandCenter,
+		-40, -20, 0)
+
+	-- Also cut off elevation from other islands close to the iron arc center.
+	local ironArcCenter = Util.getStartIslandIronArcCenter(scale)
+	local distFromIronArcCenter = Util.dist(ironArcCenter[1], ironArcCenter[2], x, y) / scale
+	local maxElevationToAvoidIronArcCenter = Util.ramp(distFromIronArcCenter,
+		C.otherIslandsMinDistFromIronArcCenter, C.otherIslandsFadeInMidFromIronArcCenter,
+		-100, 100)
+	elevation = noise.min(elevation, maxElevationToAvoidIronArcCenter)
+	-- In addition to this min to hard-cutoff the elevation around the iron arc center, we also add a constant to fade in islands gradually.
+	local fadeAdjustmentForIronArcCenter = Util.rampDouble(distFromIronArcCenter,
+		C.otherIslandsMinDistFromIronArcCenter, C.otherIslandsFadeInMidFromIronArcCenter, C.otherIslandsFadeInEndFromIronArcCenter,
+		-40, -20, 0)
+
+	-- We combine these two added constants to get a final elevation fade-in constant.
+	local fadeAdjustmentTotal = noise.min(fadeAdjustmentForStartIslandCenter, fadeAdjustmentForIronArcCenter)
+	elevation = elevation + fadeAdjustmentTotal
+
+	return elevation
+end
+
+local function desolationOverallElevation(x, y, tile, map)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+
+	local startIslandAndOffshootsMinElevation = getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
+
+	local otherIslandsMinElevation = getOtherIslandsMinElevation(scale, x, y, tile, map)
+	local elevation = noise.max(startIslandAndOffshootsMinElevation, otherIslandsMinElevation)
 
 	return correctWaterLevel(elevation, map)
 end

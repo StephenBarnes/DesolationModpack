@@ -4,11 +4,6 @@ local tne = noise.to_noise_expression
 local Util = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
 
-log("Iron ore:")
-log(serpent.block(data.raw.resource["iron-ore"].autoplace))
-log("Tin ore:")
-log(serpent.block(data.raw.resource["tin-ore"].autoplace))
-
 local originalIronProb = data.raw.resource["iron-ore"].autoplace.probability_expression
 data.raw.resource["iron-ore"].autoplace.probability_expression = noise.define_noise_function(function(x, y, tile, map)
 	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)

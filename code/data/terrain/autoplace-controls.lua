@@ -7,6 +7,7 @@ end
 data:extend{
 	{ -- Create autoplace control for scale.
 		-- Not using water scale, bc that's for the scale of the water, not also the resources etc.
+		-- TODO maybe remove this, rather just use the water scale.
 		type = "autoplace-control",
 		name = "Desolation-scale",
 		richness = false,
@@ -14,15 +15,7 @@ data:extend{
 		can_be_disabled = false,
 		category = "terrain",
 	},
-	{ -- Create autoplace control for roughness.
-		-- TODO this isn't implemented.
-		type = "autoplace-control",
-		name = "Desolation-roughness",
-		richness = false,
-		order = getNextOrderString(),
-		can_be_disabled = false,
-		category = "terrain",
-	},
+	-- TODO create autoplaces for the starting island.
 	{
 		type = "autoplace-control",
 		name = "Desolation-iron-arc",
