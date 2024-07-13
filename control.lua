@@ -1,0 +1,1 @@
+require("code.control.notify-incorrect-mapgen-preset").register()
