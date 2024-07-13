@@ -100,32 +100,17 @@ local function getOtherIslandsMinElevation(scale, x, y, tile, map)
 	-- TODO move these to sliders.
 
 	-- Cut off elevation from other islands close to the starting island.
-	local startIslandCenter = Util.getStartIslandCenter(scale)
-	local distFromStartIslandCenter = Util.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
-	local maxElevationToAvoidStartIslandCenter = Util.ramp(distFromStartIslandCenter,
+	local centerDist = Util.minDistToStartIslandCenterOrIronArcCenter(scale, x, y)
+	local maxElevationToAvoidCenter = Util.ramp(centerDist,
 		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter,
 		-100, 100)
-	elevation = noise.min(elevation, maxElevationToAvoidStartIslandCenter)
+	elevation = noise.min(elevation, maxElevationToAvoidCenter)
+
 	-- In addition to this min to hard-cutoff the elevation around the start island, we also add a constant to fade in islands gradually.
-	local fadeAdjustmentForStartIslandCenter = Util.rampDouble(distFromStartIslandCenter,
+	local fadeAdjustment = Util.rampDouble(centerDist,
 		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter, C.otherIslandsFadeInEndFromStartIslandCenter,
 		-40, -20, 0)
-
-	-- Also cut off elevation from other islands close to the iron arc center.
-	local ironArcCenter = Util.getStartIslandIronArcCenter(scale)
-	local distFromIronArcCenter = Util.dist(ironArcCenter[1], ironArcCenter[2], x, y) / scale
-	local maxElevationToAvoidIronArcCenter = Util.ramp(distFromIronArcCenter,
-		C.otherIslandsMinDistFromIronArcCenter, C.otherIslandsFadeInMidFromIronArcCenter,
-		-100, 100)
-	elevation = noise.min(elevation, maxElevationToAvoidIronArcCenter)
-	-- In addition to this min to hard-cutoff the elevation around the iron arc center, we also add a constant to fade in islands gradually.
-	local fadeAdjustmentForIronArcCenter = Util.rampDouble(distFromIronArcCenter,
-		C.otherIslandsMinDistFromIronArcCenter, C.otherIslandsFadeInMidFromIronArcCenter, C.otherIslandsFadeInEndFromIronArcCenter,
-		-40, -20, 0)
-
-	-- We combine these two added constants to get a final elevation fade-in constant.
-	local fadeAdjustmentTotal = noise.min(fadeAdjustmentForStartIslandCenter, fadeAdjustmentForIronArcCenter)
-	elevation = elevation + fadeAdjustmentTotal
+	elevation = elevation + fadeAdjustment
 
 	return elevation
 end

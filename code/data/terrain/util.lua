@@ -189,4 +189,14 @@ end
 
 ------------------------------------------------------------------------
 
+Export.minDistToStartIslandCenterOrIronArcCenter = function(scale, x, y)
+	local startIslandCenter = Export.getStartIslandCenter(scale)
+	local distFromStartIslandCenter = Export.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
+	local ironArcCenter = Export.getStartIslandIronArcCenter(scale)
+	local distFromIronArcCenter = Export.dist(ironArcCenter[1], ironArcCenter[2], x, y) / scale
+	return noise.min(distFromStartIslandCenter, distFromIronArcCenter)
+end
+
+------------------------------------------------------------------------
+
 return Export
