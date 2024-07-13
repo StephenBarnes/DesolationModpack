@@ -16,8 +16,7 @@ Export.basisNoise = function(inScale, outScale)
 	return tne{
 		type = "function-application",
 		function_name = "factorio-basis-noise",
-		arguments =
-		{
+		arguments = {
 			x = noise.var("x") + C.artifactShift,
 			y = noise.var("y"),
 			seed0 = noise.var("map_seed"),
@@ -28,7 +27,28 @@ Export.basisNoise = function(inScale, outScale)
 	}
 end
 
-Export.multiBasisNoise = function(levels, inScaleMultiplier, outScaleDivisor, inScale, outScale)
+Export.multiBasisNoise = function(octaves, inScaleMultiplier, outScaleDivisor, inScale, outScale)
+	-- Makes multioctave noise function by layering multiple basis noise functions.
+	-- Output of first (strongest) layer will generally be between -outScale and +outScale. So all layers together will be like double that range, very roughly.
+	if outScale == nil then outScale = 1 / inScale end
+	return tne{
+		type = "function-application",
+		function_name = "factorio-quick-multioctave-noise",
+		arguments = {
+			x = noise.var("x") + C.artifactShift,
+			y = noise.var("y"),
+			seed0 = noise.var("map_seed"),
+			seed1 = tne(Export.getNextSeed1()),
+			input_scale = tne(inScale),
+			output_scale = tne(outScale),
+			octaves = tne(octaves),
+			octave_output_scale_multiplier = 1 / tne(outScaleDivisor),
+			octave_input_scale_multiplier = tne(inScaleMultiplier),
+		}
+	}
+end
+
+Export.multiBasisNoiseSlow = function(levels, inScaleMultiplier, outScaleDivisor, inScale, outScale)
 	-- Makes multioctave noise function by layering multiple basis noise functions.
 	-- Output of first (strongest) layer will generally be between -outScale and +outScale. So all layers together will be like double that range, very roughly.
 	local result = Export.basisNoise(inScale, outScale)
