@@ -11,8 +11,6 @@ local Util = require("code.data.terrain.util")
 -- Basis noise arguments: seed0 should be map seed, seed1 should be any arbitrary number. Input scale should be var "segmentation_multiplier" divided by like 20, output scale should be the inverse of that.
 -- For basis noise, setting output scale to 20 should give values roughly between -20 and +20.
 
-local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
-
 local function correctWaterLevel(elevation, map)
 	return noise.max(
 		map.wlc_elevation_minimum,
@@ -21,8 +19,15 @@ local function correctWaterLevel(elevation, map)
 end
 
 local function makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
+	-- Makes max elevation that can be min'd with an elevation to create a marker lake at the given center.
 	local d = Util.dist(centerX, centerY, x, y) / scale
 	return d - rad
+end
+
+local function addMarkerLake(elevation, scale, centerX, centerY, x, y, rad)
+	-- Given elevation, adds a marker lake.
+	local markerLakeMax = makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
+	return noise.min(elevation, markerLakeMax)
 end
 
 local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
@@ -63,7 +68,7 @@ local function makeIronBlobMinElevation(scale, x, y, ironNoise)
 end
 
 local function desolationOverallElevation(x, y, tile, map)
-	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
 	local elevation = tne(-10)
 
 	local startIslandCenter = Util.getStartIslandCenter(scale)
@@ -75,11 +80,13 @@ local function desolationOverallElevation(x, y, tile, map)
 	local ironBlobMinElevation = makeIronBlobMinElevation(scale, x, y, ironNoise)
 	elevation = noise.max(ironArcMinElevation, ironBlobMinElevation, elevation)
 
-	local markerLakeMax1 = makeMarkerLakeMaxElevation(scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
-	local markerLakeMax2 = makeMarkerLakeMaxElevation(scale, 0, 0, x, y, 5)
+	elevation = addMarkerLake(elevation, scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
+	elevation = addMarkerLake(elevation, scale, 0, 0, x, y, 5)
+
 	local ironCenter = Util.getStartIslandIronCenter(scale)
-	local markerLakeMax3 = makeMarkerLakeMaxElevation(scale, ironCenter[1], ironCenter[2], x, y, 15)
-	elevation = noise.min(elevation, markerLakeMax1, markerLakeMax2, markerLakeMax3)
+	elevation = addMarkerLake(elevation, scale, ironCenter[1], ironCenter[2], x, y, 5)
+
+	-- TODO add the starting river.
 
 	return correctWaterLevel(elevation, map)
 end

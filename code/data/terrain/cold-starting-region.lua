@@ -5,15 +5,13 @@ local noise = require "noise"
 local C = require("code.data.terrain.constants")
 local Util = require("code.data.terrain.util")
 
-local scaleSlider = noise.var("control-setting:Desolation-scale:frequency:multiplier")
-
 local function clamp_temperature(raw_temperature)
 	return noise.clamp(raw_temperature, -20, 150) -- Alien Biomes seems to use this range.
 end
 
 local originalTempExpr = data.raw["noise-expression"].temperature.expression
 local newTempExpr = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (scaleSlider * map.segmentation_multiplier)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
 	local startIslandCenter = Util.getStartIslandCenter(scale)
 	local distFromStartIslandCenter = Util.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
 	local inStartIsland = noise.less_than(distFromStartIslandCenter, C.coldStartRegionRad)
