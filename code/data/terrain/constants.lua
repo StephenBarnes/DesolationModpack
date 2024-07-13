@@ -27,4 +27,6 @@ Export.ironBlobMinRad = 30 -- Approximate width of terrain around the iron ore p
 Export.ironBlobMidRad = 100
 Export.ironBlobMaxRad = 150
 
+Export.startIronPatchRad = 50 -- Approximate radius of the starting iron patch.
+
 return Export

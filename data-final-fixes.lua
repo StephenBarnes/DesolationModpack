@@ -2,11 +2,11 @@
 -- TODO add settings for everything below
 
 require("code.data.terrain.elevation")
-require("code.data.terrain.resource-placing")
 require("code.data.terrain.autoplace-controls")
 require("code.data.terrain.terrain-preset")
 require("code.data.terrain.rubber-trees-edit")
 require("code.data.terrain.cold-starting-region")
+require("code.data.terrain.resource-placing")
 
 require("code.data.tweaks.vehicles")
 require("code.data.tweaks.stack-sizes")

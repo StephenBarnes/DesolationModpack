@@ -127,6 +127,12 @@ Export.getStartIslandCenter = function(scale)
 	return Export.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
 end
 
+Export.withinStartIsland = function(scale, x, y)
+	local startIslandCenter = Export.getStartIslandCenter(scale)
+	local distFromStartIsland = Export.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
+	return noise.less_than(distFromStartIsland, C.startIslandAndOffshootsMaxRad)
+end
+
 ------------------------------------------------------------------------
 
 local function getCenterToIronAngle()
