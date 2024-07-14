@@ -135,7 +135,7 @@ X.secondCoalPatchMinRad = secondCoalPatchMinRadSlider * 15 -- Approximate radius
 X.secondCoalPatchMidRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 10
 X.secondCoalPatchMaxRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 30
 X.secondCoalPatchCenterWeight = secondCoalCenterWeightSlider * 6
-X.distIronToSecondCoal = X.startIronPatchMaxRad + X.secondCoalPatchMaxRad
+X.distIronToSecondCoal = (X.startIronPatchMaxRad + X.secondCoalPatchMaxRad) * 0.7
 
 X.coalPatchDesiredAmount = 3000000
 

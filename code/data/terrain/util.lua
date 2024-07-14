@@ -160,13 +160,17 @@ end)
 
 ------------------------------------------------------------------------
 
-local function getCenterToIronAngle()
+local function getCenterToIronBlobAngle()
 	local baseAngle = X.spawnToStartIslandCenterAngle -- Use this angle, so it's on the other side of the island from where player spawns.
 	return baseAngle + X.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
 end
 
+local function getIronBlobToIronPatchAngle()
+	return X.mapRandBetween(0, 2 * C.pi, noise.var("map_seed"), 15)
+end
+
 X.getDistToIronArc = function(scale, x, y)
-	local ironAngle = getCenterToIronAngle()
+	local ironAngle = getCenterToIronBlobAngle()
 	local islandCenter = X.getStartIslandCenter(scale)
 	local arcStart = X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcStart * scale)
 	local arcCenter = X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
@@ -202,19 +206,19 @@ end
 
 X.getStartIslandIronBlobCenter = function(scale)
 	-- Note this is the center of the blob, not the center of the actual ore patch.
-	local ironAngle = getCenterToIronAngle()
+	local ironAngle = getCenterToIronBlobAngle()
 	local islandCenter = X.getStartIslandCenter(scale)
 	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronBlob * scale)
 end
 
 X.getStartIslandIronOrePatchCenter = function(scale)
-	local ironAngle = getCenterToIronAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, (C.distCenterToIronBlob + (C.distIronToSecondCoal / 2)) * scale)
+	local angleFromBlob = getIronBlobToIronPatchAngle()
+	local ironBlobCenter = X.getStartIslandIronBlobCenter(scale)
+	return X.moveInDirection(ironBlobCenter[1], ironBlobCenter[2], angleFromBlob, (C.distIronToSecondCoal / 2) * scale)
 end
 
 X.getStartIslandIronArcCenter = function(scale)
-	local ironAngle = getCenterToIronAngle()
+	local ironAngle = getCenterToIronBlobAngle()
 	local islandCenter = X.getStartIslandCenter(scale)
 	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
 end
@@ -222,7 +226,7 @@ end
 ------------------------------------------------------------------------
 
 local function getCenterToCopperTinAngle()
-	local ironAngle = getCenterToIronAngle()
+	local ironAngle = getCenterToIronBlobAngle()
 	local angleDelta = X.mapRandBetween(-C.startIslandCopperTinMaxDeviationAngle, C.startIslandCopperTinMaxDeviationAngle, noise.var("map_seed"), 9)
 	return ironAngle + angleDelta + C.pi
 end
@@ -268,9 +272,9 @@ end
 ------------------------------------------------------------------------
 
 X.getSecondCoalCenter = function(scale)
-	local ironAngle = getCenterToIronAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, (C.distCenterToIronBlob - (C.distIronToSecondCoal / 2)) * scale)
+	local angleFromBlob = getIronBlobToIronPatchAngle() + C.pi + X.mapRandBetween(-0.2 * C.pi, 0.2 * C.pi, noise.var("map_seed"), 55)
+	local ironBlobCenter = X.getStartIslandIronBlobCenter(scale)
+	return X.moveInDirection(ironBlobCenter[1], ironBlobCenter[2], angleFromBlob, (C.distIronToSecondCoal / 2) * scale)
 end
 
 ------------------------------------------------------------------------
