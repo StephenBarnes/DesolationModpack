@@ -17,7 +17,8 @@ X.startIslandAndOffshootsMaxRad = 1200 -- Distance from center of starting islan
 X.puddleMargin = 70 -- Distance before minRad where puddles start to appear.
 X.spawnToStartIslandCenter = 200 -- Distance from center of starting island to spawn point.
 
--- These angles are radians. 0 means east, pi means west, 0.5 * pi means south.
+-- These angles are radians. 0 means east, pi means west or 180 degrees, 0.5 * pi means south or 90 degrees.
+-- TODO add sliders for these.
 X.pi = 3.1416
 X.startIslandAngleToCenterMin = 0.25 * X.pi
 X.startIslandAngleToCenterMax = 0.75 * X.pi
@@ -119,7 +120,7 @@ X.startIronPatchMidRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 13
 X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 40
 X.startIronPatchCenterWeight = ironCenterWeightSlider * 6
 
-X.startingPatchTotalDesiredAmount = 3000000
+X.startIronPatchDesiredAmount = 3000000
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

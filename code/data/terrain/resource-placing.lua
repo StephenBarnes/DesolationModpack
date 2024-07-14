@@ -15,10 +15,9 @@ local C = require("code.data.terrain.constants")
 data.raw.resource["iron-ore"].map_color = {r=0, g=0.5, b=1}
 --data.raw.resource["tin-ore"].map_color = {r=0, g=0, b=0.7}
 
--- TODO give walls a darker color.
 
 ------------------------------------------------------------------------
--- Resources
+-- Common functions for resources.
 
 local function makeResourceNoise()
 	-- Returns a multi-basis noise function to be used for a specific resource. Probably don't share between resources.
@@ -56,6 +55,39 @@ local zeroOnStartIsland = noise.define_noise_function(function(x, y, tile, map)
 	return noise.if_else_chain(Util.withinStartIsland(scale, x, y), 0, 1)
 end)
 
+local function makeSpotNoise(params)
+	return noise.define_noise_function(function(x, y, tile, map)
+		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+		return tne {
+			type = "function-application",
+			function_name = "spot-noise",
+			arguments = {
+				x = x / scale,
+				y = y / scale,
+				seed0 = noise.var("map_seed"),
+				seed1 = tne(Util.getNextSeed1()),
+
+				candidate_spot_count = tne(params.candidateSpotCount), -- Maybe more points will make the favorability bias work better? Default is 21.
+				density_expression = litexp(params.density), -- Makes more patches, it seems.
+				spot_quantity_expression = litexp(params.patchResourceAmt), -- Amount of resource per patch, from totalling up all the tiles.
+				spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
+				spot_favorability_expression = litexp(params.patchFavorability),
+				basement_value = tne(params.basementVal), -- TODO what is this?
+				maximum_spot_basement_radius = tne(params.maxSpotBasementRad), -- TODO what is this? try increasing to 128
+				region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
+			},
+		}
+	end)
+end
+-- Example patchFavorability:
+--   0.5 - uniform
+--   Util.ramp(noise.var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
+--   noise.var("elevation") -- more likely at higher elevations
+--   noise.define_noise_function(function(x, y, tile, map)
+--       local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+--       return Util.minDistToStartIsland(scale, x, y)
+--   end)
+
 ------------------------------------------------------------------------
 -- Iron on starting island, at the end of the iron circular arc.
 
@@ -73,14 +105,9 @@ local ironProb = zeroOnStartIsland
 ironProb = noise.max(ironProb, factorToProb(startingPatchIronFactor, 0.8))
 
 data.raw.resource["iron-ore"].autoplace.probability_expression = ironProb
-data.raw.resource["iron-ore"].autoplace.richness_expression = startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier") * (C.startIronPatchIronAmount / 2500)
--- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake.
-
---local originalIronRichness = data.raw.resource["iron-ore"].autoplace.richness_expression
---data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise_function(function(x, y, tile, map)
---	local richness = 400 * startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier")
---	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
---end)
+data.raw.resource["iron-ore"].autoplace.richness_expression = (startingPatchIronFactor
+	* noise.var("control-setting:iron-ore:richness:multiplier")
+	* (C.startIronPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake.
 
 ------------------------------------------------------------------------
 -- Coal on starting island, near the starting iron patch.
@@ -107,35 +134,22 @@ data.raw.resource["uranium-ore"].autoplace = resourceAutoplace.resource_autoplac
 }
 
 --log(serpent.block(data.raw.resource["uranium-ore"].autoplace.probability_expression))
-local goldOreSpotNoise = tne {
-	type = "function-application",
-	function_name = "spot-noise",
-	arguments = {
-		x = noise.var("x"), -- TODO scale
-		y = noise.var("y"),
-		seed0 = noise.var("map_seed"),
-		seed1 = tne(Util.getNextSeed1()),
-
-		candidate_spot_count = tne(256), -- Maybe more points will make the favorability bias work better? Default is 21.
-		density_expression = litexp(0.1), -- Makes more patches, it seems.
-		spot_quantity_expression = litexp(10000), -- Amount of resource per patch, from totalling up all the tiles.
-		spot_radius_expression = litexp(10), -- Radius of each resource patch, in tiles.
-		--spot_favorability_expression = litexp(0.5), -- TODO try adjusting to 1?
-		--spot_favorability_expression = litexp(Util.ramp(noise.var("elevation"), 30, 100, -10, 10)),
-		--spot_favorability_expression = litexp(noise.var("elevation")),
-		spot_favorability_expression = litexp(noise.define_noise_function(function(x, y, tile, map) -- This actually works very well!
-			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-			return Util.minDistToStartIsland(scale, x, y)
-		end)),
-		basement_value = tne(-6), -- TODO what is this?
-		maximum_spot_basement_radius = tne(5), -- TODO what is this? try increasing to 128
-		region_size = tne(2048), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
-			-- TODO scale with the scale slider etc.
-	},
+local goldOreSpotNoise = makeSpotNoise {
+	candidateSpotCount = 256,
+	density = 0.1,
+	patchResourceAmt = 10000,
+	patchRad = 10,
+	patchFavorability = noise.define_noise_function(function(x, y, tile, map)
+		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+		return Util.minDistToStartIsland(scale, x, y)
+	end),
+	basementVal = -6,
+	maxSpotBasementRad = 5,
+	regionSize = 2048,
 }
 data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}
 data.raw.resource["gold-ore"].autoplace.probability_expression = goldOreSpotNoise
-data.raw.resource["gold-ore"].autoplace.richness_expression = goldOreSpotNoise
+data.raw.resource["gold-ore"].autoplace.richness_expression = goldOreSpotNoise * noise.var("control-setting:gold-ore:richness:multiplier")
 
 
 ------------------------------------------------------------------------
