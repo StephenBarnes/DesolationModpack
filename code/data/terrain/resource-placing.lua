@@ -76,6 +76,7 @@ local function makeSpotNoiseFactor(params)
 				spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
 				spot_favorability_expression = litexp(params.patchFavorability),
 				basement_value = tne(C.resourceNoiseAmplitude) * (-2), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
+				-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
 				maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
 				region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
 			},
@@ -156,9 +157,18 @@ data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
 	* (C.coalPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake. TODO
 	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
 
+------------------------------------------------------------------------
+-- Copper
+
+-- TODO
 
 ------------------------------------------------------------------------
--- Copper and tin on starting island, at the end of the copper+tin circular arc.
+-- Tin
+
+-- TODO
+
+------------------------------------------------------------------------
+-- Stone
 
 -- TODO
 

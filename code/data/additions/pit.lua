@@ -134,9 +134,6 @@ for _, itemName in pairs(pittableItems) do
 		results = {},
 		energy_required = 0.01,
 	}})
-	-- TODO add recipes for scrap
 end
-
--- TODO force-set the IR3 runtime-global setting for the bottomless pit, to disable it.
 
 -- TODO add pit to the stone tech

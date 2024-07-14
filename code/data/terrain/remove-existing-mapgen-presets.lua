@@ -16,4 +16,3 @@ data.raw["noise-expression"]["elevation"].expression = noise.define_noise_functi
     local dist = noise.absolute_value(x) + noise.absolute_value(y)
 	return noise.if_else_chain(noise.less_than(dist, 10), 10, -10)
 end)
--- TODO add some kind of message that tells people to start a new game using the dedicated map preset.
