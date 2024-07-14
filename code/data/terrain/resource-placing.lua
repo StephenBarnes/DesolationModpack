@@ -208,3 +208,4 @@ data.raw.resource["gold-ore"].autoplace.richness_expression = goldOreSpotNoise *
 -- TODO handle starting-area steam fissures; maybe multiple.
 -- TODO handle crude oil.
 -- TODO handle uranium and gold.
+-- TODO place the gem-bearing rocks from IR3. They should be placed on certain ores. (Called gem-rock-diamond, gem-rock-ruby.)
