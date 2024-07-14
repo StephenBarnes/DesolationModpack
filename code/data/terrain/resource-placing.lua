@@ -33,6 +33,7 @@ local function makeResourceFactorForPatch(patchPosFunc, minRad, midRad, maxRad, 
 	-- This is for a patch at a specific position. So use `noise.max` to combine with other factors.
 	-- Argument `patchPosFunc` is a function that returns the position of the patch, given scale.
 	-- This doesn't have noise added yet. So make noise with makeResourceNoise(), and add it to these.
+	-- From this factor, obtain probability by clamping it to [0, 1] and then setting it to 0 below floor prob.
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
 		local pos = patchPosFunc(scale)
@@ -43,8 +44,17 @@ local function makeResourceFactorForPatch(patchPosFunc, minRad, midRad, maxRad, 
 	end)
 end
 
-local function makeResourceZeroStartIsland(scale)
+local function factorToProb(factor, floorProb)
+	-- Given a resource factor, return a probability of resource.
+	return noise.if_else_chain(noise.less_than(factor, floorProb), 0, noise.clamp(factor, 0, 1))
 end
+
+local zeroOnStartIsland = noise.define_noise_function(function(x, y, tile, map)
+	-- Returns a noise expression that's 0 on the starting island, 1 everywhere else.
+	-- Should be min'd with the resource factor that spawns stuff outside the starting island, then max'd with the resource factors that spawn patches inside the starting island.
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+	return noise.if_else_chain(Util.withinStartIsland(scale, x, y), 0, 1)
+end)
 
 ------------------------------------------------------------------------
 -- Iron on starting island, at the end of the iron circular arc.
@@ -58,25 +68,12 @@ local startingPatchIronFactor = ironNoise + makeResourceFactorForPatch(
 	C.startIronPatchMaxRad,
 	C.startIronPatchCenterWeight)
 
---local originalIronProb = data.raw.resource["iron-ore"].autoplace.probability_expression
-local ironProb = tne(0)
-data.raw.resource["iron-ore"].autoplace.probability_expression = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	local modifiedIronProb = ironProb
+local ironProb = zeroOnStartIsland
+-- TODO here we should min it with the factor for spawning outside starting island.
+ironProb = noise.max(ironProb, factorToProb(startingPatchIronFactor, 0.8))
 
-	-- Layer that's 0 on the starting island, 1 everywhere else.
-	-- This says probability should always be 0 on the starting island, so no patches.
-	local maxProbForStartIsland = noise.if_else_chain(Util.withinStartIsland(scale, x, y), 0, 1)
-	modifiedIronProb = noise.min(maxProbForStartIsland, modifiedIronProb)
-
-	-- Layer that's high at the starting iron patch, 0 everywhere else.
-	local minProbForStartWithNoise = noise.clamp(startingPatchIronFactor, 0, 1)
-	local floorProb = 0.8 -- Set probability to 0 if it's below this value, so we don't get spatterings of ore like the spray can tool in MS Paint.
-	minProbForStartWithNoise = noise.if_else_chain(noise.less_than(minProbForStartWithNoise, floorProb), 0, minProbForStartWithNoise)
-	modifiedIronProb = noise.max(minProbForStartWithNoise, modifiedIronProb)
-
-	return modifiedIronProb
-end)
+data.raw.resource["iron-ore"].autoplace.probability_expression = ironProb
+data.raw.resource["iron-ore"].autoplace.richness_expression = startingPatchIronFactor * 400 * noise.var("control-setting:iron-ore:richness:multiplier")
 
 local originalIronRichness = data.raw.resource["iron-ore"].autoplace.richness_expression
 data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise_function(function(x, y, tile, map)
