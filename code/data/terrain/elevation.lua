@@ -87,7 +87,7 @@ end
 local function makeCopperTinBlobMinElevation(scale, x, y, arcBlobNoise)
 	local blobCenter = Util.getStartIslandCopperTinCenter(scale)
 	local distToBlobCenter = Util.dist(x, y, blobCenter[1], blobCenter[2]) / scale
-	local blobMinElevation = Util.rampDouble(distToBlobCenter, 0, C.copperTinBlobMinRad * 2, C.copperTinBlobMinRad * 3, 10, -10, -100)
+	local blobMinElevation = Util.rampDouble(distToBlobCenter, 0, C.copperTinBlobMinRad * 2, C.copperTinBlobMinRad * 3, 10, -10, -200)
 	local blobNoise = arcBlobNoise + Util.rampDouble(distToBlobCenter, C.copperTinBlobMinRad, C.copperTinBlobMidRad, C.copperTinBlobMaxRad * 2,
 		C.arcBlobNoiseAmplitude * 2, -C.arcBlobNoiseAmplitude, -100)
 	local overallMinElevation = noise.max(blobMinElevation, blobNoise)

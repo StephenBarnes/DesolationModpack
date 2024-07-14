@@ -148,11 +148,15 @@ X.getStartIslandCenter = function(scale)
 	return X.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
 end
 
-X.withinStartIsland = function(scale, x, y)
+X.isWithinStartIsland = function(scale, x, y)
 	local startIslandCenter = X.getStartIslandCenter(scale)
 	local distFromStartIsland = X.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
 	return noise.less_than(distFromStartIsland, C.startIslandAndOffshootsMaxRad)
 end
+X.withinStartingIsland = noise.define_noise_function(function(x, y, tile, map)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+	return X.isWithinStartIsland(scale, x, y)
+end)
 
 ------------------------------------------------------------------------
 

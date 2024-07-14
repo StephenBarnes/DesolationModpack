@@ -120,7 +120,7 @@ X.startIronPatchMidRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 13
 X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 40
 X.startIronPatchCenterWeight = ironCenterWeightSlider * 6
 
-X.startIronPatchDesiredAmount = 3000000
+X.ironPatchDesiredAmount = 3000000
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

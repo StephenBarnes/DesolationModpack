@@ -10,42 +10,43 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 		},
         autoplace_controls = {
 			-- Resources
+            -- All of these should have everything set to 1. Rather adjust them in resource-placing.lua, when creating autoplace expressions.
             coal = {
                 frequency = 1,
                 size = 1,
-                richness = 2,
+                richness = 1,
             },
             ["copper-ore"] = {
                 frequency = 1,
                 size = 1,
-				richness = 0.5,
+				richness = 1,
             },
             ["iron-ore"] = {
                 frequency = 1,
                 size = 1,
-				richness = 0.5,
+				richness = 1,
             },
             ["tin-ore"] = {
                 frequency = 1,
                 size = 1,
-				richness = 0.5,
+				richness = 1,
             },
             ["gold-ore"] = {
-                frequency = 6,
+                frequency = 1,
                 size = 1,
-				richness = 0.5,
+				richness = 1,
             },
             stone = {
                 frequency = 1,
                 size = 1,
-				richness = 2,
+				richness = 1,
             },
             ["crude-oil"] = {
-                frequency = 6,
+                frequency = 1,
                 size = 1,
             },
             ["uranium-ore"] = {
-                frequency = 6,
+                frequency = 1,
                 size = 1,
             },
             ["ir-fissures"] = {
@@ -53,6 +54,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
                 size = 1,
             },
 
+            -- TODO in resource-placing.lua, create custom noise expressions for these, then set these here to 1.
 			trees = {
 				frequency = 2, -- Inverse of scale
 				size = 1/6, -- Coverage
@@ -68,6 +70,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             },
 
 			-- Temperature controls for Alien Biomes
+            -- TODO in resource-placing.lua, create custom noise expressions for these, then set these here to 1.
 			hot = {
 				frequency = 4, -- Inverse of scale
 				size = 0.5, -- Coverage
