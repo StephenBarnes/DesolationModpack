@@ -120,12 +120,10 @@ end
 
 ------------------------------------------------------------------------
 
-local function getSpawnToStartIslandCenterAngle()
-	return Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
-end
+Export.spawnToStartIslandCenterAngle = Export.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
 
 Export.getStartIslandCenter = function(scale)
-	local angle = getSpawnToStartIslandCenterAngle()
+	local angle = Export.spawnToStartIslandCenterAngle
 	return Export.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
 end
 
@@ -138,7 +136,7 @@ end
 ------------------------------------------------------------------------
 
 local function getCenterToIronAngle()
-	local baseAngle = getSpawnToStartIslandCenterAngle() -- Use this angle, so it's on the other side of the island from where player spawns.
+	local baseAngle = Export.spawnToStartIslandCenterAngle -- Use this angle, so it's on the other side of the island from where player spawns.
 	return baseAngle + Export.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
 end
 
