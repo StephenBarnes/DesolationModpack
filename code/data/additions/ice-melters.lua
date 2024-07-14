@@ -16,9 +16,11 @@ data:extend({
 		name = "ice-melting",
 	},
 	{ -- Entity for the copper melter.
-		type = "assembling-machine",
+		type = "furnace",
 		name = "copper-ice-melter",
-		energy_usage = data.raw.boiler["copper-boiler"].energy_consumption,
+		source_inventory_size = 1,
+		result_inventory_size = 0, -- No item results. Game automatically adds 2 slots for the fluids.
+		energy_usage = "300kW",
 		energy_source = data.raw.boiler["copper-boiler"].energy_source,
 		crafting_speed = 1,
 		crafting_categories = {"ice-melting"},
@@ -116,13 +118,13 @@ data:extend({
 		order = "a",
 		category = "ice-melting",
 		enabled = true,
-		ingredients = {{"ice", 1}},
+		ingredients = {{"ice", 3}},
 		results = {
-			{type="fluid", name="water", amount=8, temperature = 15},
-			{type="fluid", name="steam", amount=2, temperature = 165},
+			{type="fluid", name="water", amount=20, temperature = 15},
+			{type="fluid", name="steam", amount=10, temperature = 165},
 		},
 		localised_name = {"recipe-name.melt-ice-to-water-and-steam"},
-		energy_required = 2,
+		energy_required = 6,
 		main_product = "water",
 		allow_as_intermediate = false,
 		allow_intermediates = false,
@@ -142,3 +144,5 @@ Tech.addRecipeToTech("melt-ice-to-water-and-steam", "ir-copper-working-2", 9)
 -- TODO create separate icons
 -- TODO create iron melter
 -- TODO create electric melter
+
+-- TODO describe the recipe in the melter's description - how long, how much water per second, etc. so that people can figure out the ratios without knowing to look at the techs.
