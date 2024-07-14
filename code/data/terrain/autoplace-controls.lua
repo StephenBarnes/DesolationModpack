@@ -15,9 +15,12 @@ local newAutoplaceControlNames = {
 
 	-- TODO create autoplaces for the starting island.
 
+	"Desolation-arcblob-noise",
+
 	"Desolation-iron-arc",
 	"Desolation-iron-blob",
-	"Desolation-iron-arcblob-noise",
+	"Desolation-coppertin-arc",
+	"Desolation-coppertin-blob",
 
 	"Desolation-resource-noise",
 

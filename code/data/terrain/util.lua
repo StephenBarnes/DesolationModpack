@@ -191,13 +191,66 @@ end
 
 ------------------------------------------------------------------------
 
-Export.minDistToStartIslandCenterOrIronArcCenter = function(scale, x, y)
+local function getCenterToCopperTinAngle()
+	local ironAngle = getCenterToIronAngle()
+	local angleDelta = Export.mapRandBetween(-C.startIslandCopperTinMaxDeviationAngle, C.startIslandCopperTinMaxDeviationAngle, noise.var("map_seed"), 9)
+	return ironAngle + angleDelta + C.pi
+end
+
+Export.getDistToCopperTinArc = function(scale, x, y)
+	local angle = getCenterToCopperTinAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	local arcStart = Export.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTinArcStart * scale)
+	local arcCenter = Export.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTinArcCenter * scale)
+	local arcEnd = Export.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTin * scale)
+
+	local distToArcStart = Export.dist(x, y, arcStart[1], arcStart[2])
+	local distToArcEnd = Export.dist(x, y, arcEnd[1], arcEnd[2])
+	local distToArcCenter = Export.dist(x, y, arcCenter[1], arcCenter[2])
+
+	local endpointDist = noise.min(distToArcStart, distToArcEnd)
+	local arcBodyDist = noise.absolute_value(distToArcCenter - C.copperTinArcRad * scale)
+
+	local dx1 = x - arcEnd[1]
+	local dy1 = y - arcEnd[2]
+	local dx2 = x - islandCenter[1]
+	local dy2 = y - islandCenter[2]
+	local whichSide = noise.less_than(0.5, Export.mapRandBetween(0, 1, noise.var("map_seed"), 7))
+	local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
+	local isLeftSide = 1 - isRightSide
+	local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
+
+	return noise.if_else_chain(isCorrectSide, arcBodyDist, endpointDist)
+end
+
+Export.getStartIslandCopperTinCenter = function(scale)
+	local copperTinAngle = getCenterToCopperTinAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	return Export.moveInDirection(islandCenter[1], islandCenter[2], copperTinAngle, C.distCenterToCopperTin * scale)
+end
+
+Export.getStartIslandCopperTinArcCenter = function(scale)
+	local copperTinAngle = getCenterToCopperTinAngle()
+	local islandCenter = Export.getStartIslandCenter(scale)
+	return Export.moveInDirection(islandCenter[1], islandCenter[2], copperTinAngle, C.distCenterToCopperTinArcCenter * scale)
+end
+
+------------------------------------------------------------------------
+
+Export.minDistToStartIsland = function(scale, x, y)
 	local startIslandCenter = Export.getStartIslandCenter(scale)
 	local distFromStartIslandCenter = Export.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
+
 	local ironArcCenter = Export.getStartIslandIronArcCenter(scale)
 	local distFromIronArcCenter = Export.dist(ironArcCenter[1], ironArcCenter[2], x, y) / scale
-	return noise.min(distFromStartIslandCenter, distFromIronArcCenter)
+
+	local copperTinArcCenter = Export.getStartIslandCopperTinArcCenter(scale)
+	local distFromCopperTinArcCenter = Export.dist(copperTinArcCenter[1], copperTinArcCenter[2], x, y) / scale
+
+	return noise.min(distFromStartIslandCenter, distFromIronArcCenter, distFromCopperTinArcCenter)
 end
+-- TODO adjust this to use the copper/tin arc.
+-- TODO also adjust this to rather sum distances, producing a kind of ellipse maybe.
 
 ------------------------------------------------------------------------
 

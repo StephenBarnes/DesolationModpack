@@ -18,10 +18,11 @@ Export.puddleMargin = 70 -- Distance before minRad where puddles start to appear
 Export.spawnToStartIslandCenter = 200 -- Distance from center of starting island to spawn point.
 
 -- These angles are radians. 0 means east, pi means west, 0.5 * pi means south.
-local pi = 3.1416
-Export.startIslandAngleToCenterMin = 0.25 * pi
-Export.startIslandAngleToCenterMax = 0.75 * pi
-Export.startIslandIronMaxDeviationAngle = 0.25 * pi -- On starting island, iron ore spawns on the other side of the island center, with this big of an angle in either direction.
+Export.pi = 3.1416
+Export.startIslandAngleToCenterMin = 0.25 * Export.pi
+Export.startIslandAngleToCenterMax = 0.75 * Export.pi
+Export.startIslandIronMaxDeviationAngle = 0.25 * Export.pi -- On starting island, iron ore spawns on the other side of the island center, with this big of an angle in either direction.
+Export.startIslandCopperTinMaxDeviationAngle = 0.2 * Export.pi -- On starting island, an arc with copper/tin spawns on the other side of the iron arc, but offset randomly by an angle at most this big, positive or negative.
 
 ------------------------------------------------------------------------
 -- Other islands, around the starting island
@@ -38,14 +39,14 @@ Export.otherIslandsFadeInMidFromIronArcCenter = 800
 Export.otherIslandsFadeInEndFromIronArcCenter = 1100
 
 ------------------------------------------------------------------------
--- Iron arc and blob noise
+-- Noise for the starting island's offshoots, consisting of a circular arc and a blob with some ores on it.
 
 -- Rule of thumb: For terrain autocontrols, first slider (labelled "scale") is :frequency:multiplier but inverted. Second slider is :size:multiplier, not inverted.
 
-Export.ironArcBlobNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-iron-arcblob-noise:frequency:multiplier")
-Export.ironArcBlobNoiseAmplitudeSlider = noise.var("control-setting:Desolation-iron-arcblob-noise:size:multiplier")
-Export.ironArcBlobNoiseAmplitude = Export.ironArcBlobNoiseAmplitudeSlider * 15
-Export.ironArcBlobNoiseScale = Export.ironArcBlobNoiseScaleSlider * (1/200)
+Export.arcBlobNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-arcblob-noise:frequency:multiplier")
+Export.arcBlobNoiseAmplitudeSlider = noise.var("control-setting:Desolation-arcblob-noise:size:multiplier")
+Export.arcBlobNoiseAmplitude = Export.arcBlobNoiseAmplitudeSlider * 15
+Export.arcBlobNoiseScale = Export.arcBlobNoiseScaleSlider * (1/200)
 
 ------------------------------------------------------------------------
 -- Land arc leading to first iron patch
@@ -72,6 +73,32 @@ Export.ironBlobEnabled = noise.less_or_equal(noise.var("control-setting:Desolati
 Export.ironBlobMinRad = Export.ironBlobSizeSlider * 100 -- Approximate width of terrain around the iron ore patch.
 Export.ironBlobMidRad = Export.ironBlobSizeSlider * 200
 Export.ironBlobMaxRad = Export.ironBlobSizeSlider * 300
+
+------------------------------------------------------------------------
+-- Land arc leading to extra copper/tin ore
+
+Export.copperTinArcSizeSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-arc:frequency:multiplier")
+Export.copperTinArcWidthSlider = noise.var("control-setting:Desolation-coppertin-arc:size:multiplier")
+Export.copperTinArcEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-coppertin-arc:size:multiplier"), 1/6)
+
+Export.distCenterToCopperTin = Export.copperTinArcSizeSlider * 700 -- Distance from center of starting island to the center of the first copper/tin ore patch.
+Export.distCenterToCopperTinArcStart = Export.startIslandMinRad -- Distance from center of starting island to the start of the arc leading to the first iron ore patch.
+Export.distCenterToCopperTinArcCenter = (Export.distCenterToCopperTin + Export.distCenterToCopperTinArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first copper/tin ore patch.
+
+Export.copperTinArcRad = Export.distCenterToCopperTin - Export.distCenterToCopperTinArcCenter -- Radius of the circular arc around the center.
+Export.copperTinArcMinWidth = Export.copperTinArcWidthSlider * 20 -- Min width of terrain along the circular arc leading to the first copper/tin ore patch.
+Export.copperTinArcMaxWidth = Export.copperTinArcWidthSlider * 150
+Export.copperTinArcMinWidthHeightMin = 5
+
+------------------------------------------------------------------------
+-- Land blob around extra copper/tin ore
+
+Export.copperTinBlobSizeSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-blob:frequency:multiplier")
+Export.copperTinBlobEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-coppertin-blob:size:multiplier"), 1/6)
+
+Export.copperTinBlobMinRad = Export.copperTinBlobSizeSlider * 60 -- Approximate width of terrain around the copper/tin ore patch.
+Export.copperTinBlobMidRad = Export.copperTinBlobSizeSlider * 130
+Export.copperTinBlobMaxRad = Export.copperTinBlobSizeSlider * 200
 
 ------------------------------------------------------------------------
 -- Resource patches

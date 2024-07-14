@@ -27,7 +27,7 @@ local resourceNoise = noise.define_noise_function(function(x, y, tile, map)
 end)
 
 ------------------------------------------------------------------------
--- Iron
+-- Iron on starting island, at the end of the iron circular arc.
 
 -- Define a starting patch iron factor, between 0 and 1. This is used for both probability and richness.
 -- TODO maybe this should rather use spot noise?
@@ -67,6 +67,9 @@ data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise
 end)
 
 ------------------------------------------------------------------------
+-- Copper and tin on starting island, at the end of the copper+tin circular arc.
+
+------------------------------------------------------------------------
 -- All resources that fade in at a certain distance from the starting island.
 
 -- TODO I want these to be partially dependent on elevation, so they spawn near the centers of islands, not overlapping the edges of islands.
@@ -86,7 +89,7 @@ local goldOreSpotNoise = tne {
 	type = "function-application",
 	function_name = "spot-noise",
 	arguments = {
-		x = noise.var("x"),
+		x = noise.var("x"), -- TODO scale
 		y = noise.var("y"),
 		seed0 = noise.var("map_seed"),
 		seed1 = tne(Util.getNextSeed1()),
@@ -100,7 +103,7 @@ local goldOreSpotNoise = tne {
 		--spot_favorability_expression = litexp(noise.var("elevation")),
 		spot_favorability_expression = litexp(noise.define_noise_function(function(x, y, tile, map) -- This actually works very well!
 			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-			return Util.minDistToStartIslandCenterOrIronArcCenter(scale, x, y)
+			return Util.minDistToStartIsland(scale, x, y)
 		end)),
 		basement_value = tne(-6), -- TODO what is this?
 		maximum_spot_basement_radius = tne(5), -- TODO what is this? try increasing to 128
