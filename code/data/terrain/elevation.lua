@@ -133,19 +133,20 @@ local function getOtherIslandsMinElevation(scale, x, y, tile, map)
 	-- TODO move these to sliders.
 
 	-- Cut off elevation from other islands close to the starting island.
-	local centerDist = Util.minDistToStartIsland(scale, x, y)
-	local maxElevationToAvoidCenter = Util.ramp(centerDist,
-		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter,
+	local startIslandDist = Util.minDistToStartIsland(scale, x, y)
+	local maxElevationToAvoidCenter = Util.ramp(startIslandDist,
+		C.otherIslandsMinDistFromStartIsland, C.otherIslandsFadeInMidFromStartIsland,
 		-100, 100)
 	elevation = noise.min(elevation, maxElevationToAvoidCenter)
 
 	-- In addition to this min to hard-cutoff the elevation around the start island, we also add a constant to fade in islands gradually.
-	local fadeAdjustment = Util.rampDouble(centerDist,
-		C.otherIslandsMinDistFromStartIslandCenter, C.otherIslandsFadeInMidFromStartIslandCenter, C.otherIslandsFadeInEndFromStartIslandCenter,
+	local fadeAdjustment = Util.rampDouble(startIslandDist,
+		C.otherIslandsMinDistFromStartIsland, C.otherIslandsFadeInMidFromStartIsland, C.otherIslandsFadeInEndFromStartIsland,
 		-40, -20, 0)
 	elevation = elevation + fadeAdjustment
 
-	return elevation
+	return noise.if_else_chain(C.surroundingIslandsToggle, elevation, fadeAdjustment + 20)
+	--return elevation
 end
 
 local function desolationOverallElevation(x, y, tile, map)

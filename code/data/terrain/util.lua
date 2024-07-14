@@ -247,10 +247,11 @@ Export.minDistToStartIsland = function(scale, x, y)
 	local copperTinArcCenter = Export.getStartIslandCopperTinArcCenter(scale)
 	local distFromCopperTinArcCenter = Export.dist(copperTinArcCenter[1], copperTinArcCenter[2], x, y) / scale
 
-	return noise.min(distFromStartIslandCenter, distFromIronArcCenter, distFromCopperTinArcCenter)
+	return noise.min(
+		distFromStartIslandCenter - C.startIslandMaxRad,
+		distFromIronArcCenter - C.distCenterToIronArcCenter,
+		distFromCopperTinArcCenter - C.distCenterToCopperTinArcCenter)
 end
--- TODO adjust this to use the copper/tin arc.
--- TODO also adjust this to rather sum distances, producing a kind of ellipse maybe.
 
 ------------------------------------------------------------------------
 

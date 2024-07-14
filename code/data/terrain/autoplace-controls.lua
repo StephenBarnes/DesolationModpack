@@ -14,6 +14,7 @@ local newAutoplaceControlNames = {
 		-- TODO maybe remove this, rather just use the water scale.
 
 	-- TODO create autoplaces for the starting island.
+	"Desolation-surrounding-islands-toggle",
 
 	"Desolation-arcblob-noise",
 

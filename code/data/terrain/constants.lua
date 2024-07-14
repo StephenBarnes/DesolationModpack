@@ -28,15 +28,12 @@ Export.startIslandCopperTinMaxDeviationAngle = 0.2 * Export.pi -- On starting is
 -- Other islands, around the starting island
 -- These are also used for the starting cold patch.
 
--- We don't place other islands too close to the center of the starting island.
-Export.otherIslandsMinDistFromStartIslandCenter = 600
-Export.otherIslandsFadeInMidFromStartIslandCenter = 900
-Export.otherIslandsFadeInEndFromStartIslandCenter = 1200
+-- We don't place other islands too close to the starting island.
+Export.otherIslandsMinDistFromStartIsland = 200
+Export.otherIslandsFadeInMidFromStartIsland = 300
+Export.otherIslandsFadeInEndFromStartIsland = 500
 
--- We don't place other islands too close to the center of the arc that leads to the iron ore.
-Export.otherIslandsMinDistFromIronArcCenter = 550
-Export.otherIslandsFadeInMidFromIronArcCenter = 800
-Export.otherIslandsFadeInEndFromIronArcCenter = 1100
+Export.surroundingIslandsToggle = noise.less_or_equal(1/6, noise.var("control-setting:Desolation-surrounding-islands-toggle:size:multiplier"))
 
 ------------------------------------------------------------------------
 -- Noise for the starting island's offshoots, consisting of a circular arc and a blob with some ores on it.
