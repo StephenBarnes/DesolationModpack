@@ -5,7 +5,7 @@
 -- I also want to reduce the mag sizes of shotgun cartridges, bc they currently last very long.
 
 local shotgunCartridgeItems = {
-	"copper-cartridge", -- This is the normal copper cartridge.
+	"shotgun-shell", -- This is the normal copper cartridge.
 	"bronze-cartridge",
 	"iron-cartridge",
 	"piercing-shotgun-shell", -- This is the steel cartridge.

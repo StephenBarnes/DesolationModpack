@@ -1,5 +1,6 @@
 local noise = require "noise"
 local tne = noise.to_noise_expression
+local litexp = noise.literal_expression
 
 local resourceAutoplace = require("resource-autoplace")
 
@@ -80,10 +81,36 @@ data.raw.resource["uranium-ore"].autoplace = resourceAutoplace.resource_autoplac
 	regular_rq_factor_multiplier = 1
 }
 
---data.raw.resource["gold-ore"].autoplace.probability_expression = {
---	type = "function-application",
---	function_name = "factorio-basic-resource-noise",
---}
+--log(serpent.block(data.raw.resource["uranium-ore"].autoplace.probability_expression))
+local goldOreSpotNoise = tne {
+	type = "function-application",
+	function_name = "spot-noise",
+	arguments = {
+		x = noise.var("x"),
+		y = noise.var("y"),
+		seed0 = noise.var("map_seed"),
+		seed1 = tne(Util.getNextSeed1()),
+
+		candidate_spot_count = tne(256), -- Maybe more points will make the favorability bias work better? Default is 21.
+		density_expression = litexp(0.1), -- Makes more patches, it seems.
+		spot_quantity_expression = litexp(10000), -- Amount of resource per patch, from totalling up all the tiles.
+		spot_radius_expression = litexp(10), -- Radius of each resource patch, in tiles.
+		--spot_favorability_expression = litexp(0.5), -- TODO try adjusting to 1?
+		--spot_favorability_expression = litexp(Util.ramp(noise.var("elevation"), 30, 100, -10, 10)),
+		--spot_favorability_expression = litexp(noise.var("elevation")),
+		spot_favorability_expression = litexp(noise.define_noise_function(function(x, y, tile, map) -- This actually works very well!
+			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+			return Util.minDistToStartIslandCenterOrIronArcCenter(scale, x, y)
+		end)),
+		basement_value = tne(-6), -- TODO what is this?
+		maximum_spot_basement_radius = tne(5), -- TODO what is this? try increasing to 128
+		region_size = tne(2048), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
+			-- TODO scale with the scale slider etc.
+	},
+}
+data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}
+data.raw.resource["gold-ore"].autoplace.probability_expression = goldOreSpotNoise
+data.raw.resource["gold-ore"].autoplace.richness_expression = goldOreSpotNoise
 
 
 ------------------------------------------------------------------------
