@@ -1,9 +1,9 @@
-require("code.util.settings")
+local Settings = require("code.util.settings")
 
 -- Tweak vehicle inventory sizes.
-if startupSetting("modify-vehicle-inventories") then
+if Settings.startupSetting("modify-vehicle-inventories") then
 	function setVehicleInventorySize(category, name)
-		data.raw[category][name].inventory_size = startupSetting("inventory-size-"..name)
+		data.raw[category][name].inventory_size = Settings.startupSetting("inventory-size-"..name)
 	end
 	setVehicleInventorySize("car", "monowheel")
 	setVehicleInventorySize("car", "heavy-roller")
