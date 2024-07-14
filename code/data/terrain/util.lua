@@ -256,7 +256,7 @@ end
 
 ------------------------------------------------------------------------
 
-X.minDistToStartIsland = function(scale, x, y)
+X.getMinDistToStartIsland = function(scale, x, y)
 	local startIslandCenter = X.getStartIslandCenter(scale)
 	local distFromStartIslandCenter = X.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
 
@@ -271,6 +271,10 @@ X.minDistToStartIsland = function(scale, x, y)
 		distFromIronArcCenter - C.distCenterToIronArcCenter,
 		distFromCopperTinArcCenter - C.distCenterToCopperTinArcCenter)
 end
+X.minDistToStartIsland = noise.define_noise_function(function(x, y, tile, map)
+	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+	return X.getMinDistToStartIsland(scale, x, y)
+end)
 
 ------------------------------------------------------------------------
 

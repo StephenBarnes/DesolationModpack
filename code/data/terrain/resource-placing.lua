@@ -83,10 +83,7 @@ end
 --   0.5 - uniform
 --   Util.ramp(noise.var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
 --   noise.var("elevation") -- more likely at higher elevations
---   noise.define_noise_function(function(x, y, tile, map)
---       local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
---       return Util.minDistToStartIsland(scale, x, y)
---   end)
+--   Util.minDistToStartIsland
 
 ------------------------------------------------------------------------
 -- Iron on starting island, at the end of the iron circular arc.
@@ -139,10 +136,7 @@ local goldOreSpotNoise = makeSpotNoise {
 	density = 0.1,
 	patchResourceAmt = 10000,
 	patchRad = 10,
-	patchFavorability = noise.define_noise_function(function(x, y, tile, map)
-		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return Util.minDistToStartIsland(scale, x, y)
-	end),
+	patchFavorability = Util.minDistToStartIsland,
 	basementVal = -6,
 	maxSpotBasementRad = 5,
 	regionSize = 2048,

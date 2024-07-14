@@ -133,7 +133,7 @@ local function getOtherIslandsMinElevation(scale, x, y, tile, map)
 	-- TODO move these to sliders.
 
 	-- Cut off elevation from other islands close to the starting island.
-	local startIslandDist = Util.minDistToStartIsland(scale, x, y)
+	local startIslandDist = Util.getMinDistToStartIsland(scale, x, y)
 	local maxElevationToAvoidCenter = Util.ramp(startIslandDist,
 		C.otherIslandsMinDistFromStartIsland, C.otherIslandsFadeInMidFromStartIsland,
 		-100, 100)
