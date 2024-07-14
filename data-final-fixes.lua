@@ -17,6 +17,7 @@ require("code.data.tweaks.ammo")
 require("code.data.tweaks.tile-recipes")
 require("code.data.tweaks.fluid-containers")
 require("code.data.tweaks.electric-poles")
+require("code.data.tweaks.fish")
 
 require("code.data.tweaks.IR3.scatterbots")
 require("code.data.tweaks.IR3.starting-junkheaps")
