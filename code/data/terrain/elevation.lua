@@ -60,7 +60,7 @@ local function makeIronArcMinElevation(scale, x, y, ironNoise)
 end
 
 local function makeIronBlobMinElevation(scale, x, y, arcBlobNoise)
-	local blobCenter = Util.getStartIslandIronCenter(scale)
+	local blobCenter = Util.getStartIslandIronBlobCenter(scale)
 	local distToBlobCenter = Util.dist(x, y, blobCenter[1], blobCenter[2]) / scale
 	local blobMinElevation = Util.rampDouble(distToBlobCenter, 0, C.ironBlobMinRad * 2, C.ironBlobMinRad * 3, 10, -10, -100)
 	local blobNoise = arcBlobNoise + Util.rampDouble(distToBlobCenter, C.ironBlobMinRad, C.ironBlobMidRad, C.ironBlobMaxRad * 2,
@@ -119,7 +119,7 @@ local function getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
 	elevation = addMarkerLake(elevation, scale, startIslandCenter[1], startIslandCenter[2], x, y, 9)
 	elevation = addMarkerLake(elevation, scale, 0, 0, x, y, 5)
 
-	local ironCenter = Util.getStartIslandIronCenter(scale)
+	local ironCenter = Util.getStartIslandIronBlobCenter(scale)
 	elevation = addMarkerLake(elevation, scale, ironCenter[1], ironCenter[2], x, y, 5)
 	local copperTinCenter = Util.getStartIslandCopperTinCenter(scale)
 	elevation = addMarkerLake(elevation, scale, copperTinCenter[1], copperTinCenter[2], x, y, 5)

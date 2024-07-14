@@ -93,14 +93,15 @@ end
 
 local ironNoise = makeResourceNoise(slider("iron-ore", "size"))
 
-local startingPatchIronFactor = ironNoise + makeResourceFactorForPatch(
-	Util.getStartIslandIronCenter,
+local startingPatchIronFactor = makeResourceFactorForPatch(
+	Util.getStartIslandIronOrePatchCenter,
 	C.startIronPatchMinRad,
 	C.startIronPatchMidRad,
 	C.startIronPatchMaxRad,
 	C.startIronPatchCenterWeight)
+	-- TODO this function should probably take an argument for total amount of ore.
 
-local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
+local otherIslandIronFactor = makeSpotNoiseFactor {
 	candidateSpotCount = 32,
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
@@ -109,7 +110,7 @@ local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
 	regionSize = 2048,
 }
 
-local ironFactor = noise.if_else_chain(Util.withinStartingIsland, startingPatchIronFactor, otherIslandIronFactor)
+local ironFactor = ironNoise + noise.if_else_chain(Util.withinStartingIsland, startingPatchIronFactor, otherIslandIronFactor)
 
 data.raw.resource["iron-ore"].autoplace.probability_expression = factorToProb(ironFactor, 0.8)
 -- For some reason these always have the same radius. TODO fix. Even this doesn't work:
@@ -122,7 +123,38 @@ data.raw.resource["iron-ore"].autoplace.richness_expression = (ironFactor
 	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
 
 ------------------------------------------------------------------------
--- Coal on starting island, near the starting iron patch.
+-- Coal
+
+local coalNoise = makeResourceNoise(slider("coal", "size"))
+
+-- TODO create starting patch factor
+
+-- The "second patch" is the patch close to the starting iron patch.
+local secondPatchCoalFactor = makeResourceFactorForPatch(
+	Util.getSecondCoalCenter,
+	C.secondCoalPatchMinRad,
+	C.secondCoalPatchMidRad,
+	C.secondCoalPatchMaxRad,
+	C.secondCoalPatchCenterWeight)
+
+local startIslandCoalFactor = secondPatchCoalFactor -- TODO max it with the starting patch factor.
+
+local otherIslandCoalFactor = makeSpotNoiseFactor {
+	candidateSpotCount = 32,
+	density = 0.05,
+	patchResourceAmt = 10000, -- TODO take distance into account
+	patchRad = slider("coal", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
+	patchFavorability = noise.var("elevation"), -- TODO take something else into account, eg temperature
+	regionSize = 2048,
+}
+
+local coalFactor = coalNoise + noise.if_else_chain(Util.withinStartingIsland, startIslandCoalFactor, otherIslandCoalFactor)
+
+data.raw.resource["coal"].autoplace.probability_expression = factorToProb(coalFactor, 0.8)
+data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
+	* slider("coal", "richness")
+	* (C.coalPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake. TODO
+	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
 
 
 ------------------------------------------------------------------------

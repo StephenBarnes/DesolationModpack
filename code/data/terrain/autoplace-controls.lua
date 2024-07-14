@@ -27,6 +27,9 @@ local newAutoplaceControlNames = {
 
 	"Desolation-iron-patch",
 	"Desolation-iron-prob-center-weight",
+
+	"Desolation-second-coal-patch",
+	"Desolation-second-coal-prob-center-weight",
 }
 
 local newAutoplaceControls = {}

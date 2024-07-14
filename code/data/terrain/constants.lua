@@ -53,11 +53,11 @@ X.ironArcSizeSlider = tne(1) / noise.var("control-setting:Desolation-iron-arc:fr
 X.ironArcWidthSlider = noise.var("control-setting:Desolation-iron-arc:size:multiplier")
 X.ironArcEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-iron-arc:size:multiplier"), 1/6)
 
-X.distCenterToIron = X.ironArcSizeSlider * 1000 -- Distance from center of starting island to the center of the first iron ore patch.
+X.distCenterToIronBlob = X.ironArcSizeSlider * 1000 -- Distance from center of starting island to the center of the iron ore blob (not the center of the patch, which is offset a bit further).
 X.distCenterToIronArcStart = X.startIslandMinRad -- Distance from center of starting island to the start of the arc leading to the first iron ore patch.
-X.distCenterToIronArcCenter = (X.distCenterToIron + X.distCenterToIronArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first iron ore patch.
+X.distCenterToIronArcCenter = (X.distCenterToIronBlob + X.distCenterToIronArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first iron ore patch.
 
-X.ironArcRad = X.distCenterToIron - X.distCenterToIronArcCenter -- Radius of the circular arc around the center.
+X.ironArcRad = X.distCenterToIronBlob - X.distCenterToIronArcCenter -- Radius of the circular arc around the center.
 X.ironArcMinWidth = X.ironArcWidthSlider * 30 -- Min width of terrain along the circular arc leading to the first iron ore patch.
 X.ironArcMaxWidth = X.ironArcWidthSlider * 200
 X.ironArcMinWidthHeightMin = 5
@@ -121,6 +121,23 @@ X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 40
 X.startIronPatchCenterWeight = ironCenterWeightSlider * 6
 
 X.ironPatchDesiredAmount = 3000000
+
+------------------------------------------------------------------------
+-- Starting island coal patches
+
+-- The "second coal" is the patch close to the starting iron patch.
+local secondCoalPatchMinRadSlider = tne(1) / noise.var("control-setting:Desolation-second-coal-patch:frequency:multiplier")
+local secondCoalPatchMinMaxSlider = noise.var("control-setting:Desolation-second-coal-patch:size:multiplier")
+local secondCoalCenterWeightSlider = tne(1) / noise.var("control-setting:Desolation-second-coal-prob-center-weight:frequency:multiplier")
+-- TODO rewrite all of these to use a U.slider function.
+
+X.secondCoalPatchMinRad = secondCoalPatchMinRadSlider * 15 -- Approximate radius of the starting coal patch.
+X.secondCoalPatchMidRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 10
+X.secondCoalPatchMaxRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 30
+X.secondCoalPatchCenterWeight = secondCoalCenterWeightSlider * 6
+X.distIronToSecondCoal = X.startIronPatchMaxRad + X.secondCoalPatchMaxRad
+
+X.coalPatchDesiredAmount = 3000000
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources
