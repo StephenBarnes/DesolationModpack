@@ -23,11 +23,12 @@ local function slider(ore, dim)
 	return noise.var("control-setting:"..ore..":"..dim..":multiplier")
 end
 
-local function makeResourceNoise()
+local function makeResourceNoise(scaleMult)
 	-- Returns a multi-basis noise function to be used for a specific resource. Probably don't share between resources.
+	-- `scaleMult` should be the size slider for the resource; it's here so that ore patches maintain roughly similar shape as that slider is adjusted.
 	return noise.define_noise_function(function(x, y, tile, map)
-		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return Util.multiBasisNoise(2, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
+		local scale = scaleMult / (C.terrainScaleSlider * map.segmentation_multiplier)
+		return Util.multiBasisNoise(3, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
 	end)
 end
 
@@ -90,7 +91,7 @@ end
 ------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
 
-local ironNoise = makeResourceNoise()
+local ironNoise = makeResourceNoise(slider("iron-ore", "size"))
 
 local startingPatchIronFactor = ironNoise + makeResourceFactorForPatch(
 	Util.getStartIslandIronCenter,
@@ -103,7 +104,7 @@ local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
 	candidateSpotCount = 32,
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("iron-ore", "size") * 32, -- TODO take distance into account
+	patchRad = slider("iron-ore", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 	patchFavorability = noise.var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
