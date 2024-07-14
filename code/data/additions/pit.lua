@@ -2,8 +2,6 @@
 -- Use the images for IR3's "bottomless pit".
 -- TODO add this to the set of machines that allow unlubricated loaders. And explain that in the descriptions.
 
-log(serpent.block(data.raw["infinity-container"]["bottomless-pit"]))
-
 local pitIngredients = {{"stone-brick", 40}}
 
 data:extend({
@@ -101,7 +99,23 @@ data:extend({
 	},
 })
 
-for _, itemName in pairs({"stone", "gravel", "silica", "ice"}) do
+local pittableItems = {
+	"stone",
+	"gravel",
+	"silica",
+	"ice",
+	"copper-scrap",
+	"tin-scrap",
+	"copper-scrap",
+	"bronze-scrap",
+	"concrete-scrap",
+	"gold-scrap",
+	"lead-scrap",
+	"steel-scrap",
+	"brass-scrap",
+	"glass-scrap",
+}
+for _, itemName in pairs(pittableItems) do
 	data:extend({{
 		type = "recipe",
 		name = "pit-voiding-"..itemName,
