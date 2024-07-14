@@ -80,6 +80,11 @@ data.raw.resource["uranium-ore"].autoplace = resourceAutoplace.resource_autoplac
 	regular_rq_factor_multiplier = 1
 }
 
+--data.raw.resource["gold-ore"].autoplace.probability_expression = {
+--	type = "function-application",
+--	function_name = "factorio-basic-resource-noise",
+--}
+
 
 ------------------------------------------------------------------------
 

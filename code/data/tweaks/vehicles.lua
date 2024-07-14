@@ -17,7 +17,7 @@ if Settings.startupSetting("modify-vehicle-inventories") then
 end
 
 -- Make vehicles non-minable.
-function setUnminable(category)
+local function setUnminable(category)
 	for _, v in pairs(data.raw[category]) do
 		v.minable = nil
 	end
@@ -37,3 +37,4 @@ end
 -- TODO make it impossible to walk while you have a vehicle in your inventory! Check how it's done by mods like the radioactivity mod, or Ultracube.
 
 -- TODO undo IR3's increase in cargo wagon inventory space.
+-- TODO reduce vehicle inventory sizes more, bc I want to encourage containerization (like Freight Forwarding) and local processing. Should have like 4 slots in a train cargo wagon, but each could hold like 5x containers each with one stack of ore or whatever.
