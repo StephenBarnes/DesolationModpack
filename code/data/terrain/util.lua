@@ -112,6 +112,22 @@ X.rampDouble = function(v, v1, v2, v3, out1, out2, out3)
 		noise.less_than(v, v3), interpolated2, out3)
 end
 
+X.rampTriple = function(v, v1, v2, v3, v4, out1, out2, out3, out4)
+	local interpolationFrac1 = (v - v1) / (v2 - v1)
+	local interpolated1 = interpolationFrac1 * out2 + (1 - interpolationFrac1) * out1
+
+	local interpolationFrac2 = (v - v2) / (v3 - v2)
+	local interpolated2 = interpolationFrac2 * out3 + (1 - interpolationFrac2) * out2
+
+	local interpolationFrac3 = (v - v3) / (v4 - v3)
+	local interpolated3 = interpolationFrac3 * out4 + (1 - interpolationFrac3) * out3
+
+	return noise.if_else_chain(noise.less_than(v, v1), out1,
+		noise.less_than(v, v2), interpolated1,
+		noise.less_than(v, v3), interpolated2,
+		noise.less_than(v, v4), interpolated3, out4)
+end
+
 X.between = function(v, v1, v2, ifTrue, ifFalse)
 	-- Assumes v1 < v2.
 	return noise.if_else_chain(noise.less_than(v, v1), ifFalse,

@@ -40,12 +40,12 @@ local function makeResourceFactorForPatch(patchPosFunc, minRad, midRad, maxRad, 
 		local distFromPatch = Util.dist(pos[1], pos[2], x, y) / scale
 		return Util.rampDouble(distFromPatch,
 			minRad, midRad, maxRad,
-			centerWeight, 0, -centerWeight)
+			centerWeight, 0, -100)
 	end)
 end
 
 local function factorToProb(factor, floorProb)
-	-- Given a resource factor, return a probability of resource.
+	-- Given a resource factor, return a probability of resource. Probability lower than floorProb is set to 0.
 	return noise.if_else_chain(noise.less_than(factor, floorProb), 0, noise.clamp(factor, 0, 1))
 end
 
@@ -73,51 +73,18 @@ local ironProb = zeroOnStartIsland
 ironProb = noise.max(ironProb, factorToProb(startingPatchIronFactor, 0.8))
 
 data.raw.resource["iron-ore"].autoplace.probability_expression = ironProb
-data.raw.resource["iron-ore"].autoplace.richness_expression = startingPatchIronFactor * 400 * noise.var("control-setting:iron-ore:richness:multiplier")
+data.raw.resource["iron-ore"].autoplace.richness_expression = startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier") * (C.startIronPatchIronAmount / 2500)
+-- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake.
 
-local originalIronRichness = data.raw.resource["iron-ore"].autoplace.richness_expression
-data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise_function(function(x, y, tile, map)
-	local richness = 400 * startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier")
-	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
-end)
+--local originalIronRichness = data.raw.resource["iron-ore"].autoplace.richness_expression
+--data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise_function(function(x, y, tile, map)
+--	local richness = 400 * startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier")
+--	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
+--end)
 
 ------------------------------------------------------------------------
 -- Coal on starting island, near the starting iron patch.
 
-local startingPatchIronFactor = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	local startingIronPos = Util.getStartIslandIronCenter(scale)
-	local distFromStartIron = Util.dist(startingIronPos[1], startingIronPos[2], x, y) / scale
-	local factor = Util.rampDouble(distFromStartIron,
-		C.startIronPatchMinRad, C.startIronPatchMidRad, C.startIronPatchMaxRad,
-		C.startIronPatchCenterWeight, 0, -C.startIronPatchCenterWeight)
-	return factor + ironNoise
-end)
-
-local originalIronProb = data.raw.resource["iron-ore"].autoplace.probability_expression
-data.raw.resource["iron-ore"].autoplace.probability_expression = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	local modifiedIronProb = originalIronProb
-
-	-- Layer that's 0 on the starting island, 1 everywhere else.
-	-- This says probability should always be 0 on the starting island, so no patches.
-	local maxProbForStartIsland = noise.if_else_chain(Util.withinStartIsland(scale, x, y), 0, 1)
-	modifiedIronProb = noise.min(maxProbForStartIsland, modifiedIronProb)
-
-	-- Layer that's high at the starting iron patch, 0 everywhere else.
-	local minProbForStartWithNoise = noise.clamp(startingPatchIronFactor, 0, 1)
-	local floorProb = 0.8 -- Set probability to 0 if it's below this value, so we don't get spatterings of ore like the spray can tool in MS Paint.
-	minProbForStartWithNoise = noise.if_else_chain(noise.less_than(minProbForStartWithNoise, floorProb), 0, minProbForStartWithNoise)
-	modifiedIronProb = noise.max(minProbForStartWithNoise, modifiedIronProb)
-
-	return modifiedIronProb
-end)
-
-local originalIronRichness = data.raw.resource["iron-ore"].autoplace.richness_expression
-data.raw.resource["iron-ore"].autoplace.richness_expression = noise.define_noise_function(function(x, y, tile, map)
-	local richness = 400 * startingPatchIronFactor * noise.var("control-setting:iron-ore:richness:multiplier")
-	return noise.if_else_chain(noise.less_than(1, richness), richness, originalIronRichness)
-end)
 
 ------------------------------------------------------------------------
 -- Copper and tin on starting island, at the end of the copper+tin circular arc.
