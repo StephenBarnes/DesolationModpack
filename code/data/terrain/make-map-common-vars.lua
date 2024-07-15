@@ -78,10 +78,21 @@ U.nameNoiseExprXY("start-island-iron-blob-center",
 U.nameNoiseExprXY("start-island-iron-arc-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-iron-blob-angle"), C.distCenterToIronArcCenter))
 
+local ironCoalShiftScale = 30
+local ironCoalShift = { -- Just to make it a bit more random.
+	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale, var("map_seed"), 842),
+	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale, var("map_seed"), 141),
+}
 U.nameNoiseExprXY("start-island-iron-patch-center",
-	U.moveVarInDirScaled("start-island-iron-blob-center", var("iron-blob-to-iron-patch-angle"), (C.distIronToSecondCoal / 2)))
+	U.shiftScaled(
+		U.moveVarInDirScaled("start-island-iron-blob-center", var("iron-blob-to-iron-patch-angle"),
+			(C.distIronToSecondCoal / 2)),
+		ironCoalShift))
 U.nameNoiseExprXY("start-island-second-coal-center",
-	U.moveVarInDirScaled("start-island-iron-blob-center", var("iron-blob-to-iron-patch-angle") + C.pi, (C.distIronToSecondCoal / 2)))
+	U.shiftScaled(
+		U.moveVarInDirScaled("start-island-iron-blob-center", var("iron-blob-to-iron-patch-angle") + C.pi,
+			(C.distIronToSecondCoal / 2)),
+		ironCoalShift))
 
 ------------------------------------------------------------------------
 

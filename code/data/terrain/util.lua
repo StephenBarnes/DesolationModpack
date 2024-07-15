@@ -162,6 +162,13 @@ X.distVars = function(var1, var2)
 	return X.dist(x1, y1, x2, y2)
 end
 
+X.shiftScaled = function(xy, shift)
+	return {
+		xy[1] + shift[1] * var("scale"),
+		xy[2] + shift[2] * var("scale"),
+	}
+end
+
 X.ramp = function(v, v1, v2, out1, out2)
 	-- If v < v1, then return out1. If v > v2, then return out2. Otherwise interpolate between out1 and out2.
 	-- We should have v1 < v2, but not necessarily out1 < out2.
