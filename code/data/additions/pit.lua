@@ -16,8 +16,8 @@ data:extend({
 		name = "pit",
 		type = "furnace",
 		minable = {
-			mining_time = data.raw["infinity-container"]["bottomless-pit"].minable.mining_time,
-			results = pitIngredients,
+			mining_time = 0.5,
+			result = "pit",
 		},
 		source_inventory_size = 1,
 		result_inventory_size = 0,
