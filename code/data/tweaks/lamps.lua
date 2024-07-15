@@ -44,26 +44,26 @@ Recipe.setIngredients("small-lamp", {
 	{"copper-gate", 1}, -- Thermionic tube
 	{"glass", 1},
 	{"iron-plate", 2},
-	{"copper-cable", 2},
 	{"iron-rivet", 4},
+	{"copper-cable", 2},
 })
 Recipe.setIngredients("deadlock-large-lamp", {
 	{"copper-gate", 4},
 	{"glass", 4},
 	{"iron-plate", 8},
-	{"copper-cable", 2},
 	{"iron-rivet", 8},
+	{"copper-cable", 2},
 })
 Recipe.setIngredients("deadlock-floor-lamp", {
 	{"copper-gate", 8},
 	{"glass", 4},
 	{"iron-plate", 4},
-	{"copper-cable-heavy", 2},
 	{"iron-rivet", 8},
+	{"copper-cable-heavy", 2},
 })
 
 -- Move copper wire tech to earlier, bc I want to put it in the copper-lamp recipe.
-Tech.addRecipeToTech("copper-cable", "ir-copper-working-2")
+Tech.addRecipeToTech("copper-cable", "ir-copper-working-1", 5)
 Tech.removeRecipeFromTech("copper-cable", "ir-steam-power")
 
 -- Move optics (electric light) tech, should depend on electricity, not on electronics 1.

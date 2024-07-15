@@ -19,3 +19,5 @@ Recipe.setIngredients("stone-furnace", {{"stone-brick", 32}})
 Recipe.setResults("stone-furnace", {{"stone-furnace", 1}})
 Recipe.setIngredients("stone-charcoal-kiln", {{"stone-brick", 24}})
 Recipe.setResults("stone-charcoal-kiln", {{"stone-charcoal-kiln", 1}})
+
+-- TODO make the laser recipe for red circuits cheaper in materials, or make it produce like 4 red circuits instead of 2. Bc currently it adds a lot of complexity (laser assemblers, nitrogen) for only like a 2x increase in speed, I think. TODO analyze this.
