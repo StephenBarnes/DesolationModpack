@@ -12,7 +12,7 @@ end
 local originalTempExpr = data.raw["noise-expression"].temperature.expression
 local newTempExpr = noise.define_noise_function(function(x, y, tile, map)
 	-- Reduce temperature around the starting island.
-	local centerDist = Util.minDistToStartIsland
+	local centerDist = noise.var("dist-to-start-island-center")
 	local tempAdjustmentDueToCenter = Util.ramp(centerDist,
 		C.otherIslandsMinDistFromStartIsland, C.otherIslandsFadeInMidFromStartIsland,
 		-150, 50)

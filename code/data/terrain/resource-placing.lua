@@ -87,7 +87,7 @@ end
 --   0.5 - uniform
 --   Util.ramp(noise.var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
 --   noise.var("elevation") -- more likely at higher elevations
---   Util.minDistToStartIsland
+--   noise.var("dist-to-start-island-center")
 
 ------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
@@ -193,7 +193,7 @@ local goldOreSpotNoise = makeSpotNoiseFactor {
 	density = 0.1,
 	patchResourceAmt = 10000,
 	patchRad = 10,
-	patchFavorability = Util.minDistToStartIsland,
+	patchFavorability = noise.var("dist-to-start-island-center"),
 	regionSize = 2048,
 }
 data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}

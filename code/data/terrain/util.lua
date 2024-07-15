@@ -1,3 +1,10 @@
+-- Utils for terrain/resource generation.
+-- Note much of this will change when Factorio 2.0 is released.
+--   Here's an example of what it will look like: https://gist.github.com/Genhis/b4c88f47bb39e06a0739a1c177e13d4a
+--   I think we won't need that many changes actually.
+--     Could probably even make/use an adapter library that rewrites stuff like noise.if_else_chain to just return wrapped strings.
+
+
 local noise = require "noise"
 local tne = noise.to_noise_expression
 
@@ -140,6 +147,7 @@ end
 -- But then we'd have to do our programming under certain constraints. For example, to return the center of the starting island, we'd have to use noise.make_point_list instead of just a Lua array.
 -- Hmm, tried it; I think rather don't do it.
 -- Like, even noise.define_noise_function(function(x, y, tile, map) .. end) uses separate x and y, rather than a noise array-expression.
+-- Actually, looks like the array construction will be removed in Factorio 2.0.
 
 X.spawnToStartIslandCenterAngle = X.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
 
@@ -279,7 +287,7 @@ end
 
 ------------------------------------------------------------------------
 
-X.getMinDistToStartIsland = function(scale, x, y)
+local getMinDistToStartIsland = function(scale, x, y)
 	local startIslandCenter = X.getStartIslandCenter(scale)
 	local distFromStartIslandCenter = X.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
 
@@ -294,11 +302,28 @@ X.getMinDistToStartIsland = function(scale, x, y)
 		distFromIronArcCenter - C.distCenterToIronArcCenter,
 		distFromCopperTinArcCenter - C.distCenterToCopperTinArcCenter)
 end
-X.minDistToStartIsland = noise.define_noise_function(function(x, y, tile, map)
+local minDistToStartIsland = noise.define_noise_function(function(x, y, tile, map)
 	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	return X.getMinDistToStartIsland(scale, x, y)
+	return getMinDistToStartIsland(scale, x, y)
 end)
 
 ------------------------------------------------------------------------
+
+X.registerNoiseVars = function()
+	-- This function registers named noise-expression prototypes, so that we can use them in multiple places.
+	-- Before Factorio 2.0 release, this should improve performance, because it de-duplicates repeated subtrees.
+	-- After Factorio 2.0 release, change this to register noise-function prototypes, or local-functions, etc.
+	-- I looked it up, and Lua's require() will only run any given file once; dofile() runs each time.
+	--   But still, rather put these registrations in a function, to be more organized and in case I eg import it in control stage in the future or whatever.
+	data:extend({
+		{
+			type = "noise-expression",
+			name = "dist-to-start-island-center",
+			intended_property = "dist-to-start-island-center",
+			expression = minDistToStartIsland,
+		},
+		-- TODO register more.
+	})
+end
 
 return X

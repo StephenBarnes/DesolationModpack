@@ -1,5 +1,5 @@
 data.raw["map-gen-presets"]["default"]["Desolation"] = {
-    order = "Desolation",
+    order = "2001",
     basic_settings = {
         property_expression_names = {
 			--["control-setting:moisture:bias"] = 0.05, -- Moisture bias
