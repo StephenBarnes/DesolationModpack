@@ -32,6 +32,26 @@ if settings.startup["Desolation-unminable-trains"] then
 	setUnminable("fluid-wagon")
 end
 
+-- Make the big vehicles stronger.
+data.raw.car["heavy-roller"].max_health = 1500 -- originally 700
+data.raw.car["heavy-roller"].resistances = {
+	{ type = "acid", decrease = 0, percent = 50 },
+	{ type = "explosion", decrease = 10, percent = 75 },
+	{ type = "fire", decrease = 0, percent = 75 },
+	{ type = "impact", decrease = 0, percent = 100 }, -- TODO checking this
+	{ type = "physical", decrease = 1, percent = 50 },
+}
+data.raw.car["heavy-picket"].max_health = 3000 -- originally 3000
+data.raw.car["heavy-picket"].resistances = {
+	{ type = "acid", decrease = 0, percent = 90 },
+	{ type = "explosion", decrease = 10, percent = 75 },
+	{ type = "fire", decrease = 0, percent = 75 },
+	{ type = "impact", decrease = 0, percent = 100 }, -- TODO checking this
+	{ type = "physical", decrease = 3, percent = 50 },
+}
+
+-- TODO maybe complete impact resistance for the heavy roller and picket?
+
 -- TODO make vehicles more expensive to produce as well, like x10 cost, so you don't just place a new one every time.
 
 -- TODO make it impossible to walk while you have a vehicle in your inventory! Check how it's done by mods like the radioactivity mod, or Ultracube.
