@@ -1,12 +1,15 @@
 local noise = require "noise"
 local tne = noise.to_noise_expression
 local litexp = noise.literal_expression
+local var = noise.var
 
 local resourceAutoplace = require("resource-autoplace")
 
-local Util = require("code.data.terrain.util")
+local U = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
 
+
+U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-start-island-rim"), 200 * var("scale")))
 
 ------------------------------------------------------------------------
 -- Map colors
@@ -20,7 +23,7 @@ data.raw.resource["iron-ore"].map_color = {r=0, g=0.5, b=1}
 -- Common functions for resources.
 
 local function slider(ore, dim)
-	return noise.var("control-setting:"..ore..":"..dim..":multiplier")
+	return var("control-setting:"..ore..":"..dim..":multiplier")
 end
 
 local function makeResourceNoise(scaleMult)
@@ -28,21 +31,19 @@ local function makeResourceNoise(scaleMult)
 	-- `scaleMult` should be the size slider for the resource; it's here so that ore patches maintain roughly similar shape as that slider is adjusted.
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = scaleMult / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return Util.multiBasisNoise(3, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
+		return U.multiBasisNoise(3, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
 	end)
 end
 
-local function makeResourceFactorForPatch(patchPosFunc, minRad, midRad, maxRad, centerWeight)
+local function makeResourceFactorForPatch(patchPos, minRad, midRad, maxRad, centerWeight)
 	-- Makes a resource factor, which is a value used for both probability and richness of the given resource.
 	-- This is for a patch at a specific position. So use `noise.max` to combine with other factors.
-	-- Argument `patchPosFunc` is a function that returns the position of the patch, given scale.
 	-- This doesn't have noise added yet. So make noise with makeResourceNoise(), and add it to these.
 	-- From this factor, obtain probability by clamping it to [0, 1] and then setting it to 0 below floor prob.
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-		local pos = patchPosFunc(scale)
-		local distFromPatch = Util.dist(pos[1], pos[2], x, y) / scale
-		return Util.rampDouble(distFromPatch,
+		local distFromPatch = U.dist(patchPos[1], patchPos[2], x, y) / scale
+		return U.rampDouble(distFromPatch,
 			minRad, midRad, maxRad,
 			centerWeight, 0, -100)
 	end)
@@ -53,11 +54,6 @@ local function factorToProb(factor, floorProb)
 	return noise.if_else_chain(noise.less_than(factor, floorProb), 0, noise.clamp(factor, 0, 1))
 end
 
-local zeroOnStartIsland = noise.if_else_chain(Util.withinStartingIsland, 0, 10000)
--- Noise expression that's 0 on the starting island, high number everywhere else.
--- Should be min'd with the resource factor that spawns stuff outside the starting island, then max'd with the resource factors that spawn patches inside the starting island.
--- Actually, rather than using this, just use a noise.if_else_chain.
-
 local function makeSpotNoiseFactor(params)
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
@@ -67,8 +63,8 @@ local function makeSpotNoiseFactor(params)
 			arguments = {
 				x = x / scale,
 				y = y / scale,
-				seed0 = noise.var("map_seed"),
-				seed1 = tne(Util.getNextSeed1()),
+				seed0 = var("map_seed"),
+				seed1 = tne(U.getNextSeed1()),
 
 				candidate_spot_count = tne(params.candidateSpotCount), -- Maybe more points will make the favorability bias work better? Default is 21.
 				density_expression = litexp(params.density), -- Makes more patches, it seems.
@@ -85,9 +81,9 @@ local function makeSpotNoiseFactor(params)
 end
 -- Example patchFavorability:
 --   0.5 - uniform
---   Util.ramp(noise.var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
---   noise.var("elevation") -- more likely at higher elevations
---   noise.var("dist-to-start-island-center")
+--   Util.ramp(var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
+--   var("elevation") -- more likely at higher elevations
+--   var("dist-to-start-island-center")
 
 ------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
@@ -95,7 +91,7 @@ end
 local ironNoise = makeResourceNoise(slider("iron-ore", "size"))
 
 local startingPatchIronFactor = makeResourceFactorForPatch(
-	Util.getStartIslandIronOrePatchCenter,
+	U.varXY("start-island-iron-patch-center"),
 	C.startIronPatchMinRad,
 	C.startIronPatchMidRad,
 	C.startIronPatchMaxRad,
@@ -107,11 +103,11 @@ local otherIslandIronFactor = makeSpotNoiseFactor {
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("iron-ore", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
-	patchFavorability = noise.var("elevation"), -- TODO take something else into account, eg temperature
+	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
 
-local ironFactor = ironNoise + noise.if_else_chain(Util.withinStartingIsland, startingPatchIronFactor, otherIslandIronFactor)
+local ironFactor = ironNoise + noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
 
 data.raw.resource["iron-ore"].autoplace.probability_expression = factorToProb(ironFactor, 0.8)
 -- For some reason these always have the same radius. TODO fix. Even this doesn't work:
@@ -132,7 +128,7 @@ local coalNoise = makeResourceNoise(slider("coal", "size"))
 
 -- The "second patch" is the patch close to the starting iron patch.
 local secondPatchCoalFactor = makeResourceFactorForPatch(
-	Util.getSecondCoalCenter,
+	U.varXY("start-island-second-coal-center"),
 	C.secondCoalPatchMinRad,
 	C.secondCoalPatchMidRad,
 	C.secondCoalPatchMaxRad,
@@ -145,11 +141,11 @@ local otherIslandCoalFactor = makeSpotNoiseFactor {
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("coal", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
-	patchFavorability = noise.var("elevation"), -- TODO take something else into account, eg temperature
+	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
 
-local coalFactor = coalNoise + noise.if_else_chain(Util.withinStartingIsland, startIslandCoalFactor, otherIslandCoalFactor)
+local coalFactor = coalNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
 
 data.raw.resource["coal"].autoplace.probability_expression = factorToProb(coalFactor, 0.8)
 data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
@@ -193,7 +189,7 @@ local goldOreSpotNoise = makeSpotNoiseFactor {
 	density = 0.1,
 	patchResourceAmt = 10000,
 	patchRad = 10,
-	patchFavorability = noise.var("dist-to-start-island-center"),
+	patchFavorability = var("dist-to-start-island-center"),
 	regionSize = 2048,
 }
 data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}

@@ -1,0 +1,1 @@
+require("code.data.terrain.make-map-common-vars")

@@ -10,13 +10,13 @@ local function clamp_temperature(raw_temperature)
 end
 
 local originalTempExpr = data.raw["noise-expression"].temperature.expression
+-- TODO rather than modifying the original expression, rather create a fully custom expression.
 local newTempExpr = noise.define_noise_function(function(x, y, tile, map)
 	-- Reduce temperature around the starting island.
-	local centerDist = noise.var("dist-to-start-island-center")
-	local tempAdjustmentDueToCenter = Util.ramp(centerDist,
+	local centerDist = noise.var("dist-to-start-island-rim")
+	local tempAdjustmentDueToCenter = Util.ramp(centerDist / noise.var("scale"),
 		C.otherIslandsMinDistFromStartIsland, C.otherIslandsFadeInMidFromStartIsland,
-		-150, 50)
-	tempAdjustmentDueToCenter = noise.clamp(tempAdjustmentDueToCenter, -150, 0)
+		-200, 0)
 
 	local newTemp = originalTempExpr + tempAdjustmentDueToCenter
 	return noise.ident(clamp_temperature(newTemp))

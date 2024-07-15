@@ -22,7 +22,7 @@ if originalPictures ~= nil and #originalPictures == 16 then
 end
 
 -- Change frequency of some entities.
-data.raw["simple-entity"]["rock-huge-white"].autoplace.max_probability = 0.1 -- originally 0.525
+data.raw["simple-entity"]["rock-huge-white"].autoplace.max_probability = 0.05 -- originally 0.525
 
 -- Reduce frequency of some of the decorations.
 data.raw["optimized-decorative"]["cane-cluster"].autoplace.max_probability = 0.1

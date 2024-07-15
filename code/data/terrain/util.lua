@@ -1,4 +1,6 @@
 -- Utils for terrain/resource generation.
+-- This file should only contain general-purpose stuff, not code dealing with specific terrain shapes and positions etc. Rather put that in make-map-common-vars.lua.
+
 -- Note much of this will change when Factorio 2.0 is released.
 --   Here's an example of what it will look like: https://gist.github.com/Genhis/b4c88f47bb39e06a0739a1c177e13d4a
 --   I think we won't need that many changes actually.
@@ -7,10 +9,41 @@
 
 local noise = require "noise"
 local tne = noise.to_noise_expression
+local var = noise.var
 
 local C = require("code.data.terrain.constants")
 
 local X = {} -- Exported values.
+
+------------------------------------------------------------------------
+-- We register some of our computations as named noise-expression prototypes, so that we can use them in multiple places.
+-- Before Factorio 2.0 release, this should improve performance, because it de-duplicates repeated subtrees.
+-- After Factorio 2.0 release, change this to register noise-function prototypes, or local-functions, or whatever we use then.
+
+X.namedNoiseVarPrototype = function(name, expr)
+	return {
+		type = "noise-expression",
+		name = name,
+		intended_property = name,
+		expression = expr,
+	}
+end
+
+X.nameNoiseExpr = function(name, expr)
+	data:extend({X.namedNoiseVarPrototype(name, expr)})
+end
+
+-- For dealing with {x,y} positions, we register separate vars for x and y.
+-- We could use an array-expression (within the noise system). But that's getting removed in Factorio 2.0.
+X.nameNoiseExprXY = function(name, exprs)
+	data:extend({
+		X.namedNoiseVarPrototype(name.."-x", exprs[1]),
+		X.namedNoiseVarPrototype(name.."-y", exprs[2]),
+	})
+end
+
+------------------------------------------------------------------------
+-- Basis noise layers
 
 local nextSeed1 = 0
 X.getNextSeed1 = function()
@@ -24,9 +57,9 @@ X.basisNoise = function(inScale, outScale)
 		type = "function-application",
 		function_name = "factorio-basis-noise",
 		arguments = {
-			x = noise.var("x") + C.artifactShift,
-			y = noise.var("y"),
-			seed0 = noise.var("map_seed"),
+			x = var("x") + C.artifactShift,
+			y = var("y"),
+			seed0 = var("map_seed"),
 			seed1 = tne(X.getNextSeed1()),
 			input_scale = inScale,
 			output_scale = outScale,
@@ -42,9 +75,9 @@ X.multiBasisNoise = function(octaves, inScaleMultiplier, outScaleDivisor, inScal
 		type = "function-application",
 		function_name = "factorio-quick-multioctave-noise",
 		arguments = {
-			x = noise.var("x") + C.artifactShift,
-			y = noise.var("y"),
-			seed0 = noise.var("map_seed"),
+			x = var("x") + C.artifactShift,
+			y = var("y"),
+			seed0 = var("map_seed"),
 			seed1 = tne(X.getNextSeed1()),
 			input_scale = tne(inScale),
 			output_scale = tne(outScale),
@@ -56,8 +89,7 @@ X.multiBasisNoise = function(octaves, inScaleMultiplier, outScaleDivisor, inScal
 end
 
 X.multiBasisNoiseSlow = function(levels, inScaleMultiplier, outScaleDivisor, inScale, outScale)
-	-- Makes multioctave noise function by layering multiple basis noise functions.
-	-- Output of first (strongest) layer will generally be between -outScale and +outScale. So all layers together will be like double that range, very roughly.
+	-- Slower, Lua version of multiBasisNoise. Don't use this, just leaving it here bc it works and shows what multiBasisNoise does.
 	local result = X.basisNoise(inScale, outScale)
 	for i = 2, levels do
 		inScale = inScale * inScaleMultiplier
@@ -70,21 +102,64 @@ end
 
 ------------------------------------------------------------------------
 
+X.varXY = function(varName)
+	return { var(varName.."-x"), var(varName.."-y") }
+end
+
 X.mapRandBetween = function(a, b, seed, steps)
 	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
 	return a + (b - a) * (noise.fmod(seed, steps) / steps)
 end
 
-X.moveInDirection = function(x, y, angle, distance)
+X.moveInDir = function(x, y, angle, distance)
 	return {
 		x + distance * noise.cos(angle),
 		y + distance * noise.sin(angle),
 	}
 end
 
+X.moveVarInDir = function(varName, angle, distance)
+	local x = var(varName.."-x")
+	local y = var(varName.."-y")
+	return X.moveInDir(x, y, angle, distance)
+end
+
+X.moveInDirScaled = function(x, y, angle, distance)
+	return {
+		noise.define_noise_function(function(otherX, otherY, tile, map)
+			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+			return x + distance * noise.cos(angle) * scale
+		end),
+		noise.define_noise_function(function(otherX, otherY, tile, map)
+			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+			return y + distance * noise.sin(angle) * scale
+		end),
+	}
+end
+
+X.moveVarInDirScaled = function(varName, angle, distance)
+	local x = var(varName.."-x")
+	local y = var(varName.."-y")
+	return X.moveInDirScaled(x, y, angle, distance)
+end
+
 X.dist = function(x1, y1, x2, y2)
 	return ((noise.absolute_value(x1 - x2) ^ 2) + (noise.absolute_value(y1 - y2) ^ 2)) ^ tne(0.5)
 	-- No idea why the absolute value is necessary, but it seems to be necessary.
+end
+
+X.distVarXY = function(var1, x2, y2)
+	local x1 = var(var1.."-x")
+	local y1 = var(var1.."-y")
+	return X.dist(x1, y1, x2, y2)
+end
+
+X.distVars = function(var1, var2)
+	local x1 = var(var1.."-x")
+	local y1 = var(var1.."-y")
+	local x2 = var(var2.."-x")
+	local y2 = var(var2.."-y")
+	return X.dist(x1, y1, x2, y2)
 end
 
 X.ramp = function(v, v1, v2, out1, out2)
@@ -142,188 +217,5 @@ X.between = function(v, v1, v2, ifTrue, ifFalse)
 end
 
 ------------------------------------------------------------------------
-
--- We could rewrite these so that, instead of being functions, they're just noise expressions. Eg instead of getStartIslandCenter(scale), we could set startIslandCenter = noise.define_noise_function(...).
--- But then we'd have to do our programming under certain constraints. For example, to return the center of the starting island, we'd have to use noise.make_point_list instead of just a Lua array.
--- Hmm, tried it; I think rather don't do it.
--- Like, even noise.define_noise_function(function(x, y, tile, map) .. end) uses separate x and y, rather than a noise array-expression.
--- Actually, looks like the array construction will be removed in Factorio 2.0.
-
-X.spawnToStartIslandCenterAngle = X.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, noise.var("map_seed"), 23)
-
-X.getStartIslandCenter = function(scale)
-	local angle = X.spawnToStartIslandCenterAngle
-	return X.moveInDirection(tne(0), tne(0), angle, C.spawnToStartIslandCenter * scale)
-end
-
-X.isWithinStartIsland = function(scale, x, y)
-	local startIslandCenter = X.getStartIslandCenter(scale)
-	local distFromStartIsland = X.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
-	return noise.less_than(distFromStartIsland, C.startIslandAndOffshootsMaxRad)
-end
-X.withinStartingIsland = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	return X.isWithinStartIsland(scale, x, y)
-end)
-
-------------------------------------------------------------------------
-
-local function getCenterToIronBlobAngle()
-	local baseAngle = X.spawnToStartIslandCenterAngle -- Use this angle, so it's on the other side of the island from where player spawns.
-	return baseAngle + X.mapRandBetween(-C.startIslandIronMaxDeviationAngle, C.startIslandIronMaxDeviationAngle, noise.var("map_seed"), 17)
-end
-
-local function getIronBlobToIronPatchAngle()
-	return X.mapRandBetween(0, 2 * C.pi, noise.var("map_seed"), 15)
-end
-
-X.getDistToIronArc = function(scale, x, y)
-	local ironAngle = getCenterToIronBlobAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	local arcStart = X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcStart * scale)
-	local arcCenter = X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
-	local arcEnd = X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronBlob * scale)
-
-	-- If the angle of the point to the arc center is within the arc, then distance to the arc depends on distance to the center.
-	-- Otherwise, it's the min of the distances to the start and end.
-
-	local distToArcStart = X.dist(x, y, arcStart[1], arcStart[2])
-	local distToArcEnd = X.dist(x, y, arcEnd[1], arcEnd[2])
-	local distToArcCenter = X.dist(x, y, arcCenter[1], arcCenter[2])
-
-	local endpointDist = noise.min(distToArcStart, distToArcEnd)
-	local arcBodyDist = noise.absolute_value(distToArcCenter - C.ironArcRad * scale)
-
-	--local angleToArcCenter = noise.atan2(arcCenter[2] - y, arcCenter[1] - x)
-	--local angleWithinArg = noise.less_than(angleToArcCenter, 3.1416 / 2)
-
-	-- Instead of checking the angle, since these are always half-circles, we can just check what side the point is on from the islandCenter-ironCenter line.
-	-- This is easier than checking angle, since angle could be negative or go over 2pi if we adjust it, etc.
-
-	local dx1 = x - arcEnd[1]
-	local dy1 = y - arcEnd[2]
-	local dx2 = x - islandCenter[1]
-	local dy2 = y - islandCenter[2]
-	local whichSide = noise.less_than(0.5, X.mapRandBetween(0, 1, noise.var("map_seed"), 7))
-	local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
-	local isLeftSide = 1 - isRightSide
-	local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
-
-	return noise.if_else_chain(isCorrectSide, arcBodyDist, endpointDist)
-end
-
-X.getStartIslandIronBlobCenter = function(scale)
-	-- Note this is the center of the blob, not the center of the actual ore patch.
-	local ironAngle = getCenterToIronBlobAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronBlob * scale)
-end
-
-X.getStartIslandIronOrePatchCenter = function(scale)
-	local angleFromBlob = getIronBlobToIronPatchAngle()
-	local ironBlobCenter = X.getStartIslandIronBlobCenter(scale)
-	return X.moveInDirection(ironBlobCenter[1], ironBlobCenter[2], angleFromBlob, (C.distIronToSecondCoal / 2) * scale)
-end
-
-X.getStartIslandIronArcCenter = function(scale)
-	local ironAngle = getCenterToIronBlobAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], ironAngle, C.distCenterToIronArcCenter * scale)
-end
-
-------------------------------------------------------------------------
-
-local function getCenterToCopperTinAngle()
-	local ironAngle = getCenterToIronBlobAngle()
-	local angleDelta = X.mapRandBetween(-C.startIslandCopperTinMaxDeviationAngle, C.startIslandCopperTinMaxDeviationAngle, noise.var("map_seed"), 9)
-	return ironAngle + angleDelta + C.pi
-end
-
-X.getDistToCopperTinArc = function(scale, x, y)
-	local angle = getCenterToCopperTinAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	local arcStart = X.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTinArcStart * scale)
-	local arcCenter = X.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTinArcCenter * scale)
-	local arcEnd = X.moveInDirection(islandCenter[1], islandCenter[2], angle, C.distCenterToCopperTin * scale)
-
-	local distToArcStart = X.dist(x, y, arcStart[1], arcStart[2])
-	local distToArcEnd = X.dist(x, y, arcEnd[1], arcEnd[2])
-	local distToArcCenter = X.dist(x, y, arcCenter[1], arcCenter[2])
-
-	local endpointDist = noise.min(distToArcStart, distToArcEnd)
-	local arcBodyDist = noise.absolute_value(distToArcCenter - C.copperTinArcRad * scale)
-
-	local dx1 = x - arcEnd[1]
-	local dy1 = y - arcEnd[2]
-	local dx2 = x - islandCenter[1]
-	local dy2 = y - islandCenter[2]
-	local whichSide = noise.less_than(0.5, X.mapRandBetween(0, 1, noise.var("map_seed"), 7))
-	local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
-	local isLeftSide = 1 - isRightSide
-	local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
-
-	return noise.if_else_chain(isCorrectSide, arcBodyDist, endpointDist)
-end
-
-X.getStartIslandCopperTinCenter = function(scale)
-	local copperTinAngle = getCenterToCopperTinAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], copperTinAngle, C.distCenterToCopperTin * scale)
-end
-
-X.getStartIslandCopperTinArcCenter = function(scale)
-	local copperTinAngle = getCenterToCopperTinAngle()
-	local islandCenter = X.getStartIslandCenter(scale)
-	return X.moveInDirection(islandCenter[1], islandCenter[2], copperTinAngle, C.distCenterToCopperTinArcCenter * scale)
-end
-
-------------------------------------------------------------------------
-
-X.getSecondCoalCenter = function(scale)
-	local angleFromBlob = getIronBlobToIronPatchAngle() + C.pi + X.mapRandBetween(-0.2 * C.pi, 0.2 * C.pi, noise.var("map_seed"), 55)
-	local ironBlobCenter = X.getStartIslandIronBlobCenter(scale)
-	return X.moveInDirection(ironBlobCenter[1], ironBlobCenter[2], angleFromBlob, (C.distIronToSecondCoal / 2) * scale)
-end
-
-------------------------------------------------------------------------
-
-local getMinDistToStartIsland = function(scale, x, y)
-	local startIslandCenter = X.getStartIslandCenter(scale)
-	local distFromStartIslandCenter = X.dist(startIslandCenter[1], startIslandCenter[2], x, y) / scale
-
-	local ironArcCenter = X.getStartIslandIronArcCenter(scale)
-	local distFromIronArcCenter = X.dist(ironArcCenter[1], ironArcCenter[2], x, y) / scale
-
-	local copperTinArcCenter = X.getStartIslandCopperTinArcCenter(scale)
-	local distFromCopperTinArcCenter = X.dist(copperTinArcCenter[1], copperTinArcCenter[2], x, y) / scale
-
-	return noise.min(
-		distFromStartIslandCenter - C.startIslandMaxRad,
-		distFromIronArcCenter - C.distCenterToIronArcCenter,
-		distFromCopperTinArcCenter - C.distCenterToCopperTinArcCenter)
-end
-local minDistToStartIsland = noise.define_noise_function(function(x, y, tile, map)
-	local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-	return getMinDistToStartIsland(scale, x, y)
-end)
-
-------------------------------------------------------------------------
-
-X.registerNoiseVars = function()
-	-- This function registers named noise-expression prototypes, so that we can use them in multiple places.
-	-- Before Factorio 2.0 release, this should improve performance, because it de-duplicates repeated subtrees.
-	-- After Factorio 2.0 release, change this to register noise-function prototypes, or local-functions, etc.
-	-- I looked it up, and Lua's require() will only run any given file once; dofile() runs each time.
-	--   But still, rather put these registrations in a function, to be more organized and in case I eg import it in control stage in the future or whatever.
-	data:extend({
-		{
-			type = "noise-expression",
-			name = "dist-to-start-island-center",
-			intended_property = "dist-to-start-island-center",
-			expression = minDistToStartIsland,
-		},
-		-- TODO register more.
-	})
-end
 
 return X
