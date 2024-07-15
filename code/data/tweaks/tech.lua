@@ -13,8 +13,13 @@ Tech.addTechDependency("automation-2", "logistics-2")
 Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
 Tech.replacePrereq("ir-mining-2", "ir-electronics-3", "ir-inserters-3")
 
--- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinding" and adding as prereq to military (which is a prereq of autogun turrets).
-Tech.addTechDependency("ir-bronze-telescope", "military")
+-- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinders" and adding as prereq to military (which is a prereq of autogun turrets).
+--Tech.addTechDependency("ir-bronze-telescope", "military")
+-- Actually, rather renaming it to "optics", and then making it a prereq of electric lamps.
+Tech.addTechDependency("ir-bronze-telescope", "optics")
+
+-- Night-vision shouldn't depend on electric lighting, and should be pretty easy to get early on.
+Tech.setPrereqs("night-vision-equipment", {"modular-armor"})
 
 -- To avoid heavy roller and heavy armor from being dead ends, I'm going to merge them into the bronze furnace tech.
 -- Also move the heavy bronze plate recipe, since that makes sense thematically, though it's breaking with all the other material milestone techs.

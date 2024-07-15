@@ -21,6 +21,7 @@
 	, "gore-updated >= 0.19.0"
 	, "HarderBasicLogistics >= 1.2.1"
 	, "IR3_steam_locomotive >= 0.1.2"
+	, "cargo-ships >= 0.2.7"
 
 	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 	, "IntermodalContainers >= 2.0.8"

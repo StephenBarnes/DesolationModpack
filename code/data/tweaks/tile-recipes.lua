@@ -14,3 +14,5 @@ multiplyRecipeCosts("landfill", 5)
 multiplyRecipeCosts("cliff-explosives", 5)
 -- TODO check - base mod has landfill from 15x gravel and 15x silica.
 -- TODO rather just do this in Harder Basic Logistics, maybe.
+
+-- TODO rather custom-tune the recipe costs of these. The above code was written before I decided to actually try hard with this modpack.

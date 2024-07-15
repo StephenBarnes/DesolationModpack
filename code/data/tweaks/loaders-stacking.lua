@@ -25,8 +25,6 @@ Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "proces
 -- Since logistics-2 now has lubricant as prereq, let's add some of it to the recipes, same as vanilla has for blue belts.
 data.raw.recipe["fast-transport-belt"].category = data.raw.recipe["express-transport-belt"].category -- Needed to have a fluid ingredient
 Recipe.addIngredients("fast-transport-belt", {{type="fluid", name="lubricant", amount=5}})
-Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
-Tech.addRecipeToTech("ir3-loader-steam", "logistics")
 
 -- For IR3 Loaders and Stacking mod
 ------------------------------------------------------------------------
