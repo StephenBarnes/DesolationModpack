@@ -95,7 +95,7 @@ data:extend({
 		result = "pit",
 		result_count = 1,
 		energy_required = 2,
-		enabled = true,
+		enabled = false, -- This says, hide it at start of game.
 	},
 })
 
@@ -114,6 +114,7 @@ local pittableItems = {
 	"steel-scrap",
 	"brass-scrap",
 	"glass-scrap",
+	"wood-chips",
 }
 for _, itemName in pairs(pittableItems) do
 	data:extend({{
@@ -135,5 +136,8 @@ for _, itemName in pairs(pittableItems) do
 		energy_required = 0.01,
 	}})
 end
+
+local Tech = require("code.util.tech")
+Tech.addRecipeToTech("pit", "stone-wall") -- This is the stone-working tech.
 
 -- TODO add pit to the stone tech
