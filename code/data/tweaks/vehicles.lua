@@ -58,3 +58,7 @@ data.raw.car["heavy-picket"].resistances = {
 
 -- TODO undo IR3's increase in cargo wagon inventory space.
 -- TODO reduce vehicle inventory sizes more, bc I want to encourage containerization (like Freight Forwarding) and local processing. Should have like 4 slots in a train cargo wagon, but each could hold like 5x containers each with one stack of ore or whatever.
+
+-- TODO increase the .weight of the heavy roller and picket, so they cause more damage to stuff they crash into.
+-- TODO also try making them bigger? Could maybe just scale up the sprites and collision box by a factor of 2.
+-- "immune to belts" -> "immune to belts, trees, rocks, walls, and other lesser vehicles. Unfortunately, its lack of weaponry and maneuverability make it less effective for mounting assaults on enemy nests."
