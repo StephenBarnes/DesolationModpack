@@ -30,9 +30,9 @@ X.startIslandCopperTinMaxDeviationAngle = 0.2 * X.pi -- On starting island, an a
 -- These are also used for the starting cold patch.
 
 -- We don't place other islands too close to the starting island.
-X.otherIslandsMinDistFromStartIsland = 200
-X.otherIslandsFadeInMidFromStartIsland = 300
-X.otherIslandsFadeInEndFromStartIsland = 500
+X.otherIslandsMinDistFromStartIsland = 150
+X.otherIslandsFadeInMidFromStartIsland = 250
+X.otherIslandsFadeInEndFromStartIsland = 400
 
 X.surroundingIslandsToggle = noise.less_or_equal(1/6, noise.var("control-setting:Desolation-surrounding-islands-toggle:size:multiplier"))
 
