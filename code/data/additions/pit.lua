@@ -8,6 +8,9 @@ data:extend({
 	{
 		type = "recipe-category",
 		name = "pit-voiding",
+		icons = data.raw.item["bottomless-pit"].icons,
+		icon_size = 64,
+		icon_mipmaps = 4,
 	},
 	{
 		name = "pit",
@@ -127,13 +130,14 @@ for _, itemName in pairs(pittableItems) do
 		allow_decomposition = false,
 		allow_as_intermediate = false,
 		allow_intermediates = false,
-		icon = data.raw.item[itemName].icon,
-		icon_size = data.raw.item[itemName].icon_size,
-		icon_mipmaps = data.raw.item[itemName].icon_mipmaps,
+		icons = data.raw.item["bottomless-pit"].icons,
+		icon_size = 64,
+		icon_mipmaps = 4,
 		subgroup = "storage", -- This is item subgroup, not recipe subgroup. Usually it would be the main product's subgroup, but there's no product here.
 		order = "a",
 		results = {},
 		energy_required = 0.01,
+		localised_name = {"recipe-name.pit-voiding", {"item-name."..itemName}},
 	}})
 end
 
