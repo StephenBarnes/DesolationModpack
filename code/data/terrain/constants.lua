@@ -109,7 +109,7 @@ X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 3
 X.resourceNoiseInputScale = resourceNoiseScaleSlider * 30
 
 ------------------------------------------------------------------------
--- First iron patch
+-- Starting island iron/coal patches at the end of the circular arc
 
 local ironPatchMinRadSlider = tne(1) / noise.var("control-setting:Desolation-iron-patch:frequency:multiplier")
 local ironPatchMinMaxSlider = noise.var("control-setting:Desolation-iron-patch:size:multiplier")
@@ -119,11 +119,7 @@ X.startIronPatchMinRad = ironPatchMinRadSlider * 20 -- Approximate radius of the
 X.startIronPatchMidRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 13
 X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 40
 X.startIronPatchCenterWeight = ironCenterWeightSlider * 6
-
 X.ironPatchDesiredAmount = 3000000
-
-------------------------------------------------------------------------
--- Starting island coal patches
 
 -- The "second coal" is the patch close to the starting iron patch.
 local secondCoalPatchMinRadSlider = tne(1) / noise.var("control-setting:Desolation-second-coal-patch:frequency:multiplier")
@@ -135,9 +131,26 @@ X.secondCoalPatchMinRad = secondCoalPatchMinRadSlider * 15 -- Approximate radius
 X.secondCoalPatchMidRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 10
 X.secondCoalPatchMaxRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 30
 X.secondCoalPatchCenterWeight = secondCoalCenterWeightSlider * 6
+X.coalPatchDesiredAmount = 3000000
+
 X.distIronToSecondCoal = (X.startIronPatchMaxRad + X.secondCoalPatchMaxRad) * 0.7
 
-X.coalPatchDesiredAmount = 3000000
+------------------------------------------------------------------------
+-- Starting island copper/tin blob at the end of the circular arc
+
+X.secondCopperPatchMinRad = 10
+X.secondCopperPatchMidRad = X.secondCopperPatchMinRad + 6
+X.secondCopperPatchMaxRad = X.secondCopperPatchMinRad + 20
+X.secondCopperPatchCenterWeight = 6
+X.secondCopperPatchDesiredAmount = 1000000
+
+X.secondTinPatchMinRad = 8
+X.secondTinPatchMidRad = X.secondTinPatchMinRad + 5
+X.secondTinPatchMaxRad = X.secondTinPatchMinRad + 15
+X.secondTinPatchCenterWeight = 6
+X.secondTinPatchDesiredAmount = 1000000
+
+X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondCopperPatchMaxRad) * 0.7
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

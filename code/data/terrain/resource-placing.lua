@@ -110,9 +110,6 @@ local otherIslandIronFactor = makeSpotNoiseFactor {
 local ironFactor = ironNoise + noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
 
 data.raw.resource["iron-ore"].autoplace.probability_expression = factorToProb(ironFactor, 0.8)
--- For some reason these always have the same radius. TODO fix. Even this doesn't work:
---data.raw.resource["iron-ore"].autoplace.probability_expression = noise.if_else_chain(Util.withinStartingIsland, factorToProb(ironFactor, 0.8),
---noise.less_than(0, ironFactor), 1, 0)
 
 data.raw.resource["iron-ore"].autoplace.richness_expression = (ironFactor
 	* slider("iron-ore", "richness")
@@ -156,12 +153,47 @@ data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
 ------------------------------------------------------------------------
 -- Copper
 
--- TODO
+local copperNoise = makeResourceNoise(slider("copper-ore", "size"))
+
+local secondCopperFactor = makeResourceFactorForPatch(
+	U.varXY("start-island-second-copper-patch-center"),
+	C.secondCopperPatchMinRad,
+	C.secondCopperPatchMidRad,
+	C.secondCopperPatchMaxRad,
+	C.secondCopperPatchCenterWeight)
+	-- TODO this function should probably take an argument for total amount of ore.
+	-- TODO abstract this stuff so we rather have a "patch" object with min/mid/max rad and center weight.
+
+-- TODO implement other-island copper factor, and starting patch.
+
+local copperFactor = copperNoise + secondCopperFactor
+
+data.raw.resource["copper-ore"].autoplace.probability_expression = factorToProb(copperFactor, 0.8)
+data.raw.resource["copper-ore"].autoplace.richness_expression = (copperFactor
+	* slider("copper-ore", "richness")
+	* (C.secondCopperPatchDesiredAmount / 2500))
 
 ------------------------------------------------------------------------
 -- Tin
 
--- TODO
+local tinNoise = makeResourceNoise(slider("tin-ore", "size"))
+
+local secondTinFactor = makeResourceFactorForPatch(
+	U.varXY("start-island-second-tin-patch-center"),
+	C.secondTinPatchMinRad,
+	C.secondTinPatchMidRad,
+	C.secondTinPatchMaxRad,
+	C.secondTinPatchCenterWeight)
+	-- TODO this function should probably take an argument for total amount of ore.
+
+-- TODO implement other-island tin factor, and starting patch.
+
+local tinFactor = tinNoise + secondTinFactor
+
+data.raw.resource["tin-ore"].autoplace.probability_expression = factorToProb(tinFactor, 0.8)
+data.raw.resource["tin-ore"].autoplace.richness_expression = (tinFactor
+	* slider("tin-ore", "richness")
+	* (C.secondTinPatchDesiredAmount / 2500))
 
 ------------------------------------------------------------------------
 -- Stone

@@ -32,9 +32,6 @@ U.nameNoiseExpr("center-to-iron-blob-angle",
 	var("spawn-to-start-island-center-angle") -- Use this angle, so it's on the other side of the island from where player spawns.
 	+ U.mapRandBetween(C.startIslandIronMaxDeviationAngle, -C.startIslandIronMaxDeviationAngle, var("map_seed"), 14))
 
-U.nameNoiseExpr("iron-blob-to-iron-patch-angle",
-	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 43))
-
 U.nameNoiseExpr("dist-to-iron-arc",
 	noise.define_noise_function(function(x, y, tile, map)
 		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
@@ -77,6 +74,9 @@ U.nameNoiseExprXY("start-island-iron-blob-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-iron-blob-angle"), C.distCenterToIronBlob))
 U.nameNoiseExprXY("start-island-iron-arc-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-iron-blob-angle"), C.distCenterToIronArcCenter))
+
+U.nameNoiseExpr("iron-blob-to-iron-patch-angle",
+	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 43))
 
 local ironCoalShiftScale = 30
 local ironCoalShift = { -- Just to make it a bit more random.
@@ -123,7 +123,7 @@ U.nameNoiseExpr("dist-to-copper-tin-arc",
 		local dy1 = y - arcEndXY[2]
 		local dx2 = x - var("start-island-center-x")
 		local dy2 = y - var("start-island-center-y")
-		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1, var("map_seed"), 7))
+		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1, var("map_seed"), 472))
 		local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
 		local isLeftSide = 1 - isRightSide
 		local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
@@ -136,6 +136,26 @@ U.nameNoiseExprXY("start-island-copper-tin-blob-center",
 
 U.nameNoiseExprXY("start-island-copper-tin-arc-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-copper-tin-blob-angle"), C.distCenterToCopperTinArcCenter))
+
+U.nameNoiseExpr("copper-tin-blob-to-copper-patch-angle",
+	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 9932))
+	-- TODO refactor mapRandBetween to just assume map seed, and find the mod itself.
+
+local copperTinShiftScale = 15
+local copperTinShift = {
+	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 199),
+	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 1812),
+}
+U.nameNoiseExprXY("start-island-second-copper-patch-center",
+	U.shiftScaled(
+		U.moveVarInDirScaled("start-island-copper-tin-blob-center", var("copper-tin-blob-to-copper-patch-angle"),
+			(C.distSecondCopperToTin / 2)),
+		copperTinShift))
+U.nameNoiseExprXY("start-island-second-tin-patch-center",
+	U.shiftScaled(
+		U.moveVarInDirScaled("start-island-copper-tin-blob-center", var("copper-tin-blob-to-copper-patch-angle") + C.pi,
+			(C.distSecondCopperToTin / 2)),
+		copperTinShift))
 
 ------------------------------------------------------------------------
 
