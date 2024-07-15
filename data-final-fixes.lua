@@ -20,6 +20,7 @@ require("code.data.tweaks.electric-poles")
 require("code.data.tweaks.fish")
 require("code.data.tweaks.alien-biomes")
 require("code.data.tweaks.trees")
+require("code.data.tweaks.wood")
 
 require("code.data.tweaks.IR3.scatterbots")
 require("code.data.tweaks.IR3.starting-junkheaps")
