@@ -24,6 +24,8 @@ require("code.data.tweaks.IR3.starting-junkheaps")
 require("code.data.tweaks.IR3.misc")
 require("code.data.tweaks.IR3.geothermal")
 
+require("code.data.additions.transfer-plate-unlocks-tech")
+
 require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so it runs after the production scrap mod.
 
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
