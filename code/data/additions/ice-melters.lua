@@ -288,7 +288,7 @@ data:extend({
 			{
 				base_area = 1,
 				height = 2,
-				base_level = -1,
+				base_level = 1,
 				pipe_covers = data.raw.boiler.boiler.fluid_box.pipe_covers,
 				pipe_connections =
 					{ -- Seems like they must be input/output, not "input-output", for crafting machines, including furnaces. No passthrough.
