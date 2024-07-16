@@ -19,10 +19,10 @@ end
 
 local function triggerInspiration(force)
 	force.technologies["logistics"].researched = true
-	-- Do the same stuff as that IR3 Inspirations mod.
+	-- Do the same stuff as IR3 Inspiration mod.
 	force.print(
 		{
-			"gui.schematic-inspiration", -- defined in IR3 Inspirations mod
+			"gui.schematic-inspiration", -- defined in IR3 Inspiration mod
 			"[img=technology/logistics]",
 			game.technology_prototypes.logistics.localised_name
 		},
