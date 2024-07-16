@@ -29,7 +29,8 @@ data.raw["optimized-decorative"]["cane-cluster"].autoplace.max_probability = 0.1
 data.raw["optimized-decorative"]["cane-single"].autoplace.max_probability = 0.1
 data.raw["optimized-decorative"]["puddle-decal"].autoplace.max_probability = 0.03 -- originally 0.1
 	-- Also looks like they have a typo, puddle-decal.lua line says infleunce instead of influence. Notified them on Discord.
-data.raw["optimized-decorative"]["sand-decal-white"].autoplace.max_probability = 0.03
+data.raw["optimized-decorative"]["sand-decal-white"].autoplace.max_probability = 0.01
+data.raw["optimized-decorative"]["stone-decal-white"].autoplace.max_probability = 0.02
 data.raw["optimized-decorative"]["brown-asterisk-mini"].autoplace.max_probability = 0.1
 	-- This has the color as prefix instead of suffix, I think because it's a vanilla plant.
 data.raw["optimized-decorative"]["red-asterisk"].autoplace.max_probability = 0.1
