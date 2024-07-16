@@ -184,11 +184,30 @@ end
 -- For Intermodal Containers
 ------------------------------------------------------------------------
 
--- So, defaults are definitely unsuitable, eg the first tier of containerization machine requires only red and green science, but depends on stack inserter tech which needs red+green+blue+purple.
--- I think I want them to not require stack inserters at all, at the bottom tier. Rather make it require multiple ordinary inserters, or fast inserters.
--- I also want to do away with the separate techs for each tier, that's ugly.
--- I think we should move them into the logistics techs too, like for AAI loaders.
--- Their recipes should use the large frame of corresponding resource tier.
+-- I want them to use iron, not steel, bc they're unlocked with robotics 1.
+-- We could make them require steel, it's just a bit later than iron.
+-- But I want to make rail right after iron, and rail goes nicely with containerization, so no, rather use iron.
+
+-- For the ingredients of the container:
+-- The box has 12 edges and 5 faces (excluding top), and we want to use IR3's intermediates. So maybe 5x plates, 12x rod, 4x rivet.
+-- I want them to be somewhat expensive, with expensive losses from disassembly recipe too. Otherwise you just disassemble them to multiple products, then scrap all of those and re-smelt to get back ingots.
+-- To make them somewhat expensive, let's make them use reinforced iron plates.
+-- If it's 5 plate + 12 rod + 4 rivets, that's 13 ingots each. Machines for 1/sec are 1 big assembler, 24 small assemblers (mostly for rods).
+-- If it's 5 reinforced plate + 5 rivets, that's 15 ingots each. Machines for 1/sec are 16 big assemblers, 32 small assemblers.
+--   In that case, we use 5 rivets for container, and 5 rivets for reinforced plates (1 rivet per reinf plate).
+--   I like this, since we could return the rivets and plates to the player.
+--   Each reinforced plate is 1 rivet + 2 plates. So if a container is 5 reinf plates + 5 rivets, disassembly could yield 8-10 plates and 6-10 rivets.
+--   So expected loss is 1 plate and 2 rivets, which comes to 2 ingots per disassembly.
+--   I'm probably going to give train wagons like 10 storage slots, stack size for ore is 20, and it's like 5 containers per stack each holding half the original item's stack size. So per train trip, that's 10*5 = 50 containers. Disassembly of one train-wagon-load is then a loss of 100 iron ingots.
+-- Hm, TODO balance all this better with some actual playtesting, after deciding on stack sizes etc.
+
+Recipe.setIngredients("ic-container", { -- Ingredients chosen bc the box has 12 edges and 5 faces (excluding top), and we want to use IR3's intermediates.
+	--{"iron-plate", 5},
+	--{"iron-stick", 12},
+	--{"iron-rivet", 4}
+	{"iron-plate-heavy", 5},
+	{"iron-rivet", 5},
+})
 
 data:extend({
 	-- Add a subgroup for containers and containerization machines.
@@ -212,11 +231,10 @@ data:extend({
 		-- Scrap is 0.55 scrap, though user could set it to like 1.1 or so.
 		-- I think the best solution is to cap the scrap produced by the container recipe, to at most the expected loss when disassembling, which I'm setting at (chance of losing a rivet) * (ingots per rivet) = 0.5 * 0.5 = 0.25. Set it to 0.15 to be safe.
 		results = {
-			{ name = "iron-plate", amount = 5 },
-			{ name = "iron-stick", amount_min = 0, amount_max = 12 },
-			{ name = "iron-rivet", amount_min = 0, amount_max = 4 }, -- You have a 50% chance of losing 1 of the rivets used to make the container.
+			{ name = "iron-plate", amount_min = 8, amount_max = 10 },
+			{ name = "iron-rivet", amount_min = 6, amount_max = 10 },
 		},
-		main_product = "iron-stick",
+		main_product = "iron-plate",
 		localised_name = { "recipe-name.ic-container-disassembly" },
 		allow_as_intermediate = false,
 		allow_intermediates = false, -- So it doesn't try something stupid like making and then disassembling a container.
@@ -231,25 +249,18 @@ data:extend({
 				scale = 0.5
 			},
 			{ icon = data.raw.item["ic-container"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.4,  shift = { 0, -4 } },
-			{ icon = data.raw.item["iron-stick"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { -7, 7 } },
-			{ icon = data.raw.item["iron-plate"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { 7, 7 } },
+			{ icon = data.raw.item["iron-plate"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { -7, 7 } },
+			{ icon = data.raw.item["iron-rivet"].icon,   icon_size = 64, icon_mipmaps = 4, scale = 0.35, shift = { 7, 7 } },
 		},
 	}
 })
 
-Recipe.setIngredients("ic-container", { -- Ingredients chosen bc the box has 12 edges and 5 faces (excluding top), and we want to use IR3's intermediates.
-	{"iron-plate", 5},
-	{"iron-stick", 12},
-	{"iron-rivet", 4}
-})
-data.raw.item["ic-container"].subgroup = "containerization"
-data.raw.item["ic-containerization-machine-1"].subgroup = "containerization"
-data.raw.item["ic-containerization-machine-2"].subgroup = "containerization"
-data.raw.item["ic-containerization-machine-3"].subgroup = "containerization"
-data.raw.item["ic-container"].order = "2-1"
-data.raw.item["ic-containerization-machine-1"].order = "1-1"
-data.raw.item["ic-containerization-machine-2"].order = "1-2"
-data.raw.item["ic-containerization-machine-3"].order = "1-3"
+-- Re containerization machines / packers.
+-- So, defaults are definitely unsuitable, eg the first tier of containerization machine requires only red and green science, but depends on stack inserter tech which needs red+green+blue+purple.
+-- I think I want them to not require stack inserters at all, at the bottom tier. Rather make it require multiple ordinary inserters, or fast inserters.
+-- I also want to do away with the separate techs for each tier, that's ugly.
+-- I think we should move them into the logistics techs too, like for AAI loaders.
+-- Their recipes should use the large frame of corresponding resource tier.
 
 Tech.hideTech("ic-containerization-1")
 Tech.hideTech("ic-containerization-2")
@@ -288,3 +299,13 @@ Recipe.setIngredients("ic-containerization-machine-3", {
 for i = 1, 3 do
 	data.raw.item["ic-containerization-machine-"..i].localised_description = {"shared-description.ic-containerization-machine-ALL", {"belt-tier-name."..i}}
 end
+
+-- Change tabs and ordering in crafting menu.
+data.raw.item["ic-container"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-1"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-2"].subgroup = "containerization"
+data.raw.item["ic-containerization-machine-3"].subgroup = "containerization"
+data.raw.item["ic-container"].order = "2-1"
+data.raw.item["ic-containerization-machine-1"].order = "1-1"
+data.raw.item["ic-containerization-machine-2"].order = "1-2"
+data.raw.item["ic-containerization-machine-3"].order = "1-3"

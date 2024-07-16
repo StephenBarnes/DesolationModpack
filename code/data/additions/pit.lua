@@ -2,7 +2,7 @@
 -- Use the images for IR3's "bottomless pit".
 -- TODO add this to the set of machines that allow unlubricated loaders. And explain that in the descriptions.
 
-local pitIngredients = {{"stone-brick", 40}}
+local pitIngredients = {{"stone-brick", 20}}
 
 data:extend({
 	{
