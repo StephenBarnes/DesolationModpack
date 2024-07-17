@@ -31,6 +31,13 @@
 
 	, "RecipeBook >= 3.5.8"
 	, "factoryplanner >= 1.1.78"
+	, "CursorEnhancements >= 2.1.1"
+	, "GhostPlacerExpress >= 0.1.9"
+	, "PickerDollies >= 1.2.6"
+	, "HandCraftingPriorityPlus >= 1.1.1"
+	, "RemoteConfiguration >= 1.2.6"
+	, "StatsGui >= 1.5.0"
+	, "SpidertronEnhancements >= 1.9.2"
 
 	, "creative-mod >= 1.8.2"
 	],
