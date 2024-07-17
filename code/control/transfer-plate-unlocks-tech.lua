@@ -9,11 +9,9 @@
 -- So, a bit of a kludge: check whether inventory changes in the same tick.
 -- When player steps onto a plate, we record the tick. Then when inventory changes, check if it's still the same tick.
 
-local lastTransferPlateTick = -1000
-
 local function onScriptEvent(event)
 	if event.effect_id == "ir-transfer-plate" then
-		lastTransferPlateTick = game.tick
+		global.lastTransferPlateTick = game.tick
 	end
 end
 
@@ -36,7 +34,7 @@ local function triggerInspiration(force)
 end
 
 local function onPlayerMainInventoryChanged(event)
-	if game.tick == lastTransferPlateTick then
+	if game.tick == global.lastTransferPlateTick then
 		local player = game.players[event.player_index]
 		if player ~= nil and player.valid and player.force ~= nil and player.force.valid then
 			if (player.force.technologies["ir-basic-research"].researched
@@ -56,6 +54,14 @@ local function register()
 	script.on_event(defines.events.on_player_main_inventory_changed, onPlayerMainInventoryChanged)
 end
 
+local function onInitOrLoad()
+	if global.lastTransferPlateTick == nil then
+		global.lastTransferPlateTick = -1000
+	end
+end
+
 return {
 	register = register,
+	onInit = onInitOrLoad,
+	onLoad = onInitOrLoad,
 }
