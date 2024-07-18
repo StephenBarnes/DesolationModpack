@@ -9,7 +9,7 @@ local function onResearchFinished(event)
 			log("Optics was researched, but the force is nil. This shouldn't happen.")
 			return
 		end
-		force.print("Because you have just researched Surveying, your starting island will be automatically scanned over the next few minutes.") -- TODO localise
+		force.print({"Desolation-message.scan-start-island-begin", {"technology-name.ir-bronze-telescope"}})
 		if global.startIslandScan == nil then
 			global.startIslandScan = {}
 		end
@@ -50,13 +50,18 @@ end
 local function updateScanOnce(force, scanInfo)
 	if #scanInfo.frontierChunks == 0 then
 		scanInfo.hasFinished = true
-		force.print("Starting island scan finished in " .. ticksToStr(game.tick - scanInfo.firstTick) .. ".") -- TODO localise
+		force.print({"Desolation-message.scan-start-island-end", ticksToStr(game.tick - scanInfo.firstTick)})
 		scanInfo.alreadyAddedChunks = nil -- Just to free the memory.
 		return
 	end
-	--force.chart(game.surfaces[1], {{0, 0}, {0, 0}})
 	-- Scan one chunk in the frontier.
 	local chunkToScan = table.remove(scanInfo.frontierChunks, 1)
+	if (math.abs(chunkToScan[1]) + math.abs(chunkToScan[2])) > globalParams.scanStartIslandMaxTaxicabDistance then
+		-- Refuse to scan chunks that are too far away. This can happen if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
+		log("ERROR: Refusing to scan chunk " .. chunkToStr(chunkToScan) .. " because it's very far away. Probably due to terrain settings that connect all islands, or remove the sea, etc.")
+		return
+	end
+
 	local chunkArea = getChunkArea(chunkToScan)
 	force.chart(game.surfaces[1], chunkArea)
 	if globalParams.printStartIslandScanEveryChunk then
