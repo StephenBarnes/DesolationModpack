@@ -14,7 +14,7 @@ local C = require("code.data.terrain.constants")
 local U = require("code.data.terrain.util")
 
 U.nameNoiseExpr("Desolation-temperature",
-	U.multiBasisNoise(3, 2, 2,
+	U.multiBasisNoise(9, 2, 2,
 		C.temperatureScale / var("scale"),
 		tne(13) * C.temperatureAmplitude)
 	)
