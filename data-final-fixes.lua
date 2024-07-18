@@ -8,6 +8,7 @@ require("code.data.terrain.create-mapgen-preset")
 require("code.data.terrain.rubber-trees-edit")
 require("code.data.terrain.cold-starting-region")
 require("code.data.terrain.resource-placing")
+require("code.data.terrain.tile-autoplace")
 
 require("code.data.tweaks.stack-sizes")
 require("code.data.tweaks.tech")
@@ -29,3 +30,12 @@ require("code.data.additions.transfer-plate-unlocks-tech")
 require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so it runs after the production scrap mod.
 
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
+
+-- Temporary: printing out tile prototype info
+for _, tile in pairs(data.raw.tile) do
+	if tile.autoplace ~= nil then
+		log("Tile with autoplace: " .. (tile.name or ""))
+	else
+		log("Tile with nil autoplace: " .. (tile.name or ""))
+	end
+end

@@ -48,6 +48,7 @@ local function ticksToStr(ticks)
 end
 
 local function updateScanOnce(force, scanInfo)
+	if not force.valid then return end
 	if #scanInfo.frontierChunks == 0 then
 		scanInfo.hasFinished = true
 		force.print({"Desolation-message.scan-start-island-end", ticksToStr(game.tick - scanInfo.firstTick)})
@@ -108,8 +109,8 @@ local function onNthTick(event)
 		return
 	end
 	for forceIndex, scanInfo in pairs(global.startIslandScan) do
-		if not scanInfo.hasFinished then
-			local force = game.forces[forceIndex]
+		local force = game.forces[forceIndex]
+		if force and force.valid and scanInfo and not scanInfo.hasFinished then
 			for _ = 1, globalParams.scanStartIslandChunksPerUpdate do
 				updateScanOnce(force, scanInfo)
 			end
