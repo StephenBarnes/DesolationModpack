@@ -35,6 +35,7 @@ local treeToDisable = {
 	"dead-tree-desert",
 	"tree-wetland-k",
 	"tree-wetland-l",
+	"tree-wetland-m",
 	"tree-grassland-d",
 	"tree-grassland-e",
 	"tree-volcanic-a",

@@ -1,5 +1,5 @@
 -- Fewer fish, bc there's far too many.
-data.raw.fish.fish.autoplace.influence = 0.01 / 40 -- Default is 0.01.
+data.raw.fish.fish.autoplace.influence = 0.01 / 15 -- Default is 0.01.
 
 -- Reduce healing
 data.raw.capsule["raw-fish"].capsule_action.attack_parameters.ammo_type.action.action_delivery.target_effects[1].damage.amount = -5 -- Default is -80.

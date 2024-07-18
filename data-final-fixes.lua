@@ -39,3 +39,8 @@ for _, tile in pairs(data.raw.tile) do
 		log("Tile with nil autoplace: " .. (tile.name or ""))
 	end
 end
+--for _, tile in pairs(data.raw.tile) do
+--	if tile.autoplace ~= nil then
+--		log("Tile autoplace:" .. (serpent.block(tile.autoplace)))
+--	end
+--end
