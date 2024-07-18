@@ -1,13 +1,13 @@
 require("code.control.notify-incorrect-mapgen-preset").register()
-require("code.control.ir3-start-calls").register()
 
-local transferPlateUnlocksTech = require("code.control.transfer-plate-unlocks-tech")
-transferPlateUnlocksTech.register()
+local ir3StartCalls = require("code.control.ir3-start-calls")
+
+require("code.control.transfer-plate-unlocks-tech").register()
 
 script.on_init(function()
-	transferPlateUnlocksTech.onInit()
+	ir3StartCalls.onInit()
 end)
 
 script.on_load(function()
-	transferPlateUnlocksTech.onLoad()
+	ir3StartCalls.onLoad()
 end)

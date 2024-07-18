@@ -15,12 +15,13 @@ local editWoodInspiration = function()
 	remote.call("ir3-inspiration", "set_technologies", {["ir-basic-wood"] = woodTech})
 end
 
-function X.register()
-	script.on_init(function()
-		setIr3IntroCutscene()
-		-- Other stuff
-		--editWoodInspiration()
-	end)
+function onInitOrLoad()
+	setIr3IntroCutscene()
+	-- Other stuff
+	--editWoodInspiration()
 end
 
-return X
+return {
+	onInit = onInitOrLoad,
+	onLoad = onInitOrLoad,
+}

@@ -24,3 +24,5 @@ end
 for _, submachineGunMagazineItem in pairs(submachineGunMagazineItems) do
 	data.raw.ammo[submachineGunMagazineItem].stack_size = 10
 end
+
+-- TODO do this for rockets, grenades, etc.

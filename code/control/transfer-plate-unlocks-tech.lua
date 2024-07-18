@@ -54,14 +54,6 @@ local function register()
 	script.on_event(defines.events.on_player_main_inventory_changed, onPlayerMainInventoryChanged)
 end
 
-local function onInitOrLoad()
-	if global.lastTransferPlateTick == nil then
-		global.lastTransferPlateTick = -1000
-	end
-end
-
 return {
 	register = register,
-	onInit = onInitOrLoad,
-	onLoad = onInitOrLoad,
 }
