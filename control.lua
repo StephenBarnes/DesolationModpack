@@ -1,8 +1,10 @@
 require("code.control.notify-incorrect-mapgen-preset").register()
 
-local ir3StartCalls = require("code.control.ir3-start-calls")
-
 require("code.control.transfer-plate-unlocks-tech").register()
+
+require("code.control.start-island-scan").register()
+
+local ir3StartCalls = require("code.control.ir3-start-calls")
 
 script.on_init(function()
 	ir3StartCalls.onInit()
