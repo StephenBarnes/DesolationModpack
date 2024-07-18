@@ -5,7 +5,7 @@ require("code.data.terrain.elevation")
 require("code.data.terrain.autoplace-controls")
 require("code.data.terrain.remove-existing-mapgen-presets")
 require("code.data.terrain.create-mapgen-preset")
-require("code.data.terrain.rubber-trees-edit")
+require("code.data.terrain.remove-rubber-trees")
 require("code.data.terrain.cold-starting-region")
 require("code.data.terrain.resource-placing")
 require("code.data.terrain.tile-autoplace")
@@ -44,3 +44,7 @@ end
 --		log("Tile autoplace:" .. (serpent.block(tile.autoplace)))
 --	end
 --end
+
+for _, control in pairs(data.raw["autoplace-control"]) do
+	log("Autoplace control: " .. (control.name or ""))
+end

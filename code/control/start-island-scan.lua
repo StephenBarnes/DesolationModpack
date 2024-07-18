@@ -79,10 +79,10 @@ local function updateScanOnce(force, scanInfo)
 	end
 	if isChunkLand(chunkArea) then
 		for _, adjacentChunk in pairs({
-			{chunkToScan[1] + 1, chunkToScan[2]},
 			{chunkToScan[1] - 1, chunkToScan[2]},
-			{chunkToScan[1], chunkToScan[2] + 1},
 			{chunkToScan[1], chunkToScan[2] - 1},
+			{chunkToScan[1], chunkToScan[2] + 1},
+			{chunkToScan[1] + 1, chunkToScan[2]},
 		}) do
 			maybeAddChunk(adjacentChunk)
 		end
@@ -91,12 +91,16 @@ local function updateScanOnce(force, scanInfo)
 		-- But to scan in a circle, we'd need to sort chunks by distance from the center, which is tricky and might be slow, especially since Lua is a dumb language.
 		-- As a substitute for sorting by distance, we instead sometimes also add diagonally adjacent chunks.
 		-- Surprisingly, this works very well. Scanned area looks mostly like a circle, at the terrain scale and resolution we're working with.
-		if math.random() < 0.5 then
+		--if math.random() < 0.5 then
+		-- Actually, instead of a random number, use the parity, so it's more regular and won't get lopsided.
+		--if (chunkToScan[1] % 2) == 0 and (chunkToScan[2] % 2) == 1 then -- This produced an interesting rotated octagon pattern.
+		-- Well, that looks artificial again, so let's just do it randomly.
+		if math.random() < 0.4 then
 			for _, adjacentChunk in pairs({
-				{chunkToScan[1] + 1, chunkToScan[2] + 1},
+				{chunkToScan[1] - 1, chunkToScan[2] - 1},
 				{chunkToScan[1] + 1, chunkToScan[2] - 1},
 				{chunkToScan[1] - 1, chunkToScan[2] + 1},
-				{chunkToScan[1] - 1, chunkToScan[2] - 1},
+				{chunkToScan[1] + 1, chunkToScan[2] + 1},
 			}) do
 				maybeAddChunk(adjacentChunk)
 			end
