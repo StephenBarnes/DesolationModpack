@@ -12,6 +12,9 @@ local newAutoplaceControlNames = {
 		-- For overall terrain scale.
 		-- Not using water scale, bc that's for the scale of the water, not also the resources etc.
 		-- TODO maybe remove this, rather just use the water scale.
+	
+	"Desolation-startisland-noise",
+	"Desolation-temperature",
 
 	-- TODO create autoplaces for the starting island.
 	"Desolation-surrounding-islands-toggle",

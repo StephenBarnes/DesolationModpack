@@ -2,6 +2,7 @@
 -- TODO add settings for everything below
 
 require("code.data.terrain.elevation")
+require("code.data.terrain.temperature")
 require("code.data.terrain.autoplace-controls")
 require("code.data.terrain.remove-existing-mapgen-presets")
 require("code.data.terrain.create-mapgen-preset")

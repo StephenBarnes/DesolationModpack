@@ -32,10 +32,13 @@ local function addMarkerLake(elevation, scale, centerX, centerY, x, y, rad)
 end
 
 local function makeStartIslandMinElevation(scale, centerX, centerY, x, y)
-	local basis = U.multiBasisNoise(7, 2, 2, 1 / (scale * 200), tne(13))
+	local basis = U.multiBasisNoise(7, 2, 2, C.startIslandNoiseScale / scale, C.startIslandNoiseAmplitude)
 	local d = U.dist(centerX, centerY, x, y) / scale
-	local ramp1 = U.ramp(d, C.startIslandMinRad, C.startIslandMaxRad, 25, -30)
-	local minToPreventPuddles = U.ramp(d, C.startIslandMinRad - C.puddleMargin, C.startIslandMinRad, 10, -10)
+	local ramp1 = U.ramp(d, C.startIslandMinRad, C.startIslandMidRad, 25, -100)
+	local minToPreventPuddles = U.rampDouble(d,
+		C.startIslandMinRad - C.puddleMargin,
+		C.startIslandMinRad, C.startIslandMinRad + C.puddleMargin,
+		10, -10, -100)
 	return noise.max(ramp1 + basis, minToPreventPuddles)
 end
 
@@ -62,7 +65,7 @@ end
 
 local function makeIronBlobMinElevation(scale, x, y, arcBlobNoise)
 	local distToBlobCenter = U.distVarXY("start-island-iron-blob-center", x, y) / scale
-	local blobMinElevation = U.rampDouble(distToBlobCenter, 0, C.ironBlobMinRad * 2, C.ironBlobMinRad * 3, 10, -10, -100)
+	local blobMinElevation = U.rampDouble(distToBlobCenter, 0, C.ironBlobMinRad * 2, C.ironBlobMinRad * 3, 10, -30, -100)
 	local blobNoise = arcBlobNoise + U.rampDouble(distToBlobCenter, C.ironBlobMinRad, C.ironBlobMidRad, C.ironBlobMaxRad * 2,
 		C.arcBlobNoiseAmplitude * 2, -C.arcBlobNoiseAmplitude, -100)
 	local overallMinElevation = noise.max(blobMinElevation, blobNoise)
@@ -87,7 +90,7 @@ end
 
 local function makeCopperTinBlobMinElevation(scale, x, y, arcBlobNoise)
 	local distToBlobCenter = U.distVarXY("start-island-copper-tin-blob-center", x, y) / scale
-	local blobMinElevation = U.rampDouble(distToBlobCenter, 0, C.copperTinBlobMinRad * 2, C.copperTinBlobMinRad * 3, 10, -10, -200)
+	local blobMinElevation = U.rampDouble(distToBlobCenter, 0, C.copperTinBlobMinRad * 2, C.copperTinBlobMinRad * 3, 10, -30, -200)
 	local blobNoise = arcBlobNoise + U.rampDouble(distToBlobCenter, C.copperTinBlobMinRad, C.copperTinBlobMidRad, C.copperTinBlobMaxRad * 2,
 		C.arcBlobNoiseAmplitude * 2, -C.arcBlobNoiseAmplitude, -100)
 	local overallMinElevation = noise.max(blobMinElevation, blobNoise)
@@ -95,7 +98,7 @@ local function makeCopperTinBlobMinElevation(scale, x, y, arcBlobNoise)
 end
 
 local function getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
-	local elevation = tne(-10) -- starting elevation
+	local elevation = tne(-100) -- starting elevation
 
 	local startIslandCenterXY = U.varXY("start-island-center")
 	local startIslandMinElevation = makeStartIslandMinElevation(scale, startIslandCenterXY[1], startIslandCenterXY[2], x, y)
@@ -115,6 +118,9 @@ local function getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
 	local copperTinBlobMinElevation = makeCopperTinBlobMinElevation(scale, x, y, arcBlobNoise)
 	local copperTinMinElevation = noise.max(copperTinArcMinElevation, copperTinBlobMinElevation)
 	elevation = noise.max(elevation, copperTinMinElevation)
+
+	-- Make underwater areas a bit shallower, so there's more shallow water, so it looks more like the rest of the islands.
+	elevation = noise.if_else_chain(noise.less_than(0, elevation), elevation, elevation / 6)
 
 	elevation = addMarkerLake(elevation, scale, startIslandCenterXY[1], startIslandCenterXY[2], x, y, 9)
 	elevation = addMarkerLake(elevation, scale, 0, 0, x, y, 5)

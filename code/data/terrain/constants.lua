@@ -12,10 +12,16 @@ X.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal symmetry
 -- TODO implement sliders for these
 
 X.startIslandMinRad = 300 -- Distance from center of starting island to the closest ocean
+X.startIslandMidRad = 450
 X.startIslandMaxRad = 600 -- Distance from center of starting island to the furthest end of the starting island
 X.startIslandAndOffshootsMaxRad = 1200 -- Distance from center of starting island to the furthest end of the furthest "offshoot", currently just the iron.
 X.puddleMargin = 70 -- Distance before minRad where puddles start to appear.
 X.spawnToStartIslandCenter = 200 -- Distance from center of starting island to spawn point.
+
+X.startIslandNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-startisland-noise:frequency:multiplier")
+X.startIslandNoiseAmplitudeSlider = noise.var("control-setting:Desolation-startisland-noise:size:multiplier")
+X.startIslandNoiseAmplitude = X.startIslandNoiseAmplitudeSlider * 16
+X.startIslandNoiseScale = X.startIslandNoiseScaleSlider * (1/130)
 
 -- These angles are radians. 0 means east, pi means west or 180 degrees, 0.5 * pi means south or 90 degrees.
 -- TODO add sliders for these.
@@ -43,7 +49,7 @@ X.surroundingIslandsToggle = noise.less_or_equal(1/6, noise.var("control-setting
 
 X.arcBlobNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-arcblob-noise:frequency:multiplier")
 X.arcBlobNoiseAmplitudeSlider = noise.var("control-setting:Desolation-arcblob-noise:size:multiplier")
-X.arcBlobNoiseAmplitude = X.arcBlobNoiseAmplitudeSlider * 15
+X.arcBlobNoiseAmplitude = X.arcBlobNoiseAmplitudeSlider * 22
 X.arcBlobNoiseScale = X.arcBlobNoiseScaleSlider * (1/200)
 
 ------------------------------------------------------------------------
@@ -53,7 +59,7 @@ X.ironArcSizeSlider = tne(1) / noise.var("control-setting:Desolation-iron-arc:fr
 X.ironArcWidthSlider = noise.var("control-setting:Desolation-iron-arc:size:multiplier")
 X.ironArcEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-iron-arc:size:multiplier"), 1/6)
 
-X.distCenterToIronBlob = X.ironArcSizeSlider * 1000 -- Distance from center of starting island to the center of the iron ore blob (not the center of the patch, which is offset a bit further).
+X.distCenterToIronBlob = X.ironArcSizeSlider * 850 -- Distance from center of starting island to the center of the iron ore blob (not the center of the patch, which is offset a bit further).
 X.distCenterToIronArcStart = X.startIslandMinRad -- Distance from center of starting island to the start of the arc leading to the first iron ore patch.
 X.distCenterToIronArcCenter = (X.distCenterToIronBlob + X.distCenterToIronArcStart) / 2 -- Distance from center of starting island to the center of the arc leading to the first iron ore patch.
 
@@ -151,6 +157,16 @@ X.secondTinPatchCenterWeight = 6
 X.secondTinPatchDesiredAmount = 1000000
 
 X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondCopperPatchMaxRad) * 0.7
+
+------------------------------------------------------------------------
+-- For the buildable noise layer (which spawns buildable tiles)
+
+X.temperatureScaleSlider = noise.var("control-setting:Desolation-temperature:frequency:multiplier")
+X.temperatureAmplitudeSlider = noise.var("control-setting:Desolation-temperature:size:multiplier")
+X.temperatureAmplitude = X.temperatureAmplitudeSlider * 10
+X.temperatureScale = X.temperatureScaleSlider * (1/200)
+
+X.temperatureBias = noise.var("control-setting:aux:bias")
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources
