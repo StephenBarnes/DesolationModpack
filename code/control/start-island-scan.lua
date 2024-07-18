@@ -9,7 +9,7 @@ local function onResearchFinished(event)
 			log("Optics was researched, but the force is nil. This shouldn't happen.")
 			return
 		end
-		force.print("The starting island will be scanned over the next few minutes.") -- TODO localise
+		force.print("Because you have just researched Surveying, your starting island will be automatically scanned over the next few minutes.") -- TODO localise
 		if global.startIslandScan == nil then
 			global.startIslandScan = {}
 		end
@@ -51,6 +51,7 @@ local function updateScanOnce(force, scanInfo)
 	if #scanInfo.frontierChunks == 0 then
 		scanInfo.hasFinished = true
 		force.print("Starting island scan finished in " .. ticksToStr(game.tick - scanInfo.firstTick) .. ".") -- TODO localise
+		scanInfo.alreadyAddedChunks = nil -- Just to free the memory.
 		return
 	end
 	--force.chart(game.surfaces[1], {{0, 0}, {0, 0}})
@@ -63,6 +64,13 @@ local function updateScanOnce(force, scanInfo)
 	end
 
 	-- Update the frontier, if this scanned chunk had a non-water tile at its center.
+	local function maybeAddChunk(chunkToAdd)
+		local chunkStr = chunkToStr(chunkToAdd)
+		if not scanInfo.alreadyAddedChunks[chunkStr] then
+			table.insert(scanInfo.frontierChunks, chunkToAdd)
+			scanInfo.alreadyAddedChunks[chunkStr] = true
+		end
+	end
 	if isChunkLand(chunkArea) then
 		for _, adjacentChunk in pairs({
 			{chunkToScan[1] + 1, chunkToScan[2]},
@@ -70,10 +78,21 @@ local function updateScanOnce(force, scanInfo)
 			{chunkToScan[1], chunkToScan[2] + 1},
 			{chunkToScan[1], chunkToScan[2] - 1},
 		}) do
-			local chunkStr = chunkToStr(adjacentChunk)
-			if not scanInfo.alreadyAddedChunks[chunkStr] then
-				table.insert(scanInfo.frontierChunks, adjacentChunk)
-				scanInfo.alreadyAddedChunks[chunkStr] = true
+			maybeAddChunk(adjacentChunk)
+		end
+		-- Adding only those 4 adjacent chunks causes the scanned region to expand in a "growing diamond" shape, which looks annoyingly artificial to me.
+		-- I'd prefer to have the scanned shape look like a circle.
+		-- But to scan in a circle, we'd need to sort chunks by distance from the center, which is tricky and might be slow, especially since Lua is a dumb language.
+		-- As a substitute for sorting by distance, we instead sometimes also add diagonally adjacent chunks.
+		-- Surprisingly, this works very well. Scanned area looks mostly like a circle, at the terrain scale and resolution we're working with.
+		if math.random() < 0.5 then
+			for _, adjacentChunk in pairs({
+				{chunkToScan[1] + 1, chunkToScan[2] + 1},
+				{chunkToScan[1] + 1, chunkToScan[2] - 1},
+				{chunkToScan[1] - 1, chunkToScan[2] + 1},
+				{chunkToScan[1] - 1, chunkToScan[2] - 1},
+			}) do
+				maybeAddChunk(adjacentChunk)
 			end
 		end
 	end
