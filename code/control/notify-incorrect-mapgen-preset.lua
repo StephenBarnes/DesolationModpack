@@ -2,7 +2,7 @@
 
 local function registerRepeatingMessage()
 	script.on_nth_tick(60 * 15, function(event)
-		game.print({"message.incorrect-mapgen-preset"})
+		game.print({"Desolation-message.incorrect-mapgen-preset"})
 	end)
 end
 

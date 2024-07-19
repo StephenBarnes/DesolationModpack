@@ -19,7 +19,7 @@
 	, "ProductionScrapForIR3 >= 1.2.1"
 	, "FunkedOre >= 1.1.0"
 	, "gore-updated >= 0.19.0"
-	, "HarderBasicLogistics >= 1.2.1"
+	, "HarderBasicLogistics >= 1.2.3"
 	, "IR3_steam_locomotive >= 0.1.2"
 	, "cargo-ships >= 0.2.7"
 	, "SearchlightAssault >= 2.2.16"
