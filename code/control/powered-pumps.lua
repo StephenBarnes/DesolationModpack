@@ -8,6 +8,7 @@
 
 local replacements = {
 	["copper-pump"] = "burner-copper-pump",
+	["offshore-pump"] = "electric-offshore-pump",
 }
 
 local function onBuiltEntity(event)
