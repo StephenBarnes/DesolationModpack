@@ -6,6 +6,8 @@ require("code.control.start-island-scan").register()
 
 local ir3StartCalls = require("code.control.ir3-start-calls")
 
+require("code.control.powered-pumps").register()
+
 script.on_init(function()
 	ir3StartCalls.onInit()
 end)

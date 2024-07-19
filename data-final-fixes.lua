@@ -21,6 +21,7 @@ require("code.data.tweaks.fish")
 require("code.data.tweaks.alien-biomes")
 require("code.data.tweaks.trees")
 require("code.data.tweaks.wood")
+require("code.data.additions.powered-pumps")
 
 require("code.data.tweaks.IR3.scatterbots")
 require("code.data.tweaks.IR3.starting-junkheaps")
