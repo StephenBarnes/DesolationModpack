@@ -7,7 +7,6 @@ require("code.data.terrain.autoplace-controls")
 require("code.data.terrain.remove-existing-mapgen-presets")
 require("code.data.terrain.create-mapgen-preset")
 require("code.data.terrain.remove-rubber-trees")
-require("code.data.terrain.cold-starting-region")
 require("code.data.terrain.resource-placing")
 require("code.data.terrain.tile-autoplace")
 

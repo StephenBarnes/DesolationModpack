@@ -100,9 +100,9 @@ X.copperTinArcMinWidthHeightMin = 5
 X.copperTinBlobSizeSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-blob:frequency:multiplier")
 X.copperTinBlobEnabled = noise.less_or_equal(noise.var("control-setting:Desolation-coppertin-blob:size:multiplier"), 1/6)
 
-X.copperTinBlobMinRad = X.copperTinBlobSizeSlider * 60 -- Approximate width of terrain around the copper/tin ore patch.
-X.copperTinBlobMidRad = X.copperTinBlobSizeSlider * 130
-X.copperTinBlobMaxRad = X.copperTinBlobSizeSlider * 200
+X.copperTinBlobMinRad = X.copperTinBlobSizeSlider * 80 -- Approximate width of terrain around the copper/tin ore patch.
+X.copperTinBlobMidRad = X.copperTinBlobSizeSlider * 170
+X.copperTinBlobMaxRad = X.copperTinBlobSizeSlider * 260
 
 ------------------------------------------------------------------------
 -- Resource patches
@@ -156,7 +156,7 @@ X.secondTinPatchMaxRad = X.secondTinPatchMinRad + 15
 X.secondTinPatchCenterWeight = 6
 X.secondTinPatchDesiredAmount = 1000000
 
-X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondCopperPatchMaxRad) * 0.7
+X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondTinPatchMaxRad) * 0.7
 
 ------------------------------------------------------------------------
 -- For the temp, aux, and moisture noise layers (which determine where to place what tiles)
@@ -164,8 +164,8 @@ X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondCopperPatchMaxRad
 
 X.temperatureScaleSlider = noise.var("control-setting:Desolation-temperature:frequency:multiplier")
 X.temperatureAmplitudeSlider = noise.var("control-setting:Desolation-temperature:size:multiplier")
-X.temperatureAmplitude = X.temperatureAmplitudeSlider * 10
-X.temperatureScale = X.temperatureScaleSlider * (1/400)
+X.temperatureAmplitude = X.temperatureAmplitudeSlider * 30
+X.temperatureScale = X.temperatureScaleSlider * (1/600)
 
 X.auxScaleSlider = noise.var("control-setting:aux:frequency:multiplier") * noise.var("control-setting:Desolation-aux:frequency:multiplier")
 X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:frequency:multiplier")
@@ -178,6 +178,28 @@ X.moistureAmplitudeSlider = noise.var("control-setting:Desolation-moisture:size:
 X.moistureAmplitude = X.moistureAmplitudeSlider * 10
 X.moistureScale = X.moistureScaleSlider * (1/400)
 X.moistureBias = noise.var("control-setting:moisture:bias") * 30
+
+------------------------------------------------------------------------
+-- Start island temperature stuff
+
+X.oasisNoiseScaleSlider = noise.var("control-setting:Desolation-start-island-oasis-noise:frequency:multiplier")
+X.oasisNoiseAmplitudeSlider = noise.var("control-setting:Desolation-start-island-oasis-noise:size:multiplier")
+X.oasisNoiseAmplitude = X.oasisNoiseAmplitudeSlider * 3
+X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/300)
+
+local spawnOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-spawn-oasis-rad:frequency:multiplier")
+local spawnOasisMinMaxSlider = noise.var("control-setting:Desolation-spawn-oasis-rad:size:multiplier")
+
+X.spawnOasisMinRad = spawnOasisMinRadSlider * 100
+X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 300
+X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 600
+
+local copperTinOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-oasis-rad:frequency:multiplier")
+local copperTinOasisMinMaxSlider = noise.var("control-setting:Desolation-coppertin-oasis-rad:size:multiplier")
+
+X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 2
+X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 5
+X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 10
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

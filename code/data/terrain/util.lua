@@ -169,6 +169,12 @@ X.shiftScaled = function(xy, shift)
 	}
 end
 
+X.shiftVarScaled = function(varName, shift)
+	local x = var(varName.."-x")
+	local y = var(varName.."-y")
+	return X.shiftScaled({x, y}, shift)
+end
+
 X.ramp = function(v, v1, v2, out1, out2)
 	-- If v < v1, then return out1. If v > v2, then return out2. Otherwise interpolate between out1 and out2.
 	-- We should have v1 < v2, but not necessarily out1 < out2.

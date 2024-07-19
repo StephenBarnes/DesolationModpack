@@ -89,7 +89,7 @@ local function makeCopperTinArcMinElevation(scale, x, y, arcBlobNoise)
 end
 
 local function makeCopperTinBlobMinElevation(scale, x, y, arcBlobNoise)
-	local distToBlobCenter = U.distVarXY("start-island-copper-tin-blob-center", x, y) / scale
+	local distToBlobCenter = var("dist-to-copper-tin-patches-center") / scale
 	local blobMinElevation = U.rampDouble(distToBlobCenter, 0, C.copperTinBlobMinRad, C.copperTinBlobMidRad, 10, -80, -200)
 	local blobNoise = arcBlobNoise + U.rampDouble(distToBlobCenter, C.copperTinBlobMinRad, C.copperTinBlobMidRad, C.copperTinBlobMaxRad * 2,
 		C.arcBlobNoiseAmplitude * 2, -C.arcBlobNoiseAmplitude, -100)

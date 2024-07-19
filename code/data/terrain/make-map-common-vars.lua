@@ -146,16 +146,16 @@ local copperTinShift = {
 	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 199),
 	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 1812),
 }
+local copperTinPatchesCenter = U.shiftVarScaled("start-island-copper-tin-blob-center", copperTinShift)
 U.nameNoiseExprXY("start-island-second-copper-patch-center",
-	U.shiftScaled(
-		U.moveVarInDirScaled("start-island-copper-tin-blob-center", var("copper-tin-blob-to-copper-patch-angle"),
-			(C.distSecondCopperToTin / 2)),
-		copperTinShift))
+		U.moveInDirScaled(copperTinPatchesCenter[1], copperTinPatchesCenter[2], var("copper-tin-blob-to-copper-patch-angle"),
+			(C.distSecondCopperToTin / 2)))
 U.nameNoiseExprXY("start-island-second-tin-patch-center",
-	U.shiftScaled(
-		U.moveVarInDirScaled("start-island-copper-tin-blob-center", var("copper-tin-blob-to-copper-patch-angle") + C.pi,
-			(C.distSecondCopperToTin / 2)),
-		copperTinShift))
+		U.moveInDirScaled(copperTinPatchesCenter[1], copperTinPatchesCenter[2], var("copper-tin-blob-to-copper-patch-angle") + C.pi,
+			(C.distSecondCopperToTin / 2)))
+
+U.nameNoiseExpr("dist-to-copper-tin-patches-center",
+	U.dist(copperTinPatchesCenter[1], copperTinPatchesCenter[2], var("x"), var("y")))
 
 ------------------------------------------------------------------------
 

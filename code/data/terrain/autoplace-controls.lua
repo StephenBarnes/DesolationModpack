@@ -21,6 +21,11 @@ local newAutoplaceControlNames = {
 	-- TODO create autoplaces for the starting island.
 	"Desolation-surrounding-islands-toggle",
 
+	"Desolation-start-island-oasis-noise",
+	"Desolation-spawn-oasis-rad",
+
+	"Desolation-coppertin-oasis-rad",
+
 	"Desolation-arcblob-noise",
 
 	"Desolation-iron-arc",
