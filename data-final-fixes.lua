@@ -34,6 +34,8 @@ require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so 
 
 require("code.data.additions.no-building-on-snow")
 
+require("code.data.tweaks.trains")
+
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
 -- Temporary: printing out tile prototype info
