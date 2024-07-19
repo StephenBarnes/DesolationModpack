@@ -159,14 +159,25 @@ X.secondTinPatchDesiredAmount = 1000000
 X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondCopperPatchMaxRad) * 0.7
 
 ------------------------------------------------------------------------
--- For the buildable noise layer (which spawns buildable tiles)
+-- For the temp, aux, and moisture noise layers (which determine where to place what tiles)
+-- For aux and moisture, there's built-in scale sliders, but not amplitude. So I'll use both the built-in slider and a Desolation-aux/moisture slider.
 
 X.temperatureScaleSlider = noise.var("control-setting:Desolation-temperature:frequency:multiplier")
 X.temperatureAmplitudeSlider = noise.var("control-setting:Desolation-temperature:size:multiplier")
 X.temperatureAmplitude = X.temperatureAmplitudeSlider * 10
-X.temperatureScale = X.temperatureScaleSlider * (1/200)
+X.temperatureScale = X.temperatureScaleSlider * (1/400)
 
-X.temperatureBias = noise.var("control-setting:aux:bias")
+X.auxScaleSlider = noise.var("control-setting:aux:frequency:multiplier") * noise.var("control-setting:Desolation-aux:frequency:multiplier")
+X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:frequency:multiplier")
+X.auxAmplitude = X.auxAmplitudeSlider * 10
+X.auxScale = X.auxScaleSlider * (1/150)
+X.auxBias = noise.var("control-setting:aux:bias") * 30
+
+X.moistureScaleSlider = noise.var("control-setting:moisture:frequency:multiplier") * noise.var("control-setting:Desolation-moisture:frequency:multiplier")
+X.moistureAmplitudeSlider = noise.var("control-setting:Desolation-moisture:size:multiplier")
+X.moistureAmplitude = X.moistureAmplitudeSlider * 10
+X.moistureScale = X.moistureScaleSlider * (1/400)
+X.moistureBias = noise.var("control-setting:moisture:bias") * 30
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

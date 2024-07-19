@@ -8,6 +8,8 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             -- Use the custom noise expression for elevation.
             elevation = "Desolation-islands-elevation",
             temperature = "Desolation-temperature", -- We use this to decide where to place buildable tiles.
+            aux = "Desolation-aux", -- We use this to decide where to place snow vs ice.
+            moisture = "Desolation-moisture", -- We use this to decide where to place grass vs volcanic rock.
 		},
         autoplace_controls = {
 			-- Resources

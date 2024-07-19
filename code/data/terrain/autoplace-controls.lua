@@ -15,6 +15,8 @@ local newAutoplaceControlNames = {
 	
 	"Desolation-startisland-noise",
 	"Desolation-temperature",
+	"Desolation-aux",
+	"Desolation-moisture",
 
 	-- TODO create autoplaces for the starting island.
 	"Desolation-surrounding-islands-toggle",

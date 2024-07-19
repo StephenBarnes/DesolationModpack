@@ -118,12 +118,15 @@ end
 
 local temp = var("temperature")
 local aux = var("aux")
+local moisture = var("moisture")
 local lt = noise.less_than
 
 local tempHigh = lt(15, temp)
 local tempLow = lt(temp, 15)
 local auxHigh = lt(0.3, aux)
 local auxLow = lt(aux, 0.3)
+local moistureHigh = lt(0.3, moisture)
+local moistureLow = lt(moisture, 0.3)
 
 local function makeProbRichnessAutoplace(val)
 	return { probability_expression = val, richness_expression = val }
@@ -133,9 +136,9 @@ local volcanicOrangeHeat1 = noise.if_else_chain(tempLow, 0, auxHigh, 0, 1)
 data.raw.tile["volcanic-orange-heat-1"].autoplace = makeProbRichnessAutoplace(volcanicOrangeHeat1)
 local vegetationTurquoiseGrass1 = noise.if_else_chain(tempLow, 0, auxHigh, 1, 0)
 data.raw.tile["vegetation-turquoise-grass-1"].autoplace = makeProbRichnessAutoplace(vegetationTurquoiseGrass1)
-local frozenSnow0 = noise.if_else_chain(tempHigh, 0, auxHigh, 0, 1)
+local frozenSnow0 = noise.if_else_chain(tempHigh, 0, moistureHigh, 0, 1)
 data.raw.tile["frozen-snow-0"].autoplace = makeProbRichnessAutoplace(frozenSnow0)
-local frozenSnow9 = noise.if_else_chain(tempHigh, 0, auxHigh, 1, 0)
+local frozenSnow9 = noise.if_else_chain(tempHigh, 0, moistureHigh, 1, 0)
 data.raw.tile["frozen-snow-9"].autoplace = makeProbRichnessAutoplace(frozenSnow9)
 
 -- TODO properly do this for all of the tiles.
