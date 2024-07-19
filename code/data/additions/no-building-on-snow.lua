@@ -93,7 +93,6 @@ end
 
 -- Also add this collision mask to all the entities that can't be built on snow/ice.
 for _, entityType in pairs(forbiddenTypes) do
-	log("SABBB "..entityType)
 	for _, entity in pairs(data.raw[entityType]) do
 		updateCollisionMaskToForbidBuilding(entity)
 	end

@@ -10,6 +10,8 @@ require("code.control.powered-pumps").register()
 
 require("code.control.no-backer-names")
 
+require("code.control.searchlight-assault").register()
+
 script.on_init(function()
 	ir3StartCalls.onInit()
 end)

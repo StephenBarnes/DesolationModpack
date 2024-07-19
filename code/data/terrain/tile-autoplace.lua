@@ -128,18 +128,18 @@ local auxLow = lt(aux, 0.3)
 local moistureHigh = lt(0.3, moisture)
 local moistureLow = lt(moisture, 0.3)
 
+local function noiseNand(a, b)
+	return noise.if_else_chain(a, 0, b, 0, 1)
+end
+
 local function makeProbRichnessAutoplace(val)
 	return { probability_expression = val, richness_expression = val }
 end
 
-local volcanicOrangeHeat1 = noise.if_else_chain(tempLow, 0, moistureHigh, 0, 1)
-data.raw.tile["volcanic-orange-heat-1"].autoplace = makeProbRichnessAutoplace(volcanicOrangeHeat1)
-local vegetationTurquoiseGrass1 = noise.if_else_chain(tempLow, 0, moistureHigh, 1, 0)
-data.raw.tile["vegetation-turquoise-grass-1"].autoplace = makeProbRichnessAutoplace(vegetationTurquoiseGrass1)
-local frozenSnow0 = noise.if_else_chain(tempHigh, 0, auxHigh, 0, 1)
-data.raw.tile["frozen-snow-0"].autoplace = makeProbRichnessAutoplace(frozenSnow0)
-local frozenSnow9 = noise.if_else_chain(tempHigh, 0, auxHigh, 1, 0)
-data.raw.tile["frozen-snow-9"].autoplace = makeProbRichnessAutoplace(frozenSnow9)
+data.raw.tile["volcanic-orange-heat-1"].autoplace = makeProbRichnessAutoplace(noiseNand(tempLow, moistureHigh))
+data.raw.tile["vegetation-turquoise-grass-1"].autoplace = makeProbRichnessAutoplace(noiseNand(tempLow, moistureHigh))
+data.raw.tile["frozen-snow-0"].autoplace = makeProbRichnessAutoplace(noiseNand(tempHigh, auxHigh))
+data.raw.tile["frozen-snow-9"].autoplace = makeProbRichnessAutoplace(noiseNand(tempHigh, auxHigh))
 
 -- TODO properly do this for all of the tiles.
 -- TODO also make the muddy water generate some distance out from any buildable region.
