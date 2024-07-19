@@ -10,6 +10,8 @@ require("code.data.terrain.remove-rubber-trees")
 require("code.data.terrain.resource-placing")
 require("code.data.terrain.tile-autoplace")
 
+require("code.data.additions.start-island-scan")
+
 require("code.data.tweaks.stack-sizes")
 require("code.data.tweaks.tech")
 require("code.data.tweaks.tile-recipes")
