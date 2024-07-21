@@ -6,6 +6,7 @@ local var = noise.var
 local tne = noise.to_noise_expression
 local U = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
+local globalParams = require("code.global-params")
 
 -- Disable autoplace for the hotter volcanic terrain, bc we want to use the greyer rock ones as buildable land.
 data.raw.tile["volcanic-orange-heat-3"].autoplace = nil
@@ -76,11 +77,11 @@ end
 local tooMoistForVolcanic = noise.delimit_procedure(lte(0.3, moisture))
 local tooColdForVegetation = noise.delimit_procedure(lt(temp, 15))
 setTileConditionVarMinMax("volcanic-orange-heat-1", {
-	temperature = {15, 22},
+	temperature = {15, 35},
 	--moisture = {nil, 0.3},
 }, {tooMoistForVolcanic})
 setTileConditionVarMinMax("volcanic-orange-heat-2", {
-	temperature = {22, nil},
+	temperature = {35, nil},
 	--moisture = {nil, 0.3},
 }, {tooMoistForVolcanic})
 setTileConditionVarMinMax("vegetation-turquoise-grass-1", {
@@ -92,10 +93,12 @@ setTileConditionVarMinMax("vegetation-turquoise-grass-2", {
 	moisture = {5.0, nil},
 }, {tooColdForVegetation})
 -- Set tile colors temporarily, so I can see what the conditions look like.
-data.raw.tile["volcanic-orange-heat-1"].map_color = {r=0.0, g=0.0, b=1.0}
-data.raw.tile["volcanic-orange-heat-2"].map_color = {r=1, g=0.0, b=0.0}
-data.raw.tile["vegetation-turquoise-grass-1"].map_color = {r=0.0, g=1.0, b=0.0}
-data.raw.tile["vegetation-turquoise-grass-2"].map_color = {r=0.0, g=1.0, b=1.0}
+if globalParams.colorBuildableTiles then
+	data.raw.tile["volcanic-orange-heat-1"].map_color = {r=0.0, g=0.0, b=1.0}
+	data.raw.tile["volcanic-orange-heat-2"].map_color = {r=1, g=0.0, b=0.0}
+	data.raw.tile["vegetation-turquoise-grass-1"].map_color = {r=0.0, g=1.0, b=0.0}
+	data.raw.tile["vegetation-turquoise-grass-2"].map_color = {r=0.0, g=1.0, b=1.0}
+end
 
 local snowOrder = {0, 1, 3, 2, 4, 8, 9, 5, 6} -- Snow types in order from lightest to darkest.
 	-- Not using type 7 bc it looks a bit weird.

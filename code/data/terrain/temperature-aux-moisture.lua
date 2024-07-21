@@ -54,7 +54,11 @@ local minTempForCopperTin = U.rampDouble(var("dist-to-copper-tin-patches-center"
 	30, 10, -150)
 temperature = noise.max(temperature, minTempForCopperTin + tempOasisNoise)
 
--- TODO Add warm patch at the iron/copper center.
+-- Add warm patch at the iron/copper center.
+local minTempForIronCoal = U.rampDouble(var("dist-to-iron-coal-center") / var("scale"),
+	C.ironCoalOasisMinRad, C.ironCoalOasisMidRad, C.ironCoalOasisMaxRad,
+	30, 10, -150)
+temperature = noise.max(temperature, minTempForIronCoal + tempOasisNoise)
 
 -- TODO add warm patches near sides, so you can load ships.
 

@@ -108,7 +108,7 @@ end
 
 X.mapRandBetween = function(a, b, seed, steps)
 	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
-	return a + (b - a) * (noise.fmod(seed, steps) / steps)
+	return noise.delimit_procedure((noise.fmod(seed, steps) / steps) * (b - a) + a)
 end
 
 X.moveInDir = function(x, y, angle, distance)
@@ -126,14 +126,16 @@ end
 
 X.moveInDirScaled = function(x, y, angle, distance)
 	return {
-		noise.define_noise_function(function(otherX, otherY, tile, map)
-			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-			return x + distance * noise.cos(angle) * scale
-		end),
-		noise.define_noise_function(function(otherX, otherY, tile, map)
-			local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-			return y + distance * noise.sin(angle) * scale
-		end),
+		noise.delimit_procedure(
+			noise.define_noise_function(function(otherX, otherY, tile, map)
+				local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+				return x + distance * noise.cos(angle) * scale
+			end)),
+		noise.delimit_procedure(
+			noise.define_noise_function(function(otherX, otherY, tile, map)
+				local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+				return y + distance * noise.sin(angle) * scale
+			end)),
 	}
 end
 
@@ -144,7 +146,7 @@ X.moveVarInDirScaled = function(varName, angle, distance)
 end
 
 X.dist = function(x1, y1, x2, y2)
-	return ((noise.absolute_value(x1 - x2) ^ 2) + (noise.absolute_value(y1 - y2) ^ 2)) ^ tne(0.5)
+	return noise.delimit_procedure(((noise.absolute_value(x1 - x2) ^ 2) + (noise.absolute_value(y1 - y2) ^ 2)) ^ tne(0.5))
 	-- No idea why the absolute value is necessary, but it seems to be necessary.
 end
 
@@ -182,7 +184,7 @@ X.ramp = function(v, v1, v2, out1, out2)
 	local vAbove = noise.less_than(v2, v)
 	local interpolationFrac = (v - v1) / (v2 - v1)
 	local interpolated = interpolationFrac * out2 + (1 - interpolationFrac) * out1
-	return noise.if_else_chain(vBelow, out1, vAbove, out2, interpolated)
+	return noise.delimit_procedure(noise.if_else_chain(vBelow, out1, vAbove, out2, interpolated))
 end
 
 X.ramp01 = function(v, v1, v2)
@@ -202,9 +204,10 @@ X.rampDouble = function(v, v1, v2, v3, out1, out2, out3)
 	local interpolationFrac2 = (v - v2) / (v3 - v2)
 	local interpolated2 = interpolationFrac2 * out3 + (1 - interpolationFrac2) * out2
 
-	return noise.if_else_chain(noise.less_than(v, v1), out1,
-		noise.less_than(v, v2), interpolated1,
-		noise.less_than(v, v3), interpolated2, out3)
+	return noise.delimit_procedure(
+		noise.if_else_chain(noise.less_than(v, v1), out1,
+			noise.less_than(v, v2), interpolated1,
+			noise.less_than(v, v3), interpolated2, out3))
 end
 
 X.rampTriple = function(v, v1, v2, v3, v4, out1, out2, out3, out4)

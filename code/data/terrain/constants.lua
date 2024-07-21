@@ -16,7 +16,7 @@ X.startIslandMidRad = 450
 X.startIslandMaxRad = 600 -- Distance from center of starting island to the furthest end of the starting island
 X.startIslandAndOffshootsMaxRad = 1200 -- Distance from center of starting island to the furthest end of the furthest "offshoot", currently just the iron.
 X.puddleMargin = 70 -- Distance before minRad where puddles start to appear.
-X.spawnToStartIslandCenter = 200 -- Distance from center of starting island to spawn point.
+X.spawnToStartIslandCenter = 100 -- Distance from center of starting island to spawn point.
 
 X.startIslandNoiseScaleSlider = tne(1) / noise.var("control-setting:Desolation-startisland-noise:frequency:multiplier")
 X.startIslandNoiseAmplitudeSlider = noise.var("control-setting:Desolation-startisland-noise:size:multiplier")
@@ -164,13 +164,13 @@ X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondTinPatchMaxRad) *
 
 X.temperatureScaleSlider = noise.var("control-setting:Desolation-temperature:frequency:multiplier")
 X.temperatureAmplitudeSlider = noise.var("control-setting:Desolation-temperature:size:multiplier")
-X.temperatureAmplitude = X.temperatureAmplitudeSlider * 30
+X.temperatureAmplitude = X.temperatureAmplitudeSlider * 45
 X.temperatureScale = X.temperatureScaleSlider * (1/600)
 
 X.auxScaleSlider = noise.var("control-setting:aux:frequency:multiplier") * noise.var("control-setting:Desolation-aux:frequency:multiplier")
 X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:size:multiplier")
-X.auxAmplitude = X.auxAmplitudeSlider * 1
-X.auxScale = X.auxScaleSlider * (1/70)
+X.auxAmplitude = X.auxAmplitudeSlider * 0.75
+X.auxScale = X.auxScaleSlider * (1/150)
 X.auxBias = noise.var("control-setting:aux:bias") - 0.1
 
 X.moistureScaleSlider = noise.var("control-setting:moisture:frequency:multiplier") * noise.var("control-setting:Desolation-moisture:frequency:multiplier")
@@ -184,22 +184,28 @@ X.moistureBias = noise.var("control-setting:moisture:bias") * 30
 
 X.oasisNoiseScaleSlider = noise.var("control-setting:Desolation-start-island-oasis-noise:frequency:multiplier")
 X.oasisNoiseAmplitudeSlider = noise.var("control-setting:Desolation-start-island-oasis-noise:size:multiplier")
-X.oasisNoiseAmplitude = X.oasisNoiseAmplitudeSlider * 3
+X.oasisNoiseAmplitude = X.oasisNoiseAmplitudeSlider * 4.5
 X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/300)
 
 local spawnOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-spawn-oasis-rad:frequency:multiplier")
 local spawnOasisMinMaxSlider = noise.var("control-setting:Desolation-spawn-oasis-rad:size:multiplier")
 
-X.spawnOasisMinRad = spawnOasisMinRadSlider * 80
-X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 150
-X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 400
+X.spawnOasisMinRad = spawnOasisMinRadSlider * 50
+X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 80
+X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 200
 
 local copperTinOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-oasis-rad:frequency:multiplier")
 local copperTinOasisMinMaxSlider = noise.var("control-setting:Desolation-coppertin-oasis-rad:size:multiplier")
 
-X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 2
-X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 3
-X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 6
+X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 1.8
+X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 2.5
+X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 7
+
+X.ironCoalOasisMinRad = X.distIronToSecondCoal * 1.8
+X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 2.5
+X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 7
+
+-- TODO Get rid of all these extra sliders. I think they might make the map gen slower.
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources
