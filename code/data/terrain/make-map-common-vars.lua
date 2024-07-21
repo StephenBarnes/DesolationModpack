@@ -175,10 +175,11 @@ U.nameNoiseExpr("dist-to-start-island-rim",
 ------------------------------------------------------------------------
 -- Starting ore patches.
 
-local startPatchesShiftScale = 25
+local startPatchesShiftX = {-12, 8}
+local startPatchesShiftY = {-28, -20} -- Bias to shift north, so you can build southward.
 local startPatchesShift = {
-	U.mapRandBetween(-startPatchesShiftScale, startPatchesShiftScale, var("map_seed"), 92),
-	U.mapRandBetween(-startPatchesShiftScale, startPatchesShiftScale, var("map_seed"), 4087),
+	U.mapRandBetween(startPatchesShiftX[1], startPatchesShiftX[2], var("map_seed"), 92),
+	U.mapRandBetween(startPatchesShiftY[1], startPatchesShiftY[2], var("map_seed"), 4087),
 }
 local startPatchesCenter = U.shiftScaled({0, 0}, startPatchesShift)
 

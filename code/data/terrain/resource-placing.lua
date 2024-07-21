@@ -31,7 +31,7 @@ local function makeResourceNoise(scaleMult)
 	-- `scaleMult` should be the size slider for the resource; it's here so that ore patches maintain roughly similar shape as that slider is adjusted.
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = scaleMult / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return U.multiBasisNoise(3, 2, 2, 1 / (scale * C.resourceNoiseInputScale), C.resourceNoiseAmplitude)
+		return U.multiBasisNoise(3, 2, 2, C.resourceNoiseInputScale / scale, C.resourceNoiseAmplitude)
 	end)
 end
 

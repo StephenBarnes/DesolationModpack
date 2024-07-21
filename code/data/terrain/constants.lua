@@ -116,8 +116,8 @@ local resourceNoiseScaleSlider = tne(1) / slider("Desolation-resource-noise", "f
 local resourceNoiseAmplitudeSlider = slider("Desolation-resource-noise", "size")
 
 -- Noise amplitude and input scale for starting island's resource patches. Shared between resource probability and richness.
-X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 3
-X.resourceNoiseInputScale = resourceNoiseScaleSlider * 30
+X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 2
+X.resourceNoiseInputScale = resourceNoiseScaleSlider * (1/30)
 
 ------------------------------------------------------------------------
 -- Starting island iron/coal patches at the end of the circular arc
@@ -221,15 +221,15 @@ X.startCoalPatchMidRad = 10 * slider("coal", "size")
 X.startCoalPatchMaxRad = 15 * slider("coal", "size")
 X.startCoalPatchCenterWeight = 4
 
-X.startCopperPatchMinRad = 3 * slider("copper-ore", "size")
+X.startCopperPatchMinRad = 4 * slider("copper-ore", "size")
 X.startCopperPatchMidRad = 7 * slider("copper-ore", "size")
-X.startCopperPatchMaxRad = 10 * slider("copper-ore", "size")
-X.startCopperPatchCenterWeight = 4
+X.startCopperPatchMaxRad = 12 * slider("copper-ore", "size")
+X.startCopperPatchCenterWeight = 6
 
-X.startTinPatchMinRad = 2.5 * slider("tin-ore", "size")
+X.startTinPatchMinRad = 3.5 * slider("tin-ore", "size")
 X.startTinPatchMidRad = 5 * slider("tin-ore", "size")
-X.startTinPatchMaxRad = 8 * slider("tin-ore", "size")
-X.startTinPatchCenterWeight = 4
+X.startTinPatchMaxRad = 10 * slider("tin-ore", "size")
+X.startTinPatchCenterWeight = 6
 
 X.stonePatchDesiredAmount = 100000
 
