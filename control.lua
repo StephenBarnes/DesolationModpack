@@ -1,6 +1,6 @@
 require("code.control.notify-incorrect-mapgen-preset").register()
 
-require("code.control.transfer-plate-unlocks-tech").register()
+local transferPlateUnlocksTech = require("code.control.transfer-plate-unlocks-tech")
 
 require("code.control.start-island-scan").register()
 
@@ -14,8 +14,10 @@ require("code.control.searchlight-assault").register()
 
 script.on_init(function()
 	ir3StartCalls.onInit()
+	transferPlateUnlocksTech.onInit()
 end)
 
 script.on_load(function()
 	ir3StartCalls.onLoad()
+	transferPlateUnlocksTech.onLoad()
 end)

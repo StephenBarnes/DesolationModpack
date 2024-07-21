@@ -9,51 +9,25 @@
 -- So, a bit of a kludge: check whether inventory changes in the same tick.
 -- When player steps onto a plate, we record the tick. Then when inventory changes, check if it's still the same tick.
 
-local function onScriptEvent(event)
-	if event.effect_id == "ir-transfer-plate" then
-		global.lastTransferPlateTick = game.tick
-	end
-end
-
-local function triggerInspiration(force)
-	force.technologies["logistics"].researched = true
-	-- Do the same stuff as IR3 Inspiration mod.
-	force.print(
-		{
-			"gui.schematic-inspiration", -- defined in IR3 Inspiration mod
-			"[img=technology/logistics]",
-			game.technology_prototypes.logistics.localised_name
-		},
-		{sound = defines.print_sound.never})
-	force.play_sound({path = "inspiration-chime"})
-	for _,player in pairs(force.players) do
-		if player and player.valid then
-			remote.call("ir-utils", "fading-flying-text-player", player, "[img=inspiration]")
-		end
-	end
-end
-
-local function onPlayerMainInventoryChanged(event)
-	if game.tick == global.lastTransferPlateTick then
-		local player = game.players[event.player_index]
-		if player ~= nil and player.valid and player.force ~= nil and player.force.valid then
-			if (player.force.technologies["ir-basic-research"].researched
-				and not player.force.technologies["logistics"].researched) then
-				triggerInspiration(player.force)
-			end
+local function onTransferPlateOrHotkey(event)
+	if event.identity ~= "transfer-plate" then return end
+	local player = game.players[event.player_index]
+	if player ~= nil and player.valid and player.force ~= nil and player.force.valid then
+		if (player.force.technologies["ir-basic-research"].researched
+			and not player.force.technologies["logistics"].researched) then
+			remote.call("ir3-inspiration", "trigger_technology", nil, "logistics", player.force)
 		end
 	end
 end
 
 ------------------------------------------------------------------------
 
-local function register()
-	script.on_event(defines.events.on_script_trigger_effect, onScriptEvent)
-	-- Looks like it can't be filtered for effect_id.
-
-	script.on_event(defines.events.on_player_main_inventory_changed, onPlayerMainInventoryChanged)
+local function onInitOrLoad()
+	local transferPlateEventId = remote.call("ir-events", "get-event-id", "on_transfer_plate_or_hotkey")
+	script.on_event(transferPlateEventId, onTransferPlateOrHotkey)
 end
 
 return {
-	register = register,
+	onInit = onInitOrLoad,
+	onLoad = onInitOrLoad,
 }
