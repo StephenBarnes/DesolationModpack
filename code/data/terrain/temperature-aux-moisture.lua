@@ -48,13 +48,13 @@ local minTempForSpawn = U.rampDouble(var("distance") / var("scale"),
 	30, 10, -150)
 temperature = noise.max(temperature, minTempForSpawn + tempOasisNoise)
 
--- TODO add warm patch at the iron/copper center.
-
 -- Add warm patch at the copper/tin center.
 local minTempForCopperTin = U.rampDouble(var("dist-to-copper-tin-patches-center") / var("scale"),
 	C.copperTinOasisMinRad, C.copperTinOasisMidRad, C.copperTinOasisMaxRad,
 	30, 10, -150)
 temperature = noise.max(temperature, minTempForCopperTin + tempOasisNoise)
+
+-- TODO Add warm patch at the iron/copper center.
 
 -- TODO add warm patches near sides, so you can load ships.
 
@@ -65,7 +65,7 @@ U.nameNoiseExpr("Desolation-temperature",
 -- Aux -- this determines snow vs ice.
 
 U.nameNoiseExpr("Desolation-aux",
-	U.multiBasisNoise(4, 2, 2,
+	U.multiBasisNoise(5, 2, 2,
 		C.auxScale / var("scale"),
 		C.auxAmplitude)
 	+ C.auxBias

@@ -170,7 +170,7 @@ X.temperatureScale = X.temperatureScaleSlider * (1/600)
 X.auxScaleSlider = noise.var("control-setting:aux:frequency:multiplier") * noise.var("control-setting:Desolation-aux:frequency:multiplier")
 X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:size:multiplier")
 X.auxAmplitude = X.auxAmplitudeSlider * 1
-X.auxScale = X.auxScaleSlider * (1/100)
+X.auxScale = X.auxScaleSlider * (1/70)
 X.auxBias = noise.var("control-setting:aux:bias") - 0.1
 
 X.moistureScaleSlider = noise.var("control-setting:moisture:frequency:multiplier") * noise.var("control-setting:Desolation-moisture:frequency:multiplier")
@@ -198,8 +198,8 @@ local copperTinOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolatio
 local copperTinOasisMinMaxSlider = noise.var("control-setting:Desolation-coppertin-oasis-rad:size:multiplier")
 
 X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 2
-X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 5
-X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 10
+X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 3
+X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 6
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

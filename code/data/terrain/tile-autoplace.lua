@@ -76,12 +76,12 @@ end
 local tooMoistForVolcanic = noise.delimit_procedure(lte(0.3, moisture))
 local tooColdForVegetation = noise.delimit_procedure(lt(temp, 15))
 setTileConditionVarMinMax("volcanic-orange-heat-1", {
-	temperature = {15, 20},
+	temperature = {15, 22},
 	--moisture = {nil, 0.3},
 }, {tooMoistForVolcanic})
 setTileConditionVarMinMax("volcanic-orange-heat-2", {
-	temperature = {20, nil},
-	moisture = {nil, 0.3},
+	temperature = {22, nil},
+	--moisture = {nil, 0.3},
 }, {tooMoistForVolcanic})
 setTileConditionVarMinMax("vegetation-turquoise-grass-1", {
 	--temperature = {15, nil},

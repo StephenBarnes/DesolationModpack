@@ -89,6 +89,12 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             --    frequency = 1/6,
             --},
         },
+        cliff_settings = {
+            -- I want to disable cliffs, bc (1) the snowy terrain has lakes, and I don't want to make them depend on the divergence of the elevation or whatever (bc it'll be slow), and (2) they interfere with creating ports etc.
+            -- This way, I can also just completely disable cliff explosives.
+            -- No way to control the checkbox from the mapgen preset, apparently, so rather do this to effectively disable them.
+            cliff_elevation_0 = 100000,
+        },
 
         --default_enable_all_autoplace_controls = false,
         -- Wanted to use this to disable rubber trees, but, it seems to cause issues with showing terrain, so rather not using.
