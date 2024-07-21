@@ -6,16 +6,14 @@ local function registerRepeatingMessage()
 	end)
 end
 
-local function register()
-	script.on_event(defines.events.on_player_created, function(event)
-		local player = game.players[event.player_index]
-		local surface = player.surface
-		if surface.map_gen_settings.property_expression_names["elevation"] ~= "Desolation-islands-elevation" then
-			registerRepeatingMessage()
-		end
-	end)
+local function onPlayerCreated(event)
+	local player = game.players[event.player_index]
+	local surface = player.surface
+	if surface.map_gen_settings.property_expression_names["elevation"] ~= "Desolation-islands-elevation" then
+		registerRepeatingMessage()
+	end
 end
 
 return {
-	register = register,
+	onPlayerCreated = onPlayerCreated,
 }

@@ -21,10 +21,6 @@ local function onGameCreatedFromScenario(event)
 	end
 end
 
-local function register()
-	script.on_event(defines.events.on_game_created_from_scenario, onGameCreatedFromScenario)
-end
-
 return {
-	register = register,
+	onGameCreatedFromScenario = onGameCreatedFromScenario,
 }

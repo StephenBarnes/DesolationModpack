@@ -12,7 +12,9 @@ local function onBuiltEntity(event)
 	end
 end
 
-script.on_event(defines.events.on_built_entity, onBuiltEntity)
-script.on_event(defines.events.on_robot_built_entity, onBuiltEntity)
+return {
+	onBuiltEntity = onBuiltEntity,
+	onRobotBuiltEntity = onBuiltEntity,
+}
 
 -- TODO rather check the list of backer names in Factorio/data/core/backers.json, and put those in a table, and then remove any entity name that's in that set.

@@ -34,11 +34,7 @@ local function onBuiltEntity(event)
 	end
 end
 
-local function register()
-	script.on_event(defines.events.on_built_entity, onBuiltEntity)
-	script.on_event(defines.events.on_robot_built_entity, onBuiltEntity)
-end
-
 return {
-	register = register,
+	onBuiltEntity = onBuiltEntity,
+	onRobotBuiltEntity = onBuiltEntity,
 }

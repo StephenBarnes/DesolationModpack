@@ -122,13 +122,7 @@ local function onNthTick(event)
 	end
 end
 
-
-local function register()
-	script.on_event(defines.events.on_research_finished, onResearchFinished)
-	script.on_nth_tick(globalParams.scanStartIslandEveryNTicks, onNthTick)
-end
-
-
 return {
-	register = register,
+	onResearchFinished = onResearchFinished,
+	onNthTick = onNthTick,
 }
