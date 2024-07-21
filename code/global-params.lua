@@ -18,5 +18,5 @@ return {
 
 	unifySnowTileNames = false, -- Whether to unify the names of snow tiles, so they all say "frigid terrain" instead of "Snow 0" etc.
 
-	colorBuildableTiles = false, -- Whether to color the buildable tiles in bright colors.
+	colorBuildableTiles = true, -- Whether to color the buildable tiles in bright colors.
 }

@@ -45,19 +45,19 @@ local tempOasisNoise = U.multiBasisNoise(7, 2, 2,
 -- Add warm patch at spawn.
 local minTempForSpawn = U.rampDouble(var("distance") / var("scale"),
 	C.spawnOasisMinRad, C.spawnOasisMidRad, C.spawnOasisMaxRad,
-	30, 10, -150)
+	50, 10, -150)
 temperature = noise.max(temperature, minTempForSpawn + tempOasisNoise)
 
 -- Add warm patch at the copper/tin center.
 local minTempForCopperTin = U.rampDouble(var("dist-to-copper-tin-patches-center") / var("scale"),
 	C.copperTinOasisMinRad, C.copperTinOasisMidRad, C.copperTinOasisMaxRad,
-	30, 10, -150)
+	40, 10, -150)
 temperature = noise.max(temperature, minTempForCopperTin + tempOasisNoise)
 
 -- Add warm patch at the iron/copper center.
 local minTempForIronCoal = U.rampDouble(var("dist-to-iron-coal-center") / var("scale"),
 	C.ironCoalOasisMinRad, C.ironCoalOasisMidRad, C.ironCoalOasisMaxRad,
-	30, 10, -150)
+	50, 10, -150)
 temperature = noise.max(temperature, minTempForIronCoal + tempOasisNoise)
 
 -- TODO add warm patches near sides, so you can load ships.

@@ -75,6 +75,9 @@ local function makeSpotNoiseFactor(params)
 				-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
 				maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
 				region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
+
+				-- For starting patches.
+				minimum_candidate_point_spacing = params.minSpacing,
 			},
 		}
 	end)
@@ -84,6 +87,35 @@ end
 --   Util.ramp(var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
 --   var("elevation") -- more likely at higher elevations
 --   var("dist-to-start-island-center")
+
+
+local startPatchSeed1 = tne(U.getNextSeed1()) -- Shared between starting patches, so we can make them distant from each other.
+local function startingPatchSpotNoiseFactor(params)
+	return noise.define_noise_function(function(x, y, tile, map)
+		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
+		return tne {
+			type = "function-application",
+			function_name = "spot-noise",
+			arguments = {
+				x = x / scale,
+				y = y / scale,
+				seed0 = var("map_seed"),
+				seed1 = startPatchSeed1,
+
+				candidate_spot_count = tne(32),
+				density_expression = litexp(1),
+				spot_quantity_expression = litexp(params.patchResourceAmt),
+				spot_radius_expression = litexp(params.patchRad),
+				spot_favorability_expression = litexp(params.patchFavorability),
+				basement_value = tne(C.resourceNoiseAmplitude) * (-2),
+				maximum_spot_basement_radius = tne(128), --tne(params.patchRad) * 2,
+				region_size = tne(params.regionSize),
+				minimum_candidate_point_spacing = params.minSpacing,
+				hard_region_target_quantity = tne(true),
+			},
+		}
+	end)
+end
 
 ------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
@@ -121,7 +153,26 @@ data.raw.resource["iron-ore"].autoplace.richness_expression = (ironFactor
 
 local coalNoise = makeResourceNoise(slider("coal", "size"))
 
--- TODO create starting patch factor
+-- Create starting patch factor -- attempt using spot noise.
+--local coalRad = slider("coal", "size") * 16 -- TODO move to constants
+--local startPatchMaxRad = coalRad -- TODO move to constants, take max of multiple
+--local startPatchCoalFactor = startingPatchSpotNoiseFactor {
+--	patchResourceAmt = 1000,
+--	patchRad = coalRad / var("scale"),
+--	patchFavorability = -var("distance") + noise.random(0.5),
+--	--patchFavorability = 1,
+--	regionSize = C.spawnPatchesDist / var("scale"),
+--	minSpacing = startPatchMaxRad * 3 / var("scale"),
+--}
+--startPatchCoalFactor = noise.if_else_chain(noise.less_than(var("distance"), C.spawnPatchesDist / var("scale")), startPatchCoalFactor, -1000)
+
+-- Create starting patch factor -- attempt using a var for center and dist.
+local startPatchCoalFactor = makeResourceFactorForPatch(
+	U.varXY("start-coal-patch-center"),
+	C.startCoalPatchMinRad,
+	C.startCoalPatchMidRad,
+	C.startCoalPatchMaxRad,
+	C.startCoalPatchCenterWeight)
 
 -- The "second patch" is the patch close to the starting iron patch.
 local secondPatchCoalFactor = makeResourceFactorForPatch(
@@ -131,7 +182,7 @@ local secondPatchCoalFactor = makeResourceFactorForPatch(
 	C.secondCoalPatchMaxRad,
 	C.secondCoalPatchCenterWeight)
 
-local startIslandCoalFactor = secondPatchCoalFactor -- TODO max it with the starting patch factor.
+local startIslandCoalFactor = noise.max(startPatchCoalFactor, secondPatchCoalFactor)
 
 local otherIslandCoalFactor = makeSpotNoiseFactor {
 	candidateSpotCount = 32,
@@ -155,6 +206,13 @@ data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
 
 local copperNoise = makeResourceNoise(slider("copper-ore", "size"))
 
+local startPatchCopperFactor = makeResourceFactorForPatch(
+	U.varXY("start-copper-patch-center"),
+	C.startCopperPatchMinRad,
+	C.startCopperPatchMidRad,
+	C.startCopperPatchMaxRad,
+	C.startCopperPatchCenterWeight)
+
 local secondCopperFactor = makeResourceFactorForPatch(
 	U.varXY("start-island-second-copper-patch-center"),
 	C.secondCopperPatchMinRad,
@@ -164,9 +222,11 @@ local secondCopperFactor = makeResourceFactorForPatch(
 	-- TODO this function should probably take an argument for total amount of ore.
 	-- TODO abstract this stuff so we rather have a "patch" object with min/mid/max rad and center weight.
 
--- TODO implement other-island copper factor, and starting patch.
+local startIslandCopperFactor = noise.max(startPatchCopperFactor, secondCopperFactor)
 
-local copperFactor = copperNoise + secondCopperFactor
+-- TODO implement other-island copper factor
+
+local copperFactor = copperNoise + startIslandCopperFactor
 
 data.raw.resource["copper-ore"].autoplace.probability_expression = factorToProb(copperFactor, 0.8)
 data.raw.resource["copper-ore"].autoplace.richness_expression = (copperFactor
@@ -178,6 +238,13 @@ data.raw.resource["copper-ore"].autoplace.richness_expression = (copperFactor
 
 local tinNoise = makeResourceNoise(slider("tin-ore", "size"))
 
+local startPatchTinFactor = makeResourceFactorForPatch(
+	U.varXY("start-tin-patch-center"),
+	C.startTinPatchMinRad,
+	C.startTinPatchMidRad,
+	C.startTinPatchMaxRad,
+	C.startTinPatchCenterWeight)
+
 local secondTinFactor = makeResourceFactorForPatch(
 	U.varXY("start-island-second-tin-patch-center"),
 	C.secondTinPatchMinRad,
@@ -186,9 +253,11 @@ local secondTinFactor = makeResourceFactorForPatch(
 	C.secondTinPatchCenterWeight)
 	-- TODO this function should probably take an argument for total amount of ore.
 
--- TODO implement other-island tin factor, and starting patch.
+local startIslandTinFactor = noise.max(startPatchTinFactor, secondTinFactor)
 
-local tinFactor = tinNoise + secondTinFactor
+-- TODO implement other-island tin factor
+
+local tinFactor = tinNoise + startIslandTinFactor
 
 data.raw.resource["tin-ore"].autoplace.probability_expression = factorToProb(tinFactor, 0.8)
 data.raw.resource["tin-ore"].autoplace.richness_expression = (tinFactor
@@ -199,6 +268,13 @@ data.raw.resource["tin-ore"].autoplace.richness_expression = (tinFactor
 -- Stone
 
 -- TODO
+
+local stoneFactor = tne(0)
+
+data.raw.resource["stone"].autoplace.probability_expression = factorToProb(stoneFactor, 0.8)
+data.raw.resource["stone"].autoplace.richness_expression = (stoneFactor
+	* slider("stone", "richness")
+	* (C.stonePatchDesiredAmount / 2500))
 
 ------------------------------------------------------------------------
 -- All resources that fade in at a certain distance from the starting island.

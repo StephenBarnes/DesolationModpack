@@ -171,3 +171,27 @@ U.nameNoiseExpr("dist-to-start-island-rim",
 			distFromIronArcCenter - C.distCenterToIronArcCenter * var("scale"),
 			distFromCopperTinArcCenter - C.distCenterToCopperTinArcCenter * var("scale")) / var("scale")
 	end))
+
+------------------------------------------------------------------------
+-- Starting ore patches.
+
+local startPatchesShiftScale = 25
+local startPatchesShift = {
+	U.mapRandBetween(-startPatchesShiftScale, startPatchesShiftScale, var("map_seed"), 92),
+	U.mapRandBetween(-startPatchesShiftScale, startPatchesShiftScale, var("map_seed"), 4087),
+}
+local startPatchesCenter = U.shiftScaled({0, 0}, startPatchesShift)
+
+U.nameNoiseExpr("start-patch-angle",
+	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 11430))
+U.nameNoiseExpr("start-patch-rot-each",
+	(2 * C.pi / 3) + U.mapRandBetween(-0.5, 0.5, var("map_seed"), 94820))
+
+U.nameNoiseExprXY("start-coal-patch-center",
+	U.moveInDirScaled(startPatchesCenter[1], startPatchesCenter[2], var("start-patch-angle"), C.distSpawnToStartPatches))
+U.nameNoiseExprXY("start-copper-patch-center",
+	U.moveInDirScaled(startPatchesCenter[1], startPatchesCenter[2], var("start-patch-angle") + var("start-patch-rot-each"), C.distSpawnToStartPatches))
+U.nameNoiseExprXY("start-tin-patch-center",
+	U.moveInDirScaled(startPatchesCenter[1], startPatchesCenter[2], var("start-patch-angle") + (var("start-patch-rot-each") * 2), C.distSpawnToStartPatches))
+--U.nameNoiseExpr("dist-to-start-coal-patch",
+--	U.distVarXY("start-coal-patch-center", var("x"), var("y")))
