@@ -52,6 +52,6 @@ data.raw["optimized-decorative"]["croton-blue"].autoplace.max_probability = 0.2
 -- Remove/reduce the craters.
 data.raw["optimized-decorative"]["crater1-large"].autoplace = nil
 data.raw["optimized-decorative"]["crater2-medium"].autoplace = nil
-data.raw["optimized-decorative"]["crater1-large-rare"].autoplace.max_probability = 0.2
+data.raw["optimized-decorative"]["crater1-large-rare"].autoplace.max_probability = 0.05
 -- Remove the volcanic magma flows etc.
 data.raw["optimized-decorative"]["lava-decal-orange"].autoplace = nil

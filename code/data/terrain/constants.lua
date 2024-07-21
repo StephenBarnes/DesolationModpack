@@ -168,10 +168,10 @@ X.temperatureAmplitude = X.temperatureAmplitudeSlider * 30
 X.temperatureScale = X.temperatureScaleSlider * (1/600)
 
 X.auxScaleSlider = noise.var("control-setting:aux:frequency:multiplier") * noise.var("control-setting:Desolation-aux:frequency:multiplier")
-X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:frequency:multiplier")
-X.auxAmplitude = X.auxAmplitudeSlider * 10
-X.auxScale = X.auxScaleSlider * (1/150)
-X.auxBias = noise.var("control-setting:aux:bias") * 30
+X.auxAmplitudeSlider = noise.var("control-setting:Desolation-aux:size:multiplier")
+X.auxAmplitude = X.auxAmplitudeSlider * 1
+X.auxScale = X.auxScaleSlider * (1/100)
+X.auxBias = noise.var("control-setting:aux:bias") - 0.1
 
 X.moistureScaleSlider = noise.var("control-setting:moisture:frequency:multiplier") * noise.var("control-setting:Desolation-moisture:frequency:multiplier")
 X.moistureAmplitudeSlider = noise.var("control-setting:Desolation-moisture:size:multiplier")
@@ -190,9 +190,9 @@ X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/300)
 local spawnOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-spawn-oasis-rad:frequency:multiplier")
 local spawnOasisMinMaxSlider = noise.var("control-setting:Desolation-spawn-oasis-rad:size:multiplier")
 
-X.spawnOasisMinRad = spawnOasisMinRadSlider * 100
-X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 300
-X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 600
+X.spawnOasisMinRad = spawnOasisMinRadSlider * 80
+X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 150
+X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 400
 
 local copperTinOasisMinRadSlider = tne(1) / noise.var("control-setting:Desolation-coppertin-oasis-rad:frequency:multiplier")
 local copperTinOasisMinMaxSlider = noise.var("control-setting:Desolation-coppertin-oasis-rad:size:multiplier")

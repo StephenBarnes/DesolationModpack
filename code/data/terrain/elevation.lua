@@ -4,6 +4,7 @@ local var = noise.var
 
 local C = require("code.data.terrain.constants")
 local U = require("code.data.terrain.util")
+local globalParams = require("code.global-params")
 
 -- Some notes:
 -- map.wlc_elevation_offset (wlc = water level correction) -- This should be added to water level, to account for the water level set by the "coverage" slider.
@@ -27,6 +28,7 @@ end
 
 local function addMarkerLake(elevation, scale, centerX, centerY, x, y, rad)
 	-- Given elevation, adds a marker lake.
+	if not globalParams.enableMarkerLakes then return elevation end
 	local markerLakeMax = makeMarkerLakeMaxElevation(scale, centerX, centerY, x, y, rad)
 	return noise.min(elevation, markerLakeMax)
 end

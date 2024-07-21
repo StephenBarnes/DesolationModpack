@@ -26,7 +26,7 @@ local function clamp_temperature(raw_temperature)
 end
 
 -- Start with a base layer of noise.
-local tempNoise = U.multiBasisNoise(8, 2, 2,
+local tempNoise = U.multiBasisNoise(7, 2, 2,
 	C.temperatureScale / var("scale"),
 	C.temperatureAmplitude)
 local temperature = tempNoise
@@ -38,22 +38,22 @@ local maxTempStartIsland = U.ramp(var("dist-to-start-island-rim") / var("scale")
 temperature = noise.min(temperature, maxTempStartIsland)
 
 -- Noise layer for the warm oasis at spawn and the two arc-oases.
-local tempOasisNoise = U.multiBasisNoise(8, 2, 2,
+local tempOasisNoise = U.multiBasisNoise(7, 2, 2,
 	C.oasisNoiseScale / var("scale"),
 	C.oasisNoiseAmplitude)
 
 -- Add warm patch at spawn.
 local minTempForSpawn = U.rampDouble(var("distance") / var("scale"),
 	C.spawnOasisMinRad, C.spawnOasisMidRad, C.spawnOasisMaxRad,
-	20, 0, -100)
+	30, 10, -150)
 temperature = noise.max(temperature, minTempForSpawn + tempOasisNoise)
 
 -- TODO add warm patch at the iron/copper center.
 
--- TODO add warm patch at the copper/tin center.
+-- Add warm patch at the copper/tin center.
 local minTempForCopperTin = U.rampDouble(var("dist-to-copper-tin-patches-center") / var("scale"),
 	C.copperTinOasisMinRad, C.copperTinOasisMidRad, C.copperTinOasisMaxRad,
-	20, 0, -100)
+	30, 10, -150)
 temperature = noise.max(temperature, minTempForCopperTin + tempOasisNoise)
 
 -- TODO add warm patches near sides, so you can load ships.
@@ -65,9 +65,9 @@ U.nameNoiseExpr("Desolation-temperature",
 -- Aux -- this determines snow vs ice.
 
 U.nameNoiseExpr("Desolation-aux",
-	U.multiBasisNoise(9, 2, 2,
+	U.multiBasisNoise(4, 2, 2,
 		C.auxScale / var("scale"),
-		tne(13) * C.auxAmplitude)
+		C.auxAmplitude)
 	+ C.auxBias
 )
 
@@ -75,9 +75,9 @@ U.nameNoiseExpr("Desolation-aux",
 ------------------------------------------------------------------------
 -- Moisture -- this determines grass vs volcanic rock.
 
-local moistureNoise = U.multiBasisNoise(9, 2, 2,
+local moistureNoise = U.multiBasisNoise(4, 2, 2,
 	C.moistureScale / var("scale"),
-	tne(13) * C.moistureAmplitude)
+	C.moistureAmplitude)
 
 local moisture = moistureNoise + C.moistureBias
 

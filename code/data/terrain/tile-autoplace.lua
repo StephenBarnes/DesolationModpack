@@ -11,135 +11,107 @@ local C = require("code.data.terrain.constants")
 data.raw.tile["volcanic-orange-heat-3"].autoplace = nil
 data.raw.tile["volcanic-orange-heat-4"].autoplace = nil
 
---local snowBaseTile = "frozen-snow-0"
---local snowOtherTiles = {
---	"frozen-snow-1",
---	"frozen-snow-2",
---	"frozen-snow-3",
---	"frozen-snow-4",
---	"frozen-snow-5",
---	"frozen-snow-6",
---	"frozen-snow-7",
---	"frozen-snow-8",
---	"frozen-snow-9",
---}
---local snowBaseAutoplace = noise.if_else_chain(noise.less_than(noise.var("elevation"), 5), 0, 0.3)
---local snowOtherAutoplace = noise.if_else_chain(noise.less_than(noise.var("elevation"), 5), 0, 0.5)
---data.raw.tile[snowBaseTile].autoplace = {
---	probability_expression = snowBaseAutoplace,
---	richness_expression = snowBaseAutoplace,
---}
---for _, tileName in pairs(snowOtherTiles) do
---	data.raw.tile[tileName].autoplace = {
---		probability_expression = snowOtherAutoplace,
---		richness_expression = snowBaseAutoplace,
---	}
---end
-
--- Table mapping tile name to (min elevation, max elevation, min aux, max aux).
---local tilePlacementInfo = {
---	["frozen-snow-0"] = {0, 5, -1000, 0},
---	["frozen-snow-1"] = {0, 5, 0, 1000},
---	["frozen-snow-2"] = {5, 10, -1000, 0},
---	["frozen-snow-3"] = {5, 10, 0, 1000},
---	["frozen-snow-4"] = {10, 15, -1000, 0},
---	["frozen-snow-5"] = {10, 15, 0, 1000},
---	["frozen-snow-6"] = {15, 20, -1000, 0},
---	["frozen-snow-7"] = {15, 20, 0, 1000},
---	["frozen-snow-8"] = {20, 25, -1000, 0},
---	["frozen-snow-9"] = {20, 25, 0, 1000},
---	["volcanic-orange-heat-1"] = {25, 30, -1000, 0},
---	["volcanic-orange-heat-2"] = {25, 30, 0, 1000},
---	["vegetation-turquoise-grass-1"] = {30, 1000, -1000, 0},
---	["vegetation-turquoise-grass-2"] = {30, 1000, 0, 1000},
---}
---for tileName, tileRange in pairs(tilePlacementInfo) do
---	local minElevation, maxElevation, minAux, maxAux = tileRange[1], tileRange[2], tileRange[3], tileRange[4]
---	local placementFactor = noise.if_else_chain(
---		noise.less_than(noise.var("elevation"), minElevation), 0,
---		noise.less_than(maxElevation, noise.var("elevation")), 0,
---		noise.less_than(noise.var("aux"), minAux), 0,
---		noise.less_than(maxAux, noise.var("aux")), 0,
---		1)
---	data.raw.tile[tileName].autoplace = {
---		probability_expression = placementFactor,
---		richness_expression = placementFactor,
---	}
---end
--- So, that works, but it's very slow. Let's rather use the peaks system.
-
-
-local tilePlacementInfo = {
-	["frozen-snow-0"] = {0, 5, -1000, 0},
-	["frozen-snow-1"] = {0, 5, 0, 1000},
-	["frozen-snow-2"] = {5, 10, -1000, 0},
-	["frozen-snow-3"] = {5, 10, 0, 1000},
-	["frozen-snow-4"] = {10, 15, -1000, 0},
-	["frozen-snow-5"] = {10, 15, 0, 1000},
-	["frozen-snow-6"] = {15, 20, -1000, 0},
-	["frozen-snow-7"] = {15, 20, 0, 1000},
-	["frozen-snow-8"] = {20, 25, -1000, 0},
-	["frozen-snow-9"] = {20, 25, 0, 1000},
-	["volcanic-orange-heat-1"] = {25, 30, -1000, 0},
-	["volcanic-orange-heat-2"] = {25, 30, 0, 1000},
-	["vegetation-turquoise-grass-1"] = {30, 1000, -1000, 0},
-	["vegetation-turquoise-grass-2"] = {30, 1000, 0, 1000},
-}
--- First disable all autoplaces
-for tileName, tileRange in pairs(tilePlacementInfo) do
-	data.raw.tile[tileName].autoplace = nil
-end
--- Now, use some peaks to set autoplaces for two of them, so I can see how it works.
-local function makeAutoplacePeaks(temp, aux)
-	return {
-		peaks = {
-			{
-				influence = 0.5,
-				noise_octaves_difference = 2,
-				noise_persistence = 0.4,
-				temperature_optimal = temp,
-				temperature_range = 0,
-				temperature_max_range = 1000,
-				aux_optimal = aux,
-				aux_range = 0,
-				aux_max_range = 1000,
-			},
-		},
-		sharpness = 0,
-	}
-end
---data.raw.tile["volcanic-orange-heat-1"].autoplace = makeAutoplacePeaks(10, 1)
---data.raw.tile["vegetation-turquoise-grass-1"].autoplace = makeAutoplacePeaks(10, -1)
---data.raw.tile["frozen-snow-0"].autoplace = makeAutoplacePeaks(0, 2)
---data.raw.tile["frozen-snow-9"].autoplace = makeAutoplacePeaks(0, -1)
-
--- Ok, so apparently the peaks system is just the same as the normal system, it just gets compiled to the same noise expressions.
--- So, rewrite it with the normal system.
-
 local temp = var("temperature")
 local aux = var("aux")
 local moisture = var("moisture")
 local lt = noise.less_than
+local lte = noise.less_or_equal
+local zero = tne(0)
+local one = tne(1)
 
-local tempHigh = lt(15, temp)
-local tempLow = lt(temp, 15)
-local auxHigh = lt(0.3, aux)
-local auxLow = lt(aux, 0.3)
-local moistureHigh = lt(0.3, moisture)
-local moistureLow = lt(moisture, 0.3)
+--local function noiseNand(a, b)
+--	return noise.if_else_chain(a, 0, b, 0, 1)
+--end
 
-local function noiseNand(a, b)
-	return noise.if_else_chain(a, 0, b, 0, 1)
+local function makeCondition(varMinMax, extraNandTerms)
+	-- Takes a table mapping var names to min/max values, and returns a noise expression that yields 1 if all conditions are met, 0 otherwise.
+	-- The arg extraNandTerms can be used to de-duplicate expressions.
+	log("Making a new condition")
+	local nandedTerms = {} -- We collect all terms which would make this condition FALSE.
+	if extraNandTerms ~= nil then
+		for _, term in pairs(extraNandTerms) do
+			table.insert(nandedTerms, term)
+		end
+	end
+	for varName, minMax in pairs(varMinMax) do
+		local thisVar = var(varName)
+		local varMin = minMax[1]
+		local varMax = minMax[2]
+		log("Var "..varName.." min/max: "..(varMin or "nil").." / "..(varMax or "nil"))
+		if varMin ~= nil then
+			log("insert lt("..varName..", "..varMin..")")
+			table.insert(nandedTerms, lt(thisVar, varMin))
+		end
+		if varMax ~= nil then
+			log("insert lte("..varMax..", "..varName..")")
+			table.insert(nandedTerms, lte(varMax, thisVar))
+				-- Use lte instead of lt, so that you can have two conditions like {nil, 10} and {10, nil} that will cover the whole range.
+		end
+	end
+	local ifElseChainArgs = {}
+	for _, term in pairs(nandedTerms) do
+		table.insert(ifElseChainArgs, term)
+		table.insert(ifElseChainArgs, zero)
+	end
+	table.insert(ifElseChainArgs, one)
+	return tne {
+		type = "if-else-chain",
+		arguments = ifElseChainArgs,
+	}
 end
 
-local function makeProbRichnessAutoplace(val)
-	return { probability_expression = val, richness_expression = val }
+local function setTileCondition(tileName, condition)
+	data.raw.tile[tileName].autoplace = {
+		probability_expression = condition,
+		richness_expression = condition,
+	}
 end
 
-data.raw.tile["volcanic-orange-heat-1"].autoplace = makeProbRichnessAutoplace(noiseNand(tempLow, moistureHigh))
-data.raw.tile["vegetation-turquoise-grass-1"].autoplace = makeProbRichnessAutoplace(noiseNand(tempLow, moistureHigh))
-data.raw.tile["frozen-snow-0"].autoplace = makeProbRichnessAutoplace(noiseNand(tempHigh, auxHigh))
-data.raw.tile["frozen-snow-9"].autoplace = makeProbRichnessAutoplace(noiseNand(tempHigh, auxHigh))
+local function setTileConditionVarMinMax(tileName, varMinMax, extraNandTerms)
+	local condition = makeCondition(varMinMax, extraNandTerms)
+	setTileCondition(tileName, condition)
+end
 
--- TODO properly do this for all of the tiles.
+-- Cache some values, to try to speed up the noise expressions.
+local tooMoistForVolcanic = noise.delimit_procedure(lte(0.3, moisture))
+local tooColdForVegetation = noise.delimit_procedure(lt(temp, 15))
+setTileConditionVarMinMax("volcanic-orange-heat-1", {
+	temperature = {15, 20},
+	--moisture = {nil, 0.3},
+}, {tooMoistForVolcanic})
+setTileConditionVarMinMax("volcanic-orange-heat-2", {
+	temperature = {20, nil},
+	moisture = {nil, 0.3},
+}, {tooMoistForVolcanic})
+setTileConditionVarMinMax("vegetation-turquoise-grass-1", {
+	--temperature = {15, nil},
+	moisture = {0.3, 5.0},
+}, {tooColdForVegetation})
+setTileConditionVarMinMax("vegetation-turquoise-grass-2", {
+	--temperature = {15, nil},
+	moisture = {5.0, nil},
+}, {tooColdForVegetation})
+-- Set tile colors temporarily, so I can see what the conditions look like.
+data.raw.tile["volcanic-orange-heat-1"].map_color = {r=0.0, g=0.0, b=1.0}
+data.raw.tile["volcanic-orange-heat-2"].map_color = {r=1, g=0.0, b=0.0}
+data.raw.tile["vegetation-turquoise-grass-1"].map_color = {r=0.0, g=1.0, b=0.0}
+data.raw.tile["vegetation-turquoise-grass-2"].map_color = {r=0.0, g=1.0, b=1.0}
+
+local snowOrder = {0, 1, 3, 2, 4, 8, 9, 5, 6} -- Snow types in order from lightest to darkest.
+	-- Not using type 7 bc it looks a bit weird.
+data.raw.tile["frozen-snow-7"].autoplace = nil
+local snowAuxes = {0.1, 0.3, 0.4, 0.55, 0.7, 0.8, 0.915, 0.95}
+assert(#snowAuxes == 9 - 1) -- Each snow type occupies the range between consecutive snow aux values, including the endpoints with nil min/max.
+local tooHotForSnow = noise.delimit_procedure(lte(15, temp))
+for i = 1, 9 do
+	local snowAuxMin = snowAuxes[i - 1]
+	local snowAuxMax = snowAuxes[i]
+	assert((snowAuxMin ~= nil) or (snowAuxMax ~= nil))
+	local snowName = "frozen-snow-"..snowOrder[i]
+	setTileConditionVarMinMax(snowName, {
+		--temperature = {nil, 15},
+		aux = {snowAuxMin, snowAuxMax},
+	}, {tooHotForSnow})
+end
+
 -- TODO also make the muddy water generate some distance out from any buildable region.

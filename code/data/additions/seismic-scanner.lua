@@ -42,7 +42,7 @@ data:extend({
 		collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
 		selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
 		damaged_trigger_effect = hit_effects.entity(),
-		energy_per_sector = "1MJ", -- Can set lower to speed up the scans, for testing.
+		energy_per_sector = "500kJ", -- Can set lower to speed up the scans, for testing.
 		max_distance_of_sector_revealed = 1,
 		max_distance_of_nearby_sector_revealed = 1,
 		energy_per_nearby_scan = "0kJ", -- This is for the nearby map-revealing, not the scans far away.
@@ -56,10 +56,10 @@ data:extend({
 			fuel_category = "explosive",
 			effectivity = 1,
 			--smoke = {data.raw.furnace["stone-furnace"].created_smoke},
-			fuel_inventory_size = 1,
+			fuel_inventory_size = 8, -- Make it big, so that you can leave the scanner and go do something else while it runs.
 			emissions_per_minute = 300, -- One mining drill is 10
 		},
-		energy_usage = "2MW",
+		energy_usage = "1MW",
 		integration_patch = {
 			layers = {
 				{

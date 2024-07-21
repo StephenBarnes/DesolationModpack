@@ -1,6 +1,8 @@
 -- We want to only allow building most structures on rock and grass, not on snow/ice.
 -- Snow/ice can only have railways and rail signals.
 
+local globalParams = require("code.global-params")
+
 local nonBuildableTiles = {
 	"frozen-snow-0",
 	"frozen-snow-1",
@@ -87,11 +89,16 @@ local function updateCollisionMaskToForbidBuilding(x)
 	end
 end
 
+-- Add this collision mask to the snow/ice tiles.
 for _, tileName in pairs(nonBuildableTiles) do
-	-- Add this collision mask to the snow/ice tiles.
 	updateCollisionMaskToForbidBuilding(data.raw.tile[tileName])
-	-- Also update tile names for all the forbidden tiles, so the message shown to player looks better.
-	data.raw.tile[tileName].localised_name = {"Desolation.snow-tile"}
+end
+
+-- Also update tile names for all the forbidden tiles, so the message shown to player looks better.
+if globalParams.unifySnowTileNames then
+	for _, tileName in pairs(nonBuildableTiles) do
+		data.raw.tile[tileName].localised_name = {"Desolation.snow-tile"}
+	end
 end
 
 -- Also add this collision mask to all the entities that can't be built on snow/ice.
