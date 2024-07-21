@@ -43,16 +43,24 @@ data:extend({
 		selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
 		damaged_trigger_effect = hit_effects.entity(),
 		energy_per_sector = "1MJ", -- Can set lower to speed up the scans, for testing.
-		-- TODO change this to use a burner energy source, with explosives as the fuel!
 		max_distance_of_sector_revealed = 1,
 		max_distance_of_nearby_sector_revealed = 1,
-		energy_per_nearby_scan = "250kJ", -- This is for the nearby map-revealing, not the scans far away.
+		energy_per_nearby_scan = "0kJ", -- This is for the nearby map-revealing, not the scans far away.
+		--energy_source = {
+		--	type = "electric",
+		--	usage_priority = "secondary-input",
+		--	emissions_per_minute = 150  -- One mining drill is 10
+		--},
 		energy_source = {
-			type = "electric",
-			usage_priority = "secondary-input",
-			emissions_per_minute = 150  -- One mining drill is 10
+			type = "burner",
+			fuel_category = "explosive",
+			effectivity = 1,
+			--smoke = {data.raw.furnace["stone-furnace"].created_smoke},
+			fuel_inventory_size = 1,
+			emissions_per_minute = 300, -- One mining drill is 10
 		},
-		energy_usage = "600kW",
+		-- TODO update sound so it sounds like explosives.
+		energy_usage = "2MW",
 		integration_patch = {
 			layers = {
 				{
@@ -155,10 +163,18 @@ data:extend({
 		vehicle_impact_sound = sounds.generic_impact,
 		working_sound = {
 			sound = {
-				{
-					filename = "__base__/sound/radar.ogg",
-					volume = 0.8
-				}
+				--filename = "__base__/sound/radar.ogg",
+				variations = {
+					{ filename = "__base__/sound/explosion1.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/medium-explosion.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/small-explosion-1.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/small-explosion-2.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/small-explosion-3.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/small-explosion-4.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/small-explosion-5.ogg", volume = 0.5 },
+				},
+				probability = 1 / (3*60),  -- Paused for 3 seconds between sounds, on average.
+				allow_random_repeat = false,
 			},
 			max_sounds_per_type = 3,
 			--audible_distance_modifier = 0.8,
@@ -180,4 +196,13 @@ data:extend({
 			orientation_to_variation = false
 		},
 	},
+	{ -- Fuel category for the explosives.
+		type = "fuel-category",
+		name = "explosive",
+	},
 })
+
+-- Make explosives item count as explosive fuel.
+data.raw.item["explosives"].fuel_category = "explosive"
+data.raw.item["explosives"].fuel_value = "15MJ"
+-- One coke item is 6MJ, and the recipe is 3 sulfur + 3 coke + water => 1 explosives. So explosives should be less than 18MJ.
