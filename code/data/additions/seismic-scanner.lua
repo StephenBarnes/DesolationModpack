@@ -19,7 +19,7 @@ data:extend({
 	{
 		type = "recipe",
 		name = "seismic-scanner",
-		enabled = true, -- TODO add to a tech
+		enabled = false,
 		ingredients = {
 			{"advanced-circuit", 5},
 			{"electric-engine-unit", 10},
@@ -59,7 +59,6 @@ data:extend({
 			fuel_inventory_size = 1,
 			emissions_per_minute = 300, -- One mining drill is 10
 		},
-		-- TODO update sound so it sounds like explosives.
 		energy_usage = "2MW",
 		integration_patch = {
 			layers = {
@@ -165,13 +164,13 @@ data:extend({
 			sound = {
 				--filename = "__base__/sound/radar.ogg",
 				variations = {
-					{ filename = "__base__/sound/explosion1.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/medium-explosion.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/small-explosion-1.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/small-explosion-2.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/small-explosion-3.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/small-explosion-4.ogg", volume = 0.5 },
-					{ filename = "__base__/sound/small-explosion-5.ogg", volume = 0.5 },
+					{ filename = "__base__/sound/explosion1.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/medium-explosion.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/small-explosion-1.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/small-explosion-2.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/small-explosion-3.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/small-explosion-4.ogg", volume = 0.5, speed = 0.5 },
+					{ filename = "__base__/sound/small-explosion-5.ogg", volume = 0.5, speed = 0.5 },
 				},
 				probability = 1 / (3*60),  -- Paused for 3 seconds between sounds, on average.
 				allow_random_repeat = false,

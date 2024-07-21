@@ -106,6 +106,7 @@ local pittableItems = {
 	"stone",
 	"gravel",
 	"silica",
+	"stone-brick",
 	"ice",
 	"copper-scrap",
 	"tin-scrap",

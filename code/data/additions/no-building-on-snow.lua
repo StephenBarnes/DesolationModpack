@@ -68,6 +68,9 @@ local forbiddenTypes = {
 	"rocket-silo",
 	"solar-panel",
 }
+local namesBuildableAnywhere = {
+	["seismic-scanner"] = true,
+}
 
 local collisionMaskUtil = require("__core__/lualib/collision-mask-util")
 local forbidBuildingLayer = collisionMaskUtil.get_first_unused_layer()
@@ -93,7 +96,9 @@ end
 
 -- Also add this collision mask to all the entities that can't be built on snow/ice.
 for _, entityType in pairs(forbiddenTypes) do
-	for _, entity in pairs(data.raw[entityType]) do
-		updateCollisionMaskToForbidBuilding(entity)
+	for entityName, entity in pairs(data.raw[entityType]) do
+		if not namesBuildableAnywhere[entityName] then
+			updateCollisionMaskToForbidBuilding(entity)
+		end
 	end
 end
