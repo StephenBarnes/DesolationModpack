@@ -42,10 +42,11 @@ data:extend({
 		collision_box = {{-1.2, -1.2}, {1.2, 1.2}},
 		selection_box = {{-1.5, -1.5}, {1.5, 1.5}},
 		damaged_trigger_effect = hit_effects.entity(),
-		energy_per_sector = "1MJ",
+		energy_per_sector = "1MJ", -- Can set lower to speed up the scans, for testing.
+		-- TODO change this to use a burner energy source, with explosives as the fuel!
 		max_distance_of_sector_revealed = 1,
 		max_distance_of_nearby_sector_revealed = 1,
-		energy_per_nearby_scan = "250kJ",
+		energy_per_nearby_scan = "250kJ", -- This is for the nearby map-revealing, not the scans far away.
 		energy_source = {
 			type = "electric",
 			usage_priority = "secondary-input",
