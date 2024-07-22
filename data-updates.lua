@@ -10,4 +10,4 @@ require("code.data.tweaks.vehicles")
 require("code.data.tweaks.turret-recipes")
 require("code.data.tweaks.ammo")
 
-require("code.data.additions.science-packs")
+require("code.data.additions.science-packs") -- Must run before data-final-fixes, so we get scrapping and containerization recipes.

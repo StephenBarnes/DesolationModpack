@@ -13,7 +13,6 @@ require("code.data.terrain.tile-autoplace")
 require("code.data.additions.start-island-scan")
 
 require("code.data.tweaks.stack-sizes")
-require("code.data.tweaks.tech")
 require("code.data.tweaks.tile-recipes")
 require("code.data.tweaks.fluid-containers")
 require("code.data.tweaks.electric-poles")
@@ -35,6 +34,8 @@ require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so 
 require("code.data.additions.no-building-on-snow")
 
 require("code.data.tweaks.trains")
+
+require("code.data.additions.tech")
 
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 

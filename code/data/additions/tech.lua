@@ -1,9 +1,17 @@
--- Tech changes, for several reasons:
+-- This file adds new science packs and their recipes, and also changes many parts of the tech tree, eg tech dependencies and their unlocks.
+
+-- Several reasons:
+-- * Move various techs around to different places, to fit with the new progression introduced by the modpack, eg geothermal energy should come early.
+-- * Compat between the various mods. Eg we want to insert steam locomotives and cargo ships in the right places.
+-- * Add more complexity in early game, by introducing multiple science packs early on.
 -- * We want to avoid "dead ends" in the tech tree, because evolution depends on techs.
--- * Ensure mod compat, eg cargo ships whose recipe requires steel should have steel as prereq.
 -- * Consolidate techs somewhat, since techs are so expensive. Eg I don't want to have a separate tech for each tier of IR3 stacking beltbox, or containerization machine, or AAI loader.
 
 local Tech = require("code.util.tech")
+local Recipe = require("code.util.recipe")
+
+-- Glass bottle recipe unlocked by tech glass working (ir-glass-milestone).
+Tech.addRecipeToTech("glass-bottle", "ir-glass-milestone")
 
 -- Needed because I want the stacking beltboxes to be ordered correctly.
 -- Also, IR3 changes things so that logistics-2 is no longer a prereq for things like cars, like it is in vanilla.
@@ -67,6 +75,51 @@ Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing")
 -- Barrelling
 -- Medical pack
 
+-- Move light armor to the new "self-defense" tech.
+Tech.addRecipeToTech("light-armor", "ir-blunderbuss")
+Tech.removeRecipeFromTech("light-armor", "ir-tin-working-2")
+
+-- Remove unwanted cargo ships techs: oversea energy distribution, train bridges, tanker ship
+data.raw.technology["oversea-energy-distribution"] = nil
+data.raw.technology["automated_bridges"] = nil
+data.raw.technology["tank_ship"] = nil
+data.raw.technology["cargo_ships"] = nil
+data.raw.technology["water_transport_signals"] = nil
+-- Move cargo ships, buoys, ports all to the same tech.
+Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
+Tech.addRecipeToTech("buoy", "automated_water_transport")
+Tech.addRecipeToTech("chain_buoy", "automated_water_transport")
+-- TODO check ingredients
+
+Tech.addTechDependency("ir-radar", "automated_water_transport")
+
+-- Rename landfill tech to earthworks, and move it to be after explosives, and before automated shipping.
+Tech.addTechDependency("explosives", "landfill")
+Tech.addTechDependency("landfill", "automated_water_transport")
+Tech.removeRecipeFromTech("waterfill-explosive", "explosives")
+Tech.addRecipeToTech("waterfill-explosive", "landfill")
+
+data.raw.technology["fluid-wagon"] = nil
+data.raw.technology["automated-rail-transportation"].enabled = false
+Tech.removeRecipeFromTech("meat:sheet-metal-cargo-wagon", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("train-stop", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("rail-signal", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("rail-chain-signal", "meat:steam-locomotion-technology")
+--Tech.addRecipeToTech("rail", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("cargo-wagon", "meat:steam-locomotion-technology")
+Tech.removeRecipeFromTech("cargo-wagon", "railway")
+Tech.removeRecipeFromTech("rail", "railway")
+Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
+Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
+-- TODO check ingredients
+
+Tech.addTechDependency("ir-bronze-telescope", "radar")
+
+-- Geothermal and electric derrick
+data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
+data.raw.technology["ir-geothermal-exchange"].prerequisites = {"ir-steel-derrick"}
+data.raw.recipe["steel-derrick"].ingredients = {{"pipe", 8}, {"iron-plate-heavy", 4}, {"iron-beam", 8}, {"iron-piston", 4}} -- Changed steel->iron, and reduced amounts.
+data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small", 1}, {"pump", 1}, {"steam-pipe", 6}, {"pipe", 4}} -- Changed to include pump
 
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")

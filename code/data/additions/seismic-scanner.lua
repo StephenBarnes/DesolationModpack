@@ -199,6 +199,28 @@ data:extend({
 		type = "fuel-category",
 		name = "explosive",
 	},
+	{ -- Technology
+		type = "technology",
+		name = "seismic-scanner",
+		icon = "__Desolation__/graphics/seismic-scanner/seismic-scanner-icon-big.png",
+		icon_size = 178,
+		icon_mipmaps = 1,
+		prerequisites = {"water_transport", "explosives", "ir-radar"},
+		unit = {
+			count = 100,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 30,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "seismic-scanner",
+			},
+		},
+	},
 })
 
 -- Make explosives item count as explosive fuel.

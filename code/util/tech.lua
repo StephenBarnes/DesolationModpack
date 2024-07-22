@@ -40,6 +40,14 @@ Tech.hideTech = function(techName)
 end
 
 Tech.addTechDependency = function(firstTech, secondTech)
+	local secondTechData = data.raw.technology[secondTech]
+	if secondTechData == nil then
+		log("ERROR: Couldn't find tech "..secondTech.." to add dependency "..firstTech.." to.")
+		return
+	end
+	if secondTechData.prerequisites == nil then
+		secondTechData.prerequisites = {}
+	end
 	table.insert(data.raw.technology[secondTech].prerequisites, firstTech)
 end
 
