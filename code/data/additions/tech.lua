@@ -91,7 +91,7 @@ data.raw.technology["automated_water_transport"].prerequisites = {"water_transpo
 
 -- Rename landfill tech to earthworks, and add waterfill explosive.
 -- Want to place it before automated shipping, but not after explosives. So also change recipe to not require explosives.
-data.raw.technology["landfill"].prerequisites = {"water_transport"}
+data.raw.technology["landfill"].prerequisites = {"automated_water_transport"}
 Tech.removeRecipeFromTech("waterfill-explosive", "explosives")
 Tech.addRecipeToTech("waterfill-explosive", "landfill")
 data.raw.recipe["waterfill-explosive"].ingredients = {{"copper-gate", 1}, {"wooden-chest", 1}, {"solid-fuel", 4}}
@@ -107,7 +107,10 @@ Tech.addRecipeToTech("cargo-wagon", "meat:steam-locomotion-technology")
 Tech.removeRecipeFromTech("cargo-wagon", "railway")
 Tech.removeRecipeFromTech("rail", "railway")
 Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
-Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
+--Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
+data.raw.technology["railway"].prerequisites = {"meat:steam-locomotion-technology", "engine", "ir-steel-milestone"}
+data.raw.recipe["locomotive"].ingredients = {{"computer-mk1", 1}, {"engine-unit", 1}, {"steel-rod", 4}, {"steel-plate-heavy", 8}, {"steel-gear-wheel", 8}}
+
 -- TODO check ingredients
 
 Tech.addTechDependency("ir-bronze-telescope", "ir-radar")
@@ -120,6 +123,7 @@ data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small",
 
 data.raw.technology["optics"].prerequisites = {"ir-steam-power"} -- Depend only on electricity, not surveying.
 
+-- Remove all the series of techs, bc they don't fit well into the system of evolution being dependent on tech level.
 local techSeriesToDisable = {
 	["physical-projectile-damage"] = {1, 2, 3, 4, 5, 6, 7},
 	["stronger-explosives"] = {1, 2, 3, 4, 5, 6, 7},
@@ -153,7 +157,9 @@ data.raw.technology["ir-research-2"].prerequisites = {"ir-force-fields", "ir-res
 data.raw.technology["ironclad"].prerequisites = {"military-2", "automobilism"}
 
 -- Add boats=>pumpjacks dependency, bc it makes sense with this progression, and it ensures Ironclad is indirectly dependent on boats.
-Tech.addTechDependency("water_transport", "ir-pumpjacks")
+--Tech.addTechDependency("water_transport", "ir-pumpjacks")
+-- Actually, rather don't.
+Tech.addTechDependency("water_transport", "ironclad")
 
 Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
 Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
@@ -162,13 +168,18 @@ Tech.addTechDependency("effect-transmission", "ir-transmat")
 Tech.addTechDependency("belt-immunity-equipment", "power-armor")
 Tech.addTechDependency("night-vision-equipment", "power-armor")
 
+Tech.removeRecipeFromTech("mortar-cluster-bomb", "ironclad")
+Tech.addRecipeToTech("mortar-cluster-bomb", "military-4")
+Tech.addTechDependency("ironclad", "military-4")
+
+data.raw.technology["ir-inserters-1"].localised_description = {"technology-description.ir-inserters-1"}
+
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")
 	Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
 	Tech.addTechDependency("ir-steambot", "personal-roboport-equipment")
-	Tech.addTechDependency("ir-petro-generator", "ir-petroleum-processing")
 	Tech.addTechDependency("plastics-2", "logistics-3")
 	Tech.addTechDependency("logistics-3", "automation-4")
 end
