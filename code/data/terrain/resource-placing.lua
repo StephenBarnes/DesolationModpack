@@ -55,67 +55,37 @@ local function factorToProb(factor, floorProb)
 end
 
 local function makeSpotNoiseFactor(params)
-	return noise.define_noise_function(function(x, y, tile, map)
-		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return tne {
-			type = "function-application",
-			function_name = "spot-noise",
-			arguments = {
-				x = x / scale,
-				y = y / scale,
-				seed0 = var("map_seed"),
-				seed1 = tne(U.getNextSeed1()),
+	local scale = var("scale")
+	local spotNoise = tne {
+		type = "function-application",
+		function_name = "spot-noise",
+		arguments = {
+			x = var("x") / scale,
+			y = var("y") / scale,
+			seed0 = var("map_seed"),
+			seed1 = tne(U.getNextSeed1()),
 
-				candidate_spot_count = tne(params.candidateSpotCount), -- Maybe more points will make the favorability bias work better? Default is 21.
-				density_expression = litexp(params.density), -- Makes more patches, it seems.
-				spot_quantity_expression = litexp(params.patchResourceAmt), -- Amount of resource per patch, from totalling up all the tiles.
-				spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
-				spot_favorability_expression = litexp(params.patchFavorability),
-				basement_value = tne(C.resourceNoiseAmplitude) * (-2), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
-				-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
-				maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
-				region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
+			candidate_spot_count = tne(params.candidateSpotCount), -- Maybe more points will make the favorability bias work better? Default is 21.
+			density_expression = litexp(params.density), -- Makes more patches, it seems.
+			spot_quantity_expression = litexp(params.patchResourceAmt), -- Amount of resource per patch, from totalling up all the tiles.
+			spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
+			spot_favorability_expression = litexp(params.patchFavorability),
+			basement_value = tne(C.resourceNoiseAmplitude) * (-2), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
+			-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
+			maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
+			region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
 
-				-- For starting patches.
-				minimum_candidate_point_spacing = params.minSpacing,
-			},
-		}
-	end)
+			-- For starting patches.
+			minimum_candidate_point_spacing = params.minSpacing,
+		},
+	}
+	return noise.if_else_chain(var("buildable-temperature"), spotNoise, -1000)
 end
 -- Example patchFavorability:
 --   0.5 - uniform
 --   Util.ramp(var("elevation"), 30, 100, -10, 10) -- more likely at higher elevations
 --   var("elevation") -- more likely at higher elevations
 --   var("dist-to-start-island-center")
-
-
-local startPatchSeed1 = tne(U.getNextSeed1()) -- Shared between starting patches, so we can make them distant from each other.
-local function startingPatchSpotNoiseFactor(params)
-	return noise.define_noise_function(function(x, y, tile, map)
-		local scale = 1 / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return tne {
-			type = "function-application",
-			function_name = "spot-noise",
-			arguments = {
-				x = x / scale,
-				y = y / scale,
-				seed0 = var("map_seed"),
-				seed1 = startPatchSeed1,
-
-				candidate_spot_count = tne(32),
-				density_expression = litexp(1),
-				spot_quantity_expression = litexp(params.patchResourceAmt),
-				spot_radius_expression = litexp(params.patchRad),
-				spot_favorability_expression = litexp(params.patchFavorability),
-				basement_value = tne(C.resourceNoiseAmplitude) * (-2),
-				maximum_spot_basement_radius = tne(128), --tne(params.patchRad) * 2,
-				region_size = tne(params.regionSize),
-				minimum_candidate_point_spacing = params.minSpacing,
-				hard_region_target_quantity = tne(true),
-			},
-		}
-	end)
-end
 
 ------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
@@ -224,9 +194,16 @@ local secondCopperFactor = makeResourceFactorForPatch(
 
 local startIslandCopperFactor = noise.max(startPatchCopperFactor, secondCopperFactor)
 
--- TODO implement other-island copper factor
+local otherIslandCopperFactor = makeSpotNoiseFactor {
+	candidateSpotCount = 32,
+	density = 0.05,
+	patchResourceAmt = 10000, -- TODO take distance into account
+	patchRad = slider("copper-ore", "size") * 32,
+	patchFavorability = var("temperature"),
+	regionSize = 2048,
+}
 
-local copperFactor = copperNoise + startIslandCopperFactor
+local copperFactor = copperNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
 
 data.raw.resource["copper-ore"].autoplace.probability_expression = factorToProb(copperFactor, 0.8)
 data.raw.resource["copper-ore"].autoplace.richness_expression = (copperFactor

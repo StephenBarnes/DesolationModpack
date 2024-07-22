@@ -65,6 +65,9 @@ temperature = noise.max(temperature, minTempForIronCoal + tempOasisNoise)
 U.nameNoiseExpr("Desolation-temperature",
 	temperature)
 
+U.nameNoiseExpr("buildable-temperature",
+	noise.less_than(15, temperature))
+
 ------------------------------------------------------------------------
 -- Aux -- this determines snow vs ice.
 
