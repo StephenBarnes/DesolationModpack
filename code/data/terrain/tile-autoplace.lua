@@ -75,7 +75,7 @@ end
 
 -- Cache some values, to try to speed up the noise expressions.
 local tooMoistForVolcanic = noise.delimit_procedure(lte(0.3, moisture))
-local tooColdForVegetation = noise.delimit_procedure(lt(temp, 15))
+local tooColdToBuild = noise.delimit_procedure(lt(temp, 15))
 setTileConditionVarMinMax("volcanic-orange-heat-1", {
 	temperature = {15, 35},
 	--moisture = {nil, 0.3},
@@ -87,11 +87,11 @@ setTileConditionVarMinMax("volcanic-orange-heat-2", {
 setTileConditionVarMinMax("vegetation-turquoise-grass-1", {
 	--temperature = {15, nil},
 	moisture = {0.3, 5.0},
-}, {tooColdForVegetation})
+}, {tooColdToBuild})
 setTileConditionVarMinMax("vegetation-turquoise-grass-2", {
 	--temperature = {15, nil},
 	moisture = {5.0, nil},
-}, {tooColdForVegetation})
+}, {tooColdToBuild})
 -- Set tile colors temporarily, so I can see what the conditions look like.
 if globalParams.colorBuildableTiles then
 	data.raw.tile["volcanic-orange-heat-1"].map_color = {r=0.0, g=0.0, b=1.0}
@@ -117,4 +117,23 @@ for i = 1, 9 do
 	}, {tooHotForSnow})
 end
 
--- TODO also make the muddy water generate some distance out from any buildable region.
+-- Muddy water should generate around buildable regions that touch the coast, ie where elevation is just barely underwater and temperature is high.
+setTileConditionVarMinMax("water-shallow", {
+	elevation = {-1, 0},
+}, {tooColdToBuild})
+-- Multiply by 1000 to make it overpower the other water.
+data.raw.tile["water-shallow"].autoplace.probability_expression = 1000 * data.raw.tile["water-shallow"].autoplace.probability_expression
+data.raw.tile["water-shallow"].autoplace.richness_expression = 1000 * data.raw.tile["water-shallow"].autoplace.richness_expression
+-- The above works; could use this to get different cutoffs for starting island vs other islands. But rather just change elevation for that.
+--setTileCondition("water-shallow", noise.delimit_procedure(noise.if_else_chain(
+--	tooColdToBuild, 0,
+--	var("apply-start-island-resources"), noise.if_else_chain(
+--		lt(var("elevation"), -4.5), 0,
+--		lt(0, var("elevation")), 0,
+--		1),
+--	noise.if_else_chain(
+--		lt(var("elevation"), -1), 0,
+--		lt(0, var("elevation")), 0,
+--		1)
+--) * 1000)) -- Multiply by 1000 to make it overpower the other water.
+
