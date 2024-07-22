@@ -41,8 +41,6 @@ Tech.hideTech("heavy-armor")
 
 -- Change clockwork scatterbot to depend on the new heavy bronze plate tech.
 Tech.replacePrereq("ir-scatterbot", "ir-bronze-milestone", "ir-bronze-furnace")
--- Add prereq on telescope, since it makes logical sense.
-Tech.addTechDependency("ir-bronze-telescope", "ir-scatterbot")
 
 -- Make scatterbots and lampbots not dead ends.
 Tech.addTechDependency("ir-scatterbot", "ir-lampbot")
@@ -59,7 +57,7 @@ Tech.addTechDependency("logistics-3", "logistic-system")
 -- Also add dependency combustion engine => crude oil processing, bc combustion engine is needed to make the petrochemical generator.
 Tech.hideTech("ir-petro-generator")
 Tech.addTechDependency("engine", "ir-crude-oil-processing")
-Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing")
+Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing", 1)
 
 -- Radar is a dead end. We could remove it, eg:
 -- Tech.addTechDependency("ir-radar", "ir-robotower")
@@ -71,8 +69,6 @@ Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing")
 -- Helium airship, and airship station
 -- Heavy picket
 -- Land-mine
--- Geothermal exchange (once I buff geothermal energy)
--- Barrelling
 -- Medical pack
 
 -- Move light armor to the new "self-defense" tech.
@@ -80,27 +76,28 @@ Tech.addRecipeToTech("light-armor", "ir-blunderbuss")
 Tech.removeRecipeFromTech("light-armor", "ir-tin-working-2")
 
 -- Remove unwanted cargo ships techs: oversea energy distribution, train bridges, tanker ship
-data.raw.technology["oversea-energy-distribution"] = nil
-data.raw.technology["automated_bridges"] = nil
-data.raw.technology["tank_ship"] = nil
-data.raw.technology["cargo_ships"] = nil
-data.raw.technology["water_transport_signals"] = nil
+Tech.disable("oversea-energy-distribution")
+Tech.disable("automated_bridges")
+Tech.disable("tank_ship")
+Tech.disable("cargo_ships")
+Tech.disable("water_transport_signals")
 -- Move cargo ships, buoys, ports all to the same tech.
 Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
 Tech.addRecipeToTech("buoy", "automated_water_transport")
 Tech.addRecipeToTech("chain_buoy", "automated_water_transport")
+data.raw.technology["water_transport"].prerequisites = {"ir-steel-milestone"}
+data.raw.technology["automated_water_transport"].prerequisites = {"water_transport", "ir-radar"}
 -- TODO check ingredients
 
-Tech.addTechDependency("ir-radar", "automated_water_transport")
-
--- Rename landfill tech to earthworks, and move it to be after explosives, and before automated shipping.
-Tech.addTechDependency("explosives", "landfill")
-Tech.addTechDependency("landfill", "automated_water_transport")
+-- Rename landfill tech to earthworks, and add waterfill explosive.
+-- Want to place it before automated shipping, but not after explosives. So also change recipe to not require explosives.
+data.raw.technology["landfill"].prerequisites = {"water_transport"}
 Tech.removeRecipeFromTech("waterfill-explosive", "explosives")
 Tech.addRecipeToTech("waterfill-explosive", "landfill")
+data.raw.recipe["waterfill-explosive"].ingredients = {{"copper-gate", 1}, {"wooden-chest", 1}, {"solid-fuel", 4}}
 
-data.raw.technology["fluid-wagon"] = nil
-data.raw.technology["automated-rail-transportation"].enabled = false
+Tech.disable("fluid-wagon")
+Tech.disable("automated-rail-transportation")
 Tech.removeRecipeFromTech("meat:sheet-metal-cargo-wagon", "meat:steam-locomotion-technology")
 Tech.addRecipeToTech("train-stop", "meat:steam-locomotion-technology")
 Tech.addRecipeToTech("rail-signal", "meat:steam-locomotion-technology")
@@ -113,7 +110,7 @@ Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
 Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
 -- TODO check ingredients
 
-Tech.addTechDependency("ir-bronze-telescope", "radar")
+Tech.addTechDependency("ir-bronze-telescope", "ir-radar")
 
 -- Geothermal and electric derrick
 data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
@@ -121,21 +118,60 @@ data.raw.technology["ir-geothermal-exchange"].prerequisites = {"ir-steel-derrick
 data.raw.recipe["steel-derrick"].ingredients = {{"pipe", 8}, {"iron-plate-heavy", 4}, {"iron-beam", 8}, {"iron-piston", 4}} -- Changed steel->iron, and reduced amounts.
 data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small", 1}, {"pump", 1}, {"steam-pipe", 6}, {"pipe", 4}} -- Changed to include pump
 
+data.raw.technology["optics"].prerequisites = {"ir-steam-power"} -- Depend only on electricity, not surveying.
+
+local techSeriesToDisable = {
+	["physical-projectile-damage"] = {1, 2, 3, 4, 5, 6, 7},
+	["stronger-explosives"] = {1, 2, 3, 4, 5, 6, 7},
+	["artillery-shell-range"] = {1},
+	["artillery-shell-speed"] = {1},
+	["follower-robot-count"] = {1, 2, 3, 4, 5, 6, 7},
+	["ir-photon-turret-damage"] = {1, 2, 3, 4},
+	["refined-flammables"] = {1, 2, 3, 4, 5, 6, 7},
+	["mining-productivity"] = {1, 2, 3, 4},
+	["energy-weapons-damage"] = {1, 2, 3, 4, 5, 6, 7},
+	["worker-robots-speed"] = {1, 2, 3, 4, 5, 6},
+	["weapon-shooting-speed"] = {1, 2, 3, 4, 5, 6},
+	["laser-shooting-speed"] = {1, 2, 3, 4, 5, 7},
+	["braking-force"] = {1, 2, 3},
+	["research-speed"] = {1, 2, 3, 4, 5, 6},
+}
+for techName, techNums in pairs(techSeriesToDisable) do
+	if data.raw.technology[techName] ~= nil then
+		Tech.disable(techName)
+	end
+	for _, techNum in pairs(techNums) do
+		Tech.disable(techName.."-"..techNum)
+	end
+end
+-- TODO maybe put some of these bonuses back, but into regular techs, not these weird incremental bonus techs.
+
+-- Previously ir-research-2 (Improved laboratories 2) depended on research-speed-6, but we removed that tech.
+data.raw.technology["ir-research-2"].prerequisites = {"ir-force-fields", "ir-research-1"}
+
+-- Ironclad: remove duplicate dependency on explosives (since military-2 already depends on it).
+data.raw.technology["ironclad"].prerequisites = {"military-2", "automobilism"}
+
+-- Add boats=>pumpjacks dependency, bc it makes sense with this progression, and it ensures Ironclad is indirectly dependent on boats.
+Tech.addTechDependency("water_transport", "ir-pumpjacks")
+
+Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
+Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
+Tech.addTechDependency("effect-transmission", "ir-transmat")
+
+Tech.addTechDependency("belt-immunity-equipment", "power-armor")
+Tech.addTechDependency("night-vision-equipment", "power-armor")
+
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")
 	Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
-	Tech.addTechDependency("ir-bronze-telescope", "gun-turret")
 	Tech.addTechDependency("ir-steambot", "personal-roboport-equipment")
 	Tech.addTechDependency("ir-petro-generator", "ir-petroleum-processing")
 	Tech.addTechDependency("plastics-2", "logistics-3")
 	Tech.addTechDependency("logistics-3", "automation-4")
-	Tech.addTechDependency("effect-transmission", "ir-transmat")
-	Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
-	Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
-	Tech.tryAddTechDependency("ir-barrelling", "oversea-energy-distribution")
-	Tech.tryAddTechDependency("ir-steel-milestone", "automated-water-transport")
 end
--- TODO more of these?
--- TODO review all of these, make sure they're sensible.
+-- TODO remove this
+
+-- TODO fix the ordering of the techs. Currently some fairly late techs are shown quite early. Maybe just set order field for all of them to the same value, so the game automatically orders them.

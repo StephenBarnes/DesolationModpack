@@ -118,4 +118,23 @@ Tech.removeRecipeFromTech = function(recipeName, techName)
 	end
 end
 
+Tech.disable = function(techName)
+	local tech = data.raw.technology[techName]
+	if tech == nil then
+		log("Couldn't find tech "..techName.." to disable.")
+		return
+	end
+	if tech.normal ~= nil then
+		tech.normal.enabled = false
+		tech.normal.hidden = true
+		if tech.expensive ~= nil then
+			tech.expensive.enabled = false
+			tech.expensive.hidden = true
+		end
+	else
+		tech.enabled = false
+		tech.hidden = true
+	end
+end
+
 return Tech
