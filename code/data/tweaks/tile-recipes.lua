@@ -16,3 +16,7 @@ multiplyRecipeCosts("cliff-explosives", 5)
 -- TODO rather just do this in Harder Basic Logistics, maybe.
 
 -- TODO rather custom-tune the recipe costs of these. The above code was written before I decided to actually try hard with this modpack.
+
+-- Remove cliff explosives, since there's no cliffs.
+local Tech = require("code.util.tech")
+Tech.removeRecipeFromTech("cliff-explosives", "explosives")

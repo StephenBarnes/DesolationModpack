@@ -9,3 +9,5 @@ require("code.data.tweaks.lamps")
 require("code.data.tweaks.vehicles")
 require("code.data.tweaks.turret-recipes")
 require("code.data.tweaks.ammo")
+
+require("code.data.additions.science-packs")

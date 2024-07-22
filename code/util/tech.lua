@@ -1,4 +1,4 @@
-Tech = {}
+local Tech = {}
 
 Tech.addRecipeToTech = function(recipeName, techName, index)
 	local unlock = {
@@ -6,6 +6,10 @@ Tech.addRecipeToTech = function(recipeName, techName, index)
 		recipe = recipeName,
 	}
 	local tech = data.raw.technology[techName]
+	if tech == nil then
+		log("ERROR: Couldn't find tech "..techName.." to add recipe "..recipeName.." to.")
+		return
+	end
 	if not tech.effects then
 		tech.effects = {unlock}
 	else
