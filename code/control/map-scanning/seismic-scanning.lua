@@ -3,8 +3,8 @@
 -- However, they share significant code, in common-island-scanning.lua.
 
 -- We store a table of all chunks from which seismic scanners have ever scanned, in global.seismicScanners.
--- These are indexed by the string of their chunk. So multiple seismic scanners on one chunk effectively scan together.
--- Each entry in global.seismicScanners contains: frontierChunks, alreadyAddedChunks, firstTick, lastTick, hasFinished.
+-- These are indexed by the force index, then by the string of their chunk. So multiple seismic scanners on one chunk effectively scan together.
+-- Each entry in global.seismicScanners[force.index] contains: frontierChunks, alreadyAddedChunks, firstTick, lastTick, hasFinished, startChunk.
 
 local globalParams = require("code.global-params")
 local Common = require("code.control.map-scanning.common-island-scanning")
@@ -32,9 +32,10 @@ local function onSectorScanned(event)
 
 	-- Check whether we have a running scan for this radar's chunk. If not, create one.
 	if global.seismicScanners == nil then global.seismicScanners = {} end
-	if global.seismicScanners[chunkStr] == nil then
+	if global.seismicScanners[force.index] == nil then global.seismicScanners[force.index] = {} end
+	if global.seismicScanners[force.index][chunkStr] == nil then
 		force.print(math.random(100, 999) .. "New seismic scanner, chunk str "..(chunkStr or "nil"))
-		global.seismicScanners[chunkStr] = {
+		global.seismicScanners[force.index][chunkStr] = {
 			hasFinished = false,
 			firstTick = game.tick,
 			frontierChunks = {chunkList},
@@ -45,7 +46,7 @@ local function onSectorScanned(event)
 	end
 
 	-- Now we scan one chunk, and update the scan info.
-	local scanInfo = global.seismicScanners[chunkStr]
+	local scanInfo = global.seismicScanners[force.index][chunkStr]
 	if scanInfo.hasFinished then
 		ent.active = false
 	else

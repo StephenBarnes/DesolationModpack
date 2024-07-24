@@ -5,10 +5,12 @@ return {
 
 	printEveryIslandScanChunk = false, -- Whether to print a message for every chunk scanned by the starting island scan or seismic scanners.
 	scanStartIslandMaxTaxicabDistance = 1000, -- How many chunks away from (0,0) we'll scan chunks in the starting island scan. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
-	seismicScanMaxTaxicabDistance = 20000, -- How many chunks away from (0,0) we'll scan chunks in the seismic scanner. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
-	scanStartIslandEveryNTicks = 60, -- How often to update the scan of the starting island, in ticks.
-	scanStartIslandChunksPerUpdate = 2, -- How many chunks to scan per update.
-	-- For these two settings, we want scanStartIslandEveryNTicks to be large, since that's also how often we check, even if the scan isn't ongoing.
+	seismicScanMaxTaxicabDistance = 1000, -- How many chunks away from a seismic scanner it will scan chunks. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
+	oceanScanMaxTaxicabDistance = 32, -- How many chunks away from an ocean scanner it will scan chunks. This is to avoid scanning forever, since the ocean is generally connected.
+	scanEveryNTicks = 60, -- How often to update the scan of the starting island, or ocean scanners, in ticks.
+	scanStartIslandChunksPerUpdate = 2, -- How many chunks to scan per update, for starting island scan.
+	scanOceanChunksPerUpdate = 4, -- How many chunks to scan per update, for ocean scanners.
+	-- For these settings, we want scanEveryNTicks to be large, since that's also how often we check, even if the scan isn't ongoing.
 	-- So we check less frequently, and batch multiple chunks together, using the scanStartIslandChunksPerUpdate setting.
 	-- I've found that 60 and 2 are reasonable numbers - no noticeable lag on my machine, and scans are fast enough.
 	-- This changes depending on how complex the terrain autoplace rules are.

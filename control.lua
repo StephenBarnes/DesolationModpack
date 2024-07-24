@@ -50,6 +50,7 @@ script.on_event(defines.events.on_research_finished, function(event)
 	startIslandScan.onResearchFinished(event)
 end)
 
-script.on_nth_tick(globalParams.scanStartIslandEveryNTicks, function(event)
+script.on_nth_tick(globalParams.scanEveryNTicks, function(event)
 	startIslandScan.onNthTick(event)
+	oceanScanning.onNthTick(event)
 end)
