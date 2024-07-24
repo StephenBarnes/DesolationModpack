@@ -23,7 +23,7 @@ data.raw.recipe["stone-wall"].order = "a1"
 
 data:extend({concWallEnt, concWallItem, concWallRecipe})
 
-Tech.addRecipeToTech("concrete-wall", "ir-concrete-1")
+--Tech.addRecipeToTech("concrete-wall", "ir-concrete-1") -- Rather adding to fortified-defense-3 tech.
 
 -- IR3 steel plate wall is made of 4 reinforced steel plates, plus stone-wall (brick wall).
 -- Want to modify it to use the concrete wall instead.

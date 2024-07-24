@@ -37,6 +37,8 @@ require("code.data.tweaks.trains")
 
 require("code.data.additions.tech")
 
+require("code.data.tweaks.searchlight-assault")
+
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
 -- Temporary: printing out tile prototype info

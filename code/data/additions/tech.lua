@@ -174,6 +174,144 @@ Tech.addTechDependency("ironclad", "military-4")
 
 data.raw.technology["ir-inserters-1"].localised_description = {"technology-description.ir-inserters-1"}
 
+-- Rather don't have a special "circuit network" tech; rather include it in the electronics 1 tech. Move all its effects to electronics 1.
+-- And switch dependencies on circuit network to electronics 1.
+Tech.disable("circuit-network")
+--Tech.setPrereqs("searchlight-assault", {"ir-electronics-1", "optics"}) -- Rather moving it to a fortified defense tech.
+for _, effect in pairs(data.raw.technology["circuit-network"].effects) do
+	table.insert(data.raw.technology["ir-electronics-1"].effects, effect)
+end
+
+-- Remove dependency from self-defense to steam mechanisms, since it's redundant anyway.
+data.raw.technology["ir-basic-research"].prerequisites = {"ir-tin-working-2", "ir-copper-working-2"}
+
+-- Create "fortified defense" techs.
+Tech.disable("ir-scattergun-turret")
+Tech.disable("gun-turret")
+Tech.disable("gate")
+Tech.disable("ir-steel-wall")
+Tech.disable("searchlight-assault")
+Tech.removeRecipeFromTech("stone-wall", "stone-wall") -- Technology "stone-wall" is IR3's "stone-working" tech.
+data:extend({
+	{
+		type = "technology",
+		name = "fortified-defense-1",
+		icons = data.raw.technology["ir-scattergun-turret"].icons,
+		prerequisites = {"ir-blunderbuss", "ir-basic-research"},
+		--max_level = 4, -- Actually it seems the -1, -2, -3, -4 suffixes on the IDs are enough to mark levles.
+		unit = {
+			count = 10,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 60,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "scattergun-turret",
+			},
+			{
+				type = "unlock-recipe",
+				recipe = "stone-wall",
+			},
+		}
+	},
+	{
+		type = "technology",
+		name = "fortified-defense-2",
+		icons = data.raw.technology["gun-turret"].icons,
+		prerequisites = {"fortified-defense-1", "ir-iron-milestone"},
+		unit = {
+			count = 175,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 60,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "gun-turret",
+			},
+			{
+				-- A bit unrealistic to unlock gate before electricity etc, but I want it to be soon after rail.
+				type = "unlock-recipe",
+				recipe = "gate",
+			},
+		}
+	},
+	{
+		type = "technology",
+		name = "fortified-defense-3",
+		icons = {
+			{
+				icon = "__base__/graphics/technology/stone-wall.png",
+				icon_size = 256,
+				icon_mipmaps = 4,
+			},
+			{
+				icon = "__Desolation__/graphics/searchlight-icon-modified.png",
+				icon_size = 64,
+				icon_mipmaps = 4,
+				scale = 1.7,
+				shift = {0, -40},
+			}
+		},
+		prerequisites = {"fortified-defense-2", "optics", "ir-concrete-1"},
+		unit = {
+			count = 250,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 60,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "searchlight-assault",
+			},
+			{
+				type = "unlock-recipe",
+				recipe = "concrete-wall",
+			},
+		}
+	},
+	{
+		type = "technology",
+		name = "fortified-defense-4",
+		icons = data.raw.technology["ir-arc-turret"].icons,
+		prerequisites = {"fortified-defense-3", "ir-steel-milestone"},
+		unit = {
+			count = 250,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 60,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "arc-turret",
+			},
+			{
+				type = "unlock-recipe",
+				recipe = "steel-plate-wall",
+			},
+		}
+	},
+})
+data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 4}, {"iron-plate-heavy", 2}}
+-- TODO change ingredients for arc turret
+-- TODO change searchlight ingredients
+-- TODO write new locale descriptions.
+-- TODO remove electric arc turret tech, and handle its postreqs.
+
+
 if false then
 	Tech.addTechDependency("ir-scatterbot", "military")
 	Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
@@ -186,3 +324,5 @@ end
 -- TODO remove this
 
 -- TODO fix the ordering of the techs. Currently some fairly late techs are shown quite early. Maybe just set order field for all of them to the same value, so the game automatically orders them.
+
+-- TODO use this to make IR3 tech overlays: 	DIR.add_tech_icon_overlay(tech_name, DIR.get_icon_path("analysis-pack-unlock"))
