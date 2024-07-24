@@ -17,7 +17,8 @@ local concWallRecipe = table.deepcopy(data.raw.recipe["stone-wall"])
 concWallRecipe.name = "concrete-wall"
 concWallRecipe.localised_name = {"item-name.concrete-wall"}
 concWallRecipe.result = "concrete-wall"
-concWallRecipe.ingredients = {{"concrete-block", 4}, {"iron-stick", 2}} -- TODO Fine-tune this by looking at factory planner.
+concWallRecipe.result_count = 2
+concWallRecipe.ingredients = {{"concrete-block", 6}, {"iron-stick", 2}} -- TODO Fine-tune this by looking at factory planner.
 concWallRecipe.order = "a2"
 data.raw.recipe["stone-wall"].order = "a1"
 

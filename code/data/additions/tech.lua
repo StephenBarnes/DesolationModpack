@@ -21,26 +21,21 @@ Tech.addTechDependency("automation-2", "logistics-2")
 Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
 Tech.replacePrereq("ir-mining-2", "ir-electronics-3", "ir-inserters-3")
 
--- To avoid telescopes being a dead end, I'm renaming the tech to "viewfinders" and adding as prereq to military (which is a prereq of autogun turrets).
---Tech.addTechDependency("ir-bronze-telescope", "military")
--- Actually, rather renaming it to "optics", and then making it a prereq of electric lamps.
-Tech.addTechDependency("ir-bronze-telescope", "optics")
-
 -- Night-vision shouldn't depend on electric lighting, and should be pretty easy to get early on.
 Tech.setPrereqs("night-vision-equipment", {"modular-armor"})
 
 -- To avoid heavy roller and heavy armor from being dead ends, I'm going to merge them into the bronze furnace tech.
 -- Also move the heavy bronze plate recipe, since that makes sense thematically, though it's breaking with all the other material milestone techs.
-Tech.addTechDependency("ir-monowheel", "ir-bronze-furnace")
-Tech.addRecipeToTech("bronze-plate-heavy", "ir-bronze-furnace", 1)
-Tech.removeRecipeFromTech("bronze-plate-heavy", "ir-bronze-milestone")
-Tech.addRecipeToTech("heavy-roller", "ir-bronze-furnace")
-Tech.hideTech("ir-heavy-roller")
-Tech.addRecipeToTech("heavy-armor", "ir-bronze-furnace")
-Tech.hideTech("heavy-armor")
+--Tech.addTechDependency("ir-monowheel", "ir-bronze-furnace")
+--Tech.addRecipeToTech("bronze-plate-heavy", "ir-bronze-furnace", 1)
+--Tech.removeRecipeFromTech("bronze-plate-heavy", "ir-bronze-milestone")
+--Tech.addRecipeToTech("heavy-roller", "ir-bronze-furnace")
+--Tech.hideTech("ir-heavy-roller")
+--Tech.addRecipeToTech("heavy-armor", "ir-bronze-furnace")
+--Tech.hideTech("heavy-armor")
 
 -- Change clockwork scatterbot to depend on the new heavy bronze plate tech.
-Tech.replacePrereq("ir-scatterbot", "ir-bronze-milestone", "ir-bronze-furnace")
+--Tech.replacePrereq("ir-scatterbot", "ir-bronze-milestone", "ir-bronze-furnace")
 
 -- Make scatterbots and lampbots not dead ends.
 Tech.addTechDependency("ir-scatterbot", "ir-lampbot")
@@ -71,9 +66,11 @@ Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing", 1)
 -- Land-mine
 -- Medical pack
 
--- Move light armor to the new "self-defense" tech.
+-- Move light armor, and brick wall, to the new "self-defense" tech.
 Tech.addRecipeToTech("light-armor", "ir-blunderbuss")
 Tech.removeRecipeFromTech("light-armor", "ir-tin-working-2")
+Tech.addRecipeToTech("stone-wall", "ir-blunderbuss")
+Tech.removeRecipeFromTech("stone-wall", "stone-wall") -- Technology "stone-wall" is IR3's "stone-working" tech.
 
 -- Remove unwanted cargo ships techs: oversea energy distribution, train bridges, tanker ship
 Tech.disable("oversea-energy-distribution")
@@ -81,6 +78,7 @@ Tech.disable("automated_bridges")
 Tech.disable("tank_ship")
 Tech.disable("cargo_ships")
 Tech.disable("water_transport_signals")
+Tech.disable("deep_sea_oil_extraction") -- shouldn't be necessary; only shows up if settings are wrong.
 -- Move cargo ships, buoys, ports all to the same tech.
 Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
 Tech.addRecipeToTech("buoy", "automated_water_transport")
@@ -110,10 +108,9 @@ Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
 --Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
 data.raw.technology["railway"].prerequisites = {"meat:steam-locomotion-technology", "engine", "ir-steel-milestone"}
 data.raw.recipe["locomotive"].ingredients = {{"computer-mk1", 1}, {"engine-unit", 1}, {"steel-rod", 4}, {"steel-plate-heavy", 8}, {"steel-gear-wheel", 8}}
-
 -- TODO check ingredients
 
-Tech.addTechDependency("ir-bronze-telescope", "ir-radar")
+Tech.setPrereqs("ir-radar", {"ir-bronze-telescope", "ir-electronics-1"})
 
 -- Geothermal and electric derrick
 data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
@@ -162,11 +159,11 @@ data.raw.technology["ironclad"].prerequisites = {"military-2", "automobilism"}
 Tech.addTechDependency("water_transport", "ironclad")
 
 Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
-Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
+--Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
 Tech.addTechDependency("effect-transmission", "ir-transmat")
 
-Tech.addTechDependency("belt-immunity-equipment", "power-armor")
-Tech.addTechDependency("night-vision-equipment", "power-armor")
+--Tech.addTechDependency("belt-immunity-equipment", "power-armor")
+--Tech.addTechDependency("night-vision-equipment", "power-armor")
 
 Tech.removeRecipeFromTech("mortar-cluster-bomb", "ironclad")
 Tech.addRecipeToTech("mortar-cluster-bomb", "military-4")
@@ -182,85 +179,171 @@ for _, effect in pairs(data.raw.technology["circuit-network"].effects) do
 	table.insert(data.raw.technology["ir-electronics-1"].effects, effect)
 end
 
--- Remove dependency from self-defense to steam mechanisms, since it's redundant anyway.
+-- Remove dependency from basic defense to steam mechanisms, since it's redundant anyway.
 data.raw.technology["ir-basic-research"].prerequisites = {"ir-tin-working-2", "ir-copper-working-2"}
 
 -- Create "fortified defense" techs.
-Tech.disable("ir-scattergun-turret")
-Tech.disable("gun-turret")
+-- I think rather don't do all this. Because it doesn't really make sense to combine eg gun turret tech with gate tech, or shotgun turret tech with brick wall, etc.
+-- Plus, I originally thought of this because I wanted to make all techs give like +1% evolution. But now I think I'll rather just manually add evolution boosts to specific milestone techs.
+if false then
+	Tech.disable("ir-scattergun-turret")
+	Tech.disable("gun-turret")
+	Tech.disable("gate")
+	Tech.disable("ir-steel-wall")
+	Tech.disable("searchlight-assault")
+	Tech.removeRecipeFromTech("stone-wall", "stone-wall") -- Technology "stone-wall" is IR3's "stone-working" tech.
+	data:extend({
+		{
+			type = "technology",
+			name = "fortified-defense-1",
+			icons = data.raw.technology["ir-scattergun-turret"].icons,
+			prerequisites = {"ir-blunderbuss", "ir-basic-research"},
+			--max_level = 4, -- Actually it seems the -1, -2, -3, -4 suffixes on the IDs are enough to mark levles.
+			unit = {
+				count = 10,
+				ingredients = {
+					{"automation-science-pack", 1},
+					{"logistic-science-pack", 1},
+				},
+				time = 60,
+			},
+			effects = {
+				{
+					type = "unlock-recipe",
+					recipe = "scattergun-turret",
+				},
+				{
+					type = "unlock-recipe",
+					recipe = "stone-wall",
+				},
+			}
+		},
+		{
+			type = "technology",
+			name = "fortified-defense-2",
+			icons = data.raw.technology["gun-turret"].icons,
+			prerequisites = {"fortified-defense-1", "military"},
+			unit = {
+				count = 175,
+				ingredients = {
+					{"automation-science-pack", 1},
+					{"logistic-science-pack", 1},
+				},
+				time = 60,
+			},
+			effects = {
+				{
+					type = "unlock-recipe",
+					recipe = "gun-turret",
+				},
+				{
+					-- A bit unrealistic to unlock gate before electricity etc, but I want it to be soon after rail.
+					type = "unlock-recipe",
+					recipe = "gate",
+				},
+			}
+		},
+		{
+			type = "technology",
+			name = "fortified-defense-3",
+			icons = {
+				{
+					icon = "__base__/graphics/technology/stone-wall.png",
+					icon_size = 256,
+					icon_mipmaps = 4,
+				},
+				{
+					icon = "__Desolation__/graphics/searchlight-icon-modified.png",
+					icon_size = 64,
+					icon_mipmaps = 4,
+					scale = 2.0,
+					shift = {0, -60},
+				}
+			},
+			prerequisites = {"fortified-defense-2", "optics", "ir-concrete-1", "ir-radar"},
+			unit = {
+				count = 250,
+				ingredients = {
+					{"automation-science-pack", 1},
+					{"logistic-science-pack", 1},
+				},
+				time = 60,
+			},
+			effects = {
+				{
+					type = "unlock-recipe",
+					recipe = "searchlight-assault",
+				},
+				{
+					type = "unlock-recipe",
+					recipe = "concrete-wall",
+				},
+			}
+		},
+		{
+			type = "technology",
+			name = "fortified-defense-4",
+			icons = data.raw.technology["ir-arc-turret"].icons,
+			prerequisites = {"fortified-defense-3", "ir-steel-milestone"},
+			unit = {
+				count = 250,
+				ingredients = {
+					{"automation-science-pack", 1},
+					{"logistic-science-pack", 1},
+				},
+				time = 60,
+			},
+			effects = {
+				{
+					type = "unlock-recipe",
+					recipe = "arc-turret",
+				},
+				{
+					type = "unlock-recipe",
+					recipe = "steel-plate-wall",
+				},
+			}
+		},
+	})
+end
+
+-- Move the gate recipe to the rail tech. Actually, rather to the iron motor tech.
+data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 4}, {"iron-plate-heavy", 2}}
 Tech.disable("gate")
-Tech.disable("ir-steel-wall")
-Tech.disable("searchlight-assault")
-Tech.removeRecipeFromTech("stone-wall", "stone-wall") -- Technology "stone-wall" is IR3's "stone-working" tech.
+--Tech.addRecipeToTech("gate", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("gate", "ir-iron-motor")
+
+-- Change searchlight assault tech to use the icon of the searchlight inside walls
+-- Well, the tech for concrete walls could be unlocked only after the searchlight tech, but I think it's still better to use this icon, so it's not visibly lower-res than the other techs.
+data.raw.technology["searchlight-assault"].icons = {
+	{
+		icon = "__base__/graphics/technology/stone-wall.png",
+		icon_size = 256,
+		icon_mipmaps = 4,
+	},
+	{
+		icon = "__Desolation__/graphics/searchlight-icon-modified.png",
+		icon_size = 64,
+		icon_mipmaps = 4,
+		scale = 2.0,
+		shift = {0, -60},
+	}
+}
+-- Make the tech use the new icon, same as the recipe and item.
+--data.raw.technology["searchlight-assault"].icon = "__Desolation__/graphics/searchlight-icon-modified.png"
+--data.raw.technology["searchlight-assault"].icon_mipmaps = 4
+--data.raw.technology["searchlight-assault"].icon_size = 64
+data.raw.technology["searchlight-assault"].prerequisites = {"ir-radar", "optics"}
+
+-- Create concrete wall tech.
 data:extend({
 	{
 		type = "technology",
-		name = "fortified-defense-1",
-		icons = data.raw.technology["ir-scattergun-turret"].icons,
-		prerequisites = {"ir-blunderbuss", "ir-basic-research"},
-		--max_level = 4, -- Actually it seems the -1, -2, -3, -4 suffixes on the IDs are enough to mark levles.
-		unit = {
-			count = 10,
-			ingredients = {
-				{"automation-science-pack", 1},
-				{"logistic-science-pack", 1},
-			},
-			time = 60,
-		},
-		effects = {
-			{
-				type = "unlock-recipe",
-				recipe = "scattergun-turret",
-			},
-			{
-				type = "unlock-recipe",
-				recipe = "stone-wall",
-			},
-		}
-	},
-	{
-		type = "technology",
-		name = "fortified-defense-2",
-		icons = data.raw.technology["gun-turret"].icons,
-		prerequisites = {"fortified-defense-1", "ir-iron-milestone"},
-		unit = {
-			count = 175,
-			ingredients = {
-				{"automation-science-pack", 1},
-				{"logistic-science-pack", 1},
-			},
-			time = 60,
-		},
-		effects = {
-			{
-				type = "unlock-recipe",
-				recipe = "gun-turret",
-			},
-			{
-				-- A bit unrealistic to unlock gate before electricity etc, but I want it to be soon after rail.
-				type = "unlock-recipe",
-				recipe = "gate",
-			},
-		}
-	},
-	{
-		type = "technology",
-		name = "fortified-defense-3",
-		icons = {
-			{
-				icon = "__base__/graphics/technology/stone-wall.png",
-				icon_size = 256,
-				icon_mipmaps = 4,
-			},
-			{
-				icon = "__Desolation__/graphics/searchlight-icon-modified.png",
-				icon_size = 64,
-				icon_mipmaps = 4,
-				scale = 1.7,
-				shift = {0, -40},
-			}
-		},
-		prerequisites = {"fortified-defense-2", "optics", "ir-concrete-1"},
+		name = "concrete-wall",
+		icon = "__base__/graphics/technology/stone-wall.png",
+		icon_size = 256,
+		icon_mipmaps = 4,
+		prerequisites = {"ir-concrete-1"},
 		unit = {
 			count = 250,
 			ingredients = {
@@ -270,51 +353,44 @@ data:extend({
 			time = 60,
 		},
 		effects = {
-			{
-				type = "unlock-recipe",
-				recipe = "searchlight-assault",
-			},
 			{
 				type = "unlock-recipe",
 				recipe = "concrete-wall",
 			},
 		}
 	},
-	{
-		type = "technology",
-		name = "fortified-defense-4",
-		icons = data.raw.technology["ir-arc-turret"].icons,
-		prerequisites = {"fortified-defense-3", "ir-steel-milestone"},
-		unit = {
-			count = 250,
-			ingredients = {
-				{"automation-science-pack", 1},
-				{"logistic-science-pack", 1},
-			},
-			time = 60,
-		},
-		effects = {
-			{
-				type = "unlock-recipe",
-				recipe = "arc-turret",
-			},
-			{
-				type = "unlock-recipe",
-				recipe = "steel-plate-wall",
-			},
-		}
-	},
 })
-data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 4}, {"iron-plate-heavy", 2}}
+Tech.addTechDependency("concrete-wall", "ir-steel-wall")
+
+
 -- TODO change ingredients for arc turret
 -- TODO change searchlight ingredients
 -- TODO write new locale descriptions.
 -- TODO remove electric arc turret tech, and handle its postreqs.
 
+Tech.addTechDependency("fluid-handling", "ir-barrelling")
+
+-- Remove wood-to-charcoal recipe, and rather only have wood-chips-to-charcoal. Because I don't want to encourage people to accidentally use wood as fuel before they realize how scarce it is on the starting island.
+-- Keep the charcoal kiln recipe there, bc people can get wood chips as scrap from crafting wood items.
+-- Also move charcoal-from-chips recipe to the stone furnace.
+Tech.removeRecipeFromTech("charcoal-from-ore", "ir-charcoal")
+Tech.removeRecipeFromTech("charcoal-from-scrap", "ir-grinding-1")
+Tech.addRecipeToTech("charcoal-from-scrap", "ir-charcoal")
+
+Tech.addTechDependency("ir-blunderbuss", "ir-scattergun-turret")
+
+-- Copper foil and thermionic tube (copper-gate) should be with electricity, not electronics, bc it's needed for things like lihts.
+Tech.removeRecipeFromTech("copper-foil", "ir-electronics-1")
+Tech.removeRecipeFromTech("copper-gate", "ir-electronics-1")
+Tech.addRecipeToTech("copper-foil", "ir-steam-power")
+Tech.addRecipeToTech("copper-gate", "ir-steam-power")
+
+Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
+
+--Tech.addTechDependency("ir-scattergun-turret", "gun-turret")
+Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
 if false then
-	Tech.addTechDependency("ir-scatterbot", "military")
-	Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
 	Tech.addTechDependency("ir-steambot", "personal-roboport-equipment")
@@ -325,4 +401,4 @@ end
 
 -- TODO fix the ordering of the techs. Currently some fairly late techs are shown quite early. Maybe just set order field for all of them to the same value, so the game automatically orders them.
 
--- TODO use this to make IR3 tech overlays: 	DIR.add_tech_icon_overlay(tech_name, DIR.get_icon_path("analysis-pack-unlock"))
+-- TODO use this to make IR3 tech overlays, for techs that unlock science pack recipes: 	DIR.add_tech_icon_overlay(tech_name, DIR.get_icon_path("analysis-pack-unlock"))

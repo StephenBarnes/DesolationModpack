@@ -7,3 +7,9 @@ data.raw["utility-constants"].default.main_menu_simulations.sl_sweep = nil
 
 -- Change icon
 data.raw.item["searchlight-assault"].icon = "__Desolation__/graphics/searchlight-icon-modified.png"
+
+-- Recipe
+data.raw.recipe["searchlight-assault"].ingredients = {
+	{"deadlock-large-lamp", 1},
+	{"iron-frame-large", 1},
+}
