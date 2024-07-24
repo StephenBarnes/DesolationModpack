@@ -15,7 +15,8 @@ Tech.addRecipeToTech("glass-bottle", "ir-glass-milestone")
 
 -- Needed because I want the stacking beltboxes to be ordered correctly.
 -- Also, IR3 changes things so that logistics-2 is no longer a prereq for things like cars, like it is in vanilla.
-Tech.addTechDependency("automation-2", "logistics-2")
+-- Actually not needed, bc it already depends on automation-2 indirectly.
+--Tech.addTechDependency("automation-2", "logistics-2")
 
 -- I'm using IR3's tech ir-inserters-3 (stack inserters) as "Robotics 3". That's a dead end, so let's switch some prereqs from ir-electronics-3 to ir-inserters-3.
 Tech.replacePrereq("rocket-silo", "ir-electronics-3", "ir-inserters-3")
@@ -45,28 +46,16 @@ Tech.addTechDependency("ir-lampbot", "defender")
 Tech.addTechDependency("ir-bronze-forestry", "ir-iron-forestry")
 Tech.addTechDependency("ir-iron-forestry", "ir-chrome-forestry")
 
--- Add logistics-3 as prereq for some higher-tier stuff, to avoid dead end.
+-- Add logistics-3 as prereq for some higher-tier stuff.
 Tech.addTechDependency("logistics-3", "logistic-system")
 
 -- Move petrochemical generator to crude oil processing, bc it's a dead end.
 -- Also add dependency combustion engine => crude oil processing, bc combustion engine is needed to make the petrochemical generator.
-Tech.hideTech("ir-petro-generator")
-Tech.addTechDependency("engine", "ir-crude-oil-processing")
-Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing", 1)
+--Tech.hideTech("ir-petro-generator")
+--Tech.addTechDependency("engine", "ir-crude-oil-processing")
+--Tech.addRecipeToTech("petro-generator", "ir-crude-oil-processing", 1)
 
--- Radar is a dead end. We could remove it, eg:
--- Tech.addTechDependency("ir-radar", "ir-robotower")
--- But, I don't think this is actually necessary - surely nobody's going to continue using telescopes into late-game, and if they do, alright, they can get a reduction in evolution.
-
--- There's several other dead ends that I think are actually fine, because forgoing them could be fun and deserves a reward in lowered evolution. Namely:
--- Autogun turret
--- Fluid wagon
--- Helium airship, and airship station
--- Heavy picket
--- Land-mine
--- Medical pack
-
--- Move light armor, and brick wall, to the new "self-defense" tech.
+-- Move light armor, and brick wall, to the new "basic defense" tech.
 Tech.addRecipeToTech("light-armor", "ir-blunderbuss")
 Tech.removeRecipeFromTech("light-armor", "ir-tin-working-2")
 Tech.addRecipeToTech("stone-wall", "ir-blunderbuss")

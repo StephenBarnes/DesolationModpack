@@ -1,0 +1,63 @@
+-- This file creates tech, item, and recipe for the ocean scanner capsule.
+
+data:extend({
+	{
+		type = "capsule",
+		name = "ocean-scanner",
+		icon = "__Desolation__/graphics/ocean-scanner.png",
+		icon_size = 256,
+		icon_mipmaps = 4,
+		--subgroup = "capsule",
+		order = "a",
+		stack_size = 20,
+		capsule_action = {
+			type = "throw",
+			uses_stack = false, -- Rather remove the item by script, if thrown into valid tile.
+			attack_parameters = {
+				type = "projectile",
+				range = 10,
+				cooldown = 120,
+				ammo_type = {
+					category = "capsule",
+					target_type = "position",
+				},
+			},
+		},
+	},
+	{
+		type = "recipe",
+		name = "ocean-scanner",
+		subgroup = data.raw.recipe["radar"].subgroup,
+		category = data.raw.recipe["radar"].category,
+		order = "zz1",
+		enabled = false,
+		ingredients = {
+			{"steel-frame-small", 1},
+			{"steel-plate-heavy", 4},
+			{"electronic-circuit", 4},
+		},
+		result = "ocean-scanner",
+	},
+	{
+		type = "technology",
+		name = "ocean-scanner",
+		icon = "__Desolation__/graphics/ocean-scanner.png",
+		icon_size = 256,
+		icon_mipmaps = 4,
+		prerequisites = {"water_transport", "ir-radar"},
+		unit = {
+			count = 100,
+			ingredients = {
+				{"automation-science-pack", 1},
+				{"logistic-science-pack", 1},
+			},
+			time = 30,
+		},
+		effects = {
+			{
+				type = "unlock-recipe",
+				recipe = "ocean-scanner",
+			},
+		},
+	},
+})

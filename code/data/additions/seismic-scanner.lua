@@ -11,7 +11,7 @@ data:extend({
 		icon = "__Desolation__/graphics/seismic-scanner/seismic-scanner-icon.png",
 		icon_size = 64,
 		icon_mipmaps = 1,
-		subgroup = "defensive-structure",
+		subgroup = data.raw.item.radar.subgroup,
 		order = "d[radar]-b[radar]",
 		place_result = "seismic-scanner",
 		stack_size = 1,
@@ -21,11 +21,14 @@ data:extend({
 		name = "seismic-scanner",
 		enabled = false,
 		ingredients = {
-			{"advanced-circuit", 5},
-			{"electric-engine-unit", 10},
-			{"explosives", 10}
+			{"iron-frame-large", 1},
+			{"copper-cable-heavy", 1},
+			{"electronic-circuit", 4}
 		},
-		result = "seismic-scanner"
+		result = "seismic-scanner",
+		subgroup = data.raw.recipe["radar"].subgroup,
+		category = data.raw.recipe["radar"].category,
+		order = "zz0",
 	},
 	{
 		type = "radar",
