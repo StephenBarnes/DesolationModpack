@@ -47,10 +47,8 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 	end
 	-- Scan one chunk in the frontier.
 	local chunkToScan = table.remove(scanInfo.frontierChunks, 1)
-	local startChunk = scanInfo.startChunk
-	if (math.abs(chunkToScan[1] - startChunk[1]) + math.abs(chunkToScan[2] - startChunk[2])) > maxDist then
-		-- Refuse to scan chunks that are too far away. This can happen if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
-		log("ERROR: Refusing to scan chunk " .. X.chunkToStr(chunkToScan) .. " because it's very far away. Probably due to terrain settings that connect all islands, or remove the sea, etc.")
+	if chunkToScan[3] > maxDist then
+		-- Refuse to scan chunks that are too far away. This generally happens for ocean scanner pods, but can also happen for seismic scanners or the starting island scan, if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 		return
 	end
 
@@ -70,10 +68,10 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 	end
 	if isChunkPermitted(chunkArea, minLandTiles, maxLandTiles) then
 		for _, adjacentChunk in pairs({
-			{chunkToScan[1] - 1, chunkToScan[2]},
-			{chunkToScan[1], chunkToScan[2] - 1},
-			{chunkToScan[1], chunkToScan[2] + 1},
-			{chunkToScan[1] + 1, chunkToScan[2]},
+			{chunkToScan[1] - 1, chunkToScan[2], chunkToScan[3]+1},
+			{chunkToScan[1], chunkToScan[2] - 1, chunkToScan[3]+1},
+			{chunkToScan[1], chunkToScan[2] + 1, chunkToScan[3]+1},
+			{chunkToScan[1] + 1, chunkToScan[2], chunkToScan[3]+1},
 		}) do
 			maybeAddChunk(adjacentChunk)
 		end
@@ -88,10 +86,10 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 		-- Well, that looks artificial again, so let's just do it randomly.
 		if math.random() < 0.4 then
 			for _, adjacentChunk in pairs({
-				{chunkToScan[1] - 1, chunkToScan[2] - 1},
-				{chunkToScan[1] + 1, chunkToScan[2] - 1},
-				{chunkToScan[1] - 1, chunkToScan[2] + 1},
-				{chunkToScan[1] + 1, chunkToScan[2] + 1},
+				{chunkToScan[1] - 1, chunkToScan[2] - 1, chunkToScan[3]+1.41},
+				{chunkToScan[1] + 1, chunkToScan[2] - 1, chunkToScan[3]+1.41},
+				{chunkToScan[1] - 1, chunkToScan[2] + 1, chunkToScan[3]+1.41},
+				{chunkToScan[1] + 1, chunkToScan[2] + 1, chunkToScan[3]+1.41},
 			}) do
 				maybeAddChunk(adjacentChunk)
 			end

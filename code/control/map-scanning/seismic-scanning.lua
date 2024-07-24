@@ -38,7 +38,7 @@ local function onSectorScanned(event)
 		global.seismicScanners[force.index][chunkStr] = {
 			hasFinished = false,
 			firstTick = game.tick,
-			frontierChunks = {chunkList},
+			frontierChunks = {{chunkList[1], chunkList[2], 0}},
 			alreadyAddedChunks = {chunkList},
 			startChunk = chunkList,
 		}
@@ -50,7 +50,7 @@ local function onSectorScanned(event)
 	if scanInfo.hasFinished then
 		ent.active = false
 	else
-		Common.updateScanOnce(force, scanInfo, globalParams.seismicScanMaxTaxicabDistance, 30, nil)
+		Common.updateScanOnce(force, scanInfo, globalParams.seismicScanMaxDist, 30, nil)
 		if scanInfo.hasFinished then -- If it has now finished, print the message.
 			force.print({"Desolation-message.scan-seismic-end", Common.ticksToStr(scanInfo.lastTick - scanInfo.firstTick)})
 			ent.active = false

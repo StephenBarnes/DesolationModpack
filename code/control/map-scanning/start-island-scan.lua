@@ -17,7 +17,7 @@ local function onResearchFinished(event)
 		global.startIslandScan[force.index] = {
 			hasFinished = false,
 			firstTick = game.tick,
-			frontierChunks = {{0, 0}},
+			frontierChunks = {{0, 0, 0}}, -- Extra 0 for the distance.
 			alreadyAddedChunks = {{0, 0}}, -- Chunks that we've already added to the frontier, so shouldn't add them again.
 			startChunk = {0, 0},
 		}
@@ -32,7 +32,7 @@ local function onNthTick(event)
 		local force = game.forces[forceIndex]
 		if force and force.valid and scanInfo and not scanInfo.hasFinished then
 			for _ = 1, globalParams.scanStartIslandChunksPerUpdate do
-				Common.updateScanOnce(force, scanInfo, globalParams.scanStartIslandMaxTaxicabDistance, 30, nil)
+				Common.updateScanOnce(force, scanInfo, globalParams.scanStartIslandMaxDist, 30, nil)
 				if scanInfo.hasFinished then
 					force.print({"Desolation-message.scan-start-island-end", Common.ticksToStr(scanInfo.lastTick - scanInfo.firstTick)})
 					return

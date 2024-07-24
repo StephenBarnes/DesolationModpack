@@ -66,7 +66,7 @@ local function onCapsuleThrown(event)
 	global.oceanScanners[force.index][plopChunkStr] = {
 		hasFinished = false,
 		firstTick = event.tick,
-		frontierChunks = {plopChunkPos},
+		frontierChunks = {{plopChunkPos[1], plopChunkPos[2], 0}},
 		alreadyAddedChunks = {plopChunkPos},
 		startChunk = plopChunkPos,
 	}
@@ -74,7 +74,7 @@ end
 
 local function updateScan(force, scanInfo, chunkStr)
 	for _ = 1, globalParams.scanOceanChunksPerUpdate do
-		Common.updateScanOnce(force, scanInfo, globalParams.oceanScanMaxTaxicabDistance, nil, 30)
+		Common.updateScanOnce(force, scanInfo, globalParams.oceanScanMaxDist, nil, 30)
 		if scanInfo.hasFinished then
 			force.print({"Desolation-message.scan-ocean-end", Common.ticksToStr(scanInfo.lastTick - scanInfo.firstTick)})
 			global.oceanScanners[force.index][chunkStr] = nil -- Remove completely; so you could toss a new one in the same chunk.
