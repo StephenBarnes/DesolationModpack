@@ -13,9 +13,11 @@ local function getChunkArea(chunkPos)
 	return {{x1, y1}, {x2, y2}}
 end
 
-local function isChunkLand(chunkArea)
-	local groundTileCount = game.surfaces[1].count_tiles_filtered{area = chunkArea, collision_mask = "ground-tile"}
-	return groundTileCount > 30
+local function isChunkPermitted(chunkArea, minLandTiles, maxLandTiles)
+	local landTileCount = game.surfaces[1].count_tiles_filtered{area = chunkArea, collision_mask = "ground-tile"}
+	if minLandTiles ~= nil and landTileCount < minLandTiles then return false end
+	if maxLandTiles ~= nil and landTileCount > maxLandTiles then return false end
+	return true
 end
 
 function X.chunkToStr(chunkPos)
@@ -28,8 +30,8 @@ function X.ticksToStr(ticks)
 	return minutes .. "m " .. math.floor(seconds - minutes * 60) .. "s"
 end
 
-function X.updateScanOnce(force, scanInfo, maxDist)
-	-- Takes a force and a scanInfo with fields: frontierChunks, alreadyAddedChunks, firstTick, lastTick, hasFinished.
+function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
+	-- Takes a force and a scanInfo with fields: frontierChunks, alreadyAddedChunks, firstTick, lastTick, hasFinished, startChunk.
 	-- Also takes maxDist, which is maximum taxicab distance of chunks from origin to consider scanning. Cannot be nil.
 	-- Returns nothing.
 	-- Modifies scanInfo.frontierChunks, scanInfo.alreadyAddedChunks, scanInfo.hasFinished, lastTick.
@@ -45,7 +47,8 @@ function X.updateScanOnce(force, scanInfo, maxDist)
 	end
 	-- Scan one chunk in the frontier.
 	local chunkToScan = table.remove(scanInfo.frontierChunks, 1)
-	if (math.abs(chunkToScan[1]) + math.abs(chunkToScan[2])) > maxDist then
+	local startChunk = scanInfo.startChunk
+	if (math.abs(chunkToScan[1] - startChunk[1]) + math.abs(chunkToScan[2] - startChunk[2])) > maxDist then
 		-- Refuse to scan chunks that are too far away. This can happen if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 		log("ERROR: Refusing to scan chunk " .. X.chunkToStr(chunkToScan) .. " because it's very far away. Probably due to terrain settings that connect all islands, or remove the sea, etc.")
 		return
@@ -65,7 +68,7 @@ function X.updateScanOnce(force, scanInfo, maxDist)
 			scanInfo.alreadyAddedChunks[chunkStr] = true
 		end
 	end
-	if isChunkLand(chunkArea) then
+	if isChunkPermitted(chunkArea, minLandTiles, maxLandTiles) then
 		for _, adjacentChunk in pairs({
 			{chunkToScan[1] - 1, chunkToScan[2]},
 			{chunkToScan[1], chunkToScan[2] - 1},

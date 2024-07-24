@@ -2,12 +2,13 @@ local globalParams = require("code.global-params")
 
 local notifyIncorrectMapgenPreset = require("code.control.notify-incorrect-mapgen-preset")
 local transferPlateUnlocksTech = require("code.control.transfer-plate-unlocks-tech")
-local startIslandScan = require("code.control.island-scanning.start-island-scan")
 local ir3StartCalls = require("code.control.ir3-start-calls")
 local poweredPumps = require("code.control.powered-pumps")
 local noBackerNames = require("code.control.no-backer-names")
 local searchlightAssault = require("code.control.searchlight-assault")
-local seismicScanning = require("code.control.island-scanning.seismic-scanning")
+local startIslandScan = require("code.control.map-scanning.start-island-scan")
+local seismicScanning = require("code.control.map-scanning.seismic-scanning")
+local oceanScanning = require("code.control.map-scanning.ocean-scanning")
 
 script.on_init(function()
 	ir3StartCalls.onInit()
@@ -31,6 +32,10 @@ end)
 
 script.on_event(defines.events.on_sector_scanned, function(event)
 	seismicScanning.onSectorScanned(event)
+end)
+
+script.on_event(defines.events.on_player_used_capsule, function(event)
+	oceanScanning.onCapsuleThrown(event)
 end)
 
 script.on_event(defines.events.on_game_created_from_scenario, function(event)

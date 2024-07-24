@@ -60,4 +60,14 @@ data:extend({
 			},
 		},
 	},
+	{
+		type = "sound",
+		name = "ocean-scanner-plop",
+		filename = "__core__/sound/mine-fish.ogg",
+	},
+	{
+		type = "sound",
+		name = "ocean-scanner-radar",
+		filename = "__base__/sound/radar.ogg",
+	},
 })

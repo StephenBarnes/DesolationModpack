@@ -7,7 +7,7 @@
 -- Each entry in global.seismicScanners contains: frontierChunks, alreadyAddedChunks, firstTick, lastTick, hasFinished.
 
 local globalParams = require("code.global-params")
-local Common = require("code.control.island-scanning.common-island-scanning")
+local Common = require("code.control.map-scanning.common-island-scanning")
 
 local function onSectorScanned(event)
 	local ent = event.radar
@@ -39,6 +39,7 @@ local function onSectorScanned(event)
 			firstTick = game.tick,
 			frontierChunks = {chunkList},
 			alreadyAddedChunks = {chunkList},
+			startChunk = chunkList,
 		}
 		force.print({"Desolation-message.scan-seismic-start"})
 	end
@@ -48,7 +49,7 @@ local function onSectorScanned(event)
 	if scanInfo.hasFinished then
 		ent.active = false
 	else
-		Common.updateScanOnce(force, scanInfo, globalParams.seismicScanMaxTaxicabDistance)
+		Common.updateScanOnce(force, scanInfo, globalParams.seismicScanMaxTaxicabDistance, 30, nil)
 		if scanInfo.hasFinished then -- If it has now finished, print the message.
 			force.print({"Desolation-message.scan-seismic-end", Common.ticksToStr(scanInfo.lastTick - scanInfo.firstTick)})
 			ent.active = false
