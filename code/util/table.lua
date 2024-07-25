@@ -28,4 +28,13 @@ Table.maybeGet = function(t, k)
 	return t.k
 end
 
+Table.listToSet = function(l)
+	-- Converts sth like {"a", "b", "c"} to {a=true, b=true, c=true}.
+	local s = {}
+	for _, v in pairs(l) do
+		s[v] = true
+	end
+	return s
+end
+
 return Table

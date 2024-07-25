@@ -7,6 +7,9 @@
 -- * TODO for all techs, check required science packs and that there's a recipe for that science pack unlocked by one of its prereqs.
 -- * TODO for all techs, for all recipes they unlock, check that all ingredients have been unlocked by that point.
 
+-- This might seem like more effort than just manually looking through the tech tree, but, so far it's already found multiple bugs that I hadn't noticed.
+-- So, this is good. Keep it updated.
+
 local Table = require("code.util.table")
 
 -- Local var to hold a list of all techs' names, sorted so that all dependencies only go forwards.
@@ -104,13 +107,24 @@ local function checkTechUnlockOrder()
 	end
 
 	-- Table of stuff that's already available when the game starts.
-	local unlockedAtStart = {
-		["wood"] = true,
-		["copper-ore"] = true,
-		["tin-ore"] = true,
-		["iron-ore"] = true,
-		["coal"] = true,
-		["stone"] = true,
+	local unlockedAtStart = Table.listToSet {
+		"wood",
+		"copper-ore",
+		"tin-ore",
+		"iron-ore",
+		"coal",
+		"stone",
+
+		-- Schematics that come from items available at start.
+		"schematic-ir-charcoal", -- for stone furnace tech
+		"schematic-stone-wall",
+
+		-- "Lightbulb-only" schematics that are unlocked by their prereqs.
+		"schematic-ir-basic-research", -- for steel mechanisms tech
+		"schematic-ir-blunderbuss",
+		"schematic-ir-basic-wood",
+		"schematic-ir-electroplating",
+		"schematic-ir-washing-2",
 	}
 
 	-- Table from tech to stuff that's unlocked by that tech, but not explicitly in its recipe list.
@@ -119,18 +133,45 @@ local function checkTechUnlockOrder()
 		-- TODO add steam from the first steam mechanism thing
 	}
 
+	-- Table from item unlocked by tech to stuff that's also unlocked by that item.
+	local unlockedImplicitlyByItem = {
+		["transfer-plate-2x2"] = {"Desolation-transfer-plate-unlocks-tech"},
+		["transfer-plate"] = {"Desolation-transfer-plate-unlocks-tech"},
+		["pumpjack"] = {"schematic-ir-crude-oil-processing"},
+		["gold-ingot"] = {"schematic-ir-gold-milestone"},
+		["steel-ingot"] = {"schematic-ir-steel-milestone"},
+		["iron-ingot"] = {"schematic-ir-iron-milestone"},
+		["glass"] = {"schematic-ir-glass-milestone"},
+		["bronze-ingot"] = {"schematic-ir-bronze-milestone"},
+		["copper-ingot"] = {"schematic-ir-copper-working-1"},
+		["tin-ingot"] = {"schematic-ir-tin-working-1"},
+		["copper-plate"] = {"schematic-ir-copper-working-2"},
+		["tin-gear-wheel"] = {"schematic-ir-tin-working-2"},
+		["brass-ingot"] = {"schematic-ir-brass-milestone"},
+		["electrum-gem"] = {"schematic-ir-electrum-milestone"},
+		["uranium-235"] = {"schematic-kovarex-enrichment-process"},
+
+		["lead-ingot"] = {"schematic-ir-lead-smelting"},
+		["chromium-ingot"] = {"schematic-ir-chromium-smelting"},
+		["nickel-ingot"] = {"schematic-ir-nickel-smelting"},
+		["platinum-ingot"] = {"schematic-ir-platinum-smelting"},
+	}
+
 	-- TODO special tables for stuff like the barrelling recipes.
 
-	-- Table from tech to stuff that's available after that tech is researched.
-	-- This is later required to be a superset of the tech's required things.
+	-- Tables from tech to stuff that's available before/after that tech is researched.
+	-- Later, we require that the stuff available before the tech contains all science packs required by the tech.
+	-- And we require that the stuff available after the tech contains all ingredients of the tech's unlocked recipes.
 	local availableAfterTech = {}
+	local availableBeforeTech = {}
 	for _, techName in pairs(toposortedTechs) do
 		local tech = data.raw.technology[techName]
 		local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites")
+		local availableBeforeThisTech = {}
 		local availableAfterThisTech = {}
 		if prereqs == nil or #prereqs == 0 then
 			-- If no prereqs, it's only things unlocked at start.
-			Table.overwriteInto(unlockedAtStart, availableAfterThisTech)
+			Table.overwriteInto(unlockedAtStart, availableBeforeThisTech)
 		else
 			-- If it has prereqs, copy in stuff from prereqs.
 			for _, prereqName in pairs(prereqs) do
@@ -139,15 +180,17 @@ local function checkTechUnlockOrder()
 					log("ERROR: Tech "..techName.." has prereq "..prereqName.." which has not been processed; this should never happen.")
 					return false
 				end
-				Table.overwriteInto(availableAfterPrereq, availableAfterThisTech)
+				Table.overwriteInto(availableAfterPrereq, availableBeforeThisTech)
 			end
 		end
 
+		availableBeforeTech[techName] = availableBeforeThisTech
+		Table.overwriteInto(availableBeforeThisTech, availableAfterThisTech)
+
 		-- Add products of unlocked recipes.
-		-- TODO
 		if tech.effects == nil then
-			log("ERROR: Tech "..techName.." has no effects.")
-			return false
+			log("ERROR: Tech "..techName.." has no effects. This should never happen.")
+			successfulSoFar = false
 		end
 		for _, effect in pairs(tech.effects or {}) do
 			if effect.type == "unlock-recipe" then
@@ -170,9 +213,15 @@ local function checkTechUnlockOrder()
 					local resultName = result.name or result[1]
 					if resultName == nil then
 						log("ERROR: Recipe "..effect.recipe.." has result "..serpent.block(result).." which has no name; this should never happen.")
-						return false
+						successfulSoFar = false
+					else
+						availableAfterThisTech[resultName] = true
+						if unlockedImplicitlyByItem[resultName] ~= nil then
+							for _, unlockedImplicitlyByItemName in pairs(unlockedImplicitlyByItem[resultName]) do
+								availableAfterThisTech[unlockedImplicitlyByItemName] = true
+							end
+						end
 					end
-					availableAfterThisTech[resultName] = true
 				end
 			end
 		end
@@ -189,7 +238,24 @@ local function checkTechUnlockOrder()
 	--log(serpent.block(availableAfterTech["automation"]))
 	-- So far, this seems to run correctly. TODO the rest.
 
-	-- TODO check that science packs of all techs are included in it's prereqs' available-after-tech.
+	-- Check that science packs of all techs are included in it's prereqs' available-after-tech.
+	for _, techName in pairs(toposortedTechs) do
+		local tech = data.raw.technology[techName]
+		local sciencePacks = tech.unit.ingredients or Table.maybeGet(Table.maybeGet(tech.normal, "unit"), "ingredients")
+		for _, sciencePack in pairs(sciencePacks) do
+			local sciencePackName = sciencePack.name or sciencePack[1]
+			if sciencePackName == nil then
+				log("ERROR: Tech "..techName.." has science pack "..serpent.block(sciencePack).." which has no name. This should never happen.")
+				return
+			end
+			--local isSchematic = string.match(sciencePackName, "^schematic-") -- IR3 Inspiration mod adds schematic items, which can't actually be produced.
+			--if not isSchematic and not availableBeforeTech[techName][sciencePackName] then
+			if not availableBeforeTech[techName][sciencePackName] then
+				log("ERROR: Tech "..techName.." requires science pack "..sciencePackName.." which has not been unlocked yet.")
+				successfulSoFar = false
+			end
+		end
+	end
 
 	-- TODO check all requirements of all techs are included in available after tech.
 
