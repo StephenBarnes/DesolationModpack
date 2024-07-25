@@ -18,7 +18,7 @@ return {
 
 	enableMarkerLakes = false, -- Whether to place small lakes at points of interest for mapgen. For debugging.
 
-	unifySnowTileNames = false, -- Whether to unify the names of snow tiles, so they all say "frigid terrain" instead of "Snow 0" etc.
+	unifySnowTileNames = true, -- Whether to unify the names of snow tiles, so they all say "frigid terrain" instead of "Snow 0" etc.
 
-	colorBuildableTiles = true, -- Whether to color the buildable tiles in bright colors.
+	colorBuildableTiles = false, -- Whether to color the buildable tiles in bright colors, for debugging.
 }

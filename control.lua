@@ -9,15 +9,23 @@ local searchlightAssault = require("code.control.searchlight-assault")
 local startIslandScan = require("code.control.map-scanning.start-island-scan")
 local seismicScanning = require("code.control.map-scanning.seismic-scanning")
 local oceanScanning = require("code.control.map-scanning.ocean-scanning")
+local evolution = require("code.control.evolution")
 
 script.on_init(function()
 	ir3StartCalls.onInit()
 	transferPlateUnlocksTech.onInit()
+	evolution.onInit()
 end)
 
 script.on_load(function()
 	ir3StartCalls.onLoad()
 	transferPlateUnlocksTech.onLoad()
+	evolution.onLoad()
+end)
+
+script.on_configuration_changed(function()
+	-- TODO shouldn't other control-stage scripts also have handlers here?
+	evolution.onConfigChanged()
 end)
 
 script.on_event(defines.events.on_built_entity, function(event)
@@ -48,6 +56,7 @@ end)
 
 script.on_event(defines.events.on_research_finished, function(event)
 	startIslandScan.onResearchFinished(event)
+	evolution.onResearchFinished(event)
 end)
 
 script.on_nth_tick(globalParams.scanEveryNTicks, function(event)

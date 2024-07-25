@@ -382,6 +382,9 @@ Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 -- Add enemy evolution effects to milestone techs.
 Tech.addEvolutionEffect("fluid-handling", 20)
 Tech.addEvolutionEffect("ir-electronics-1", 10)
+Tech.addEvolutionEffect("ir-charcoal", 15)
+Tech.addEvolutionEffect("ir-copper-working-1", 15)
+Tech.addEvolutionEffect("ir-basic-research", 25)
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
