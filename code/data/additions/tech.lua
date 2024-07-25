@@ -379,6 +379,10 @@ Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
 --Tech.addTechDependency("ir-scattergun-turret", "gun-turret")
 Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
+-- Add enemy evolution effects to milestone techs.
+Tech.addEvolutionEffect("fluid-handling", 20)
+Tech.addEvolutionEffect("ir-electronics-1", 10)
+
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")

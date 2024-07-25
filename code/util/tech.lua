@@ -137,4 +137,44 @@ Tech.disable = function(techName)
 	end
 end
 
+Tech.addEvolutionEffect = function(techName, evolutionPercent)
+	local tech = data.raw.technology[techName]
+	if tech == nil then
+		log("ERROR: Couldn't find tech "..techName.." to add evolution effect to.")
+		return
+	end
+
+	-- Add effect to tech.effects.
+	local effect = {
+		type = "nothing",
+		icon = "__Desolation__/graphics/evolution.png",
+		icon_size = 64,
+		icon_mipmaps = 2,
+		effect_description = {"effect-description.evolution", evolutionPercent},
+			-- We use this localised string to store the evolution percent. Because there's no other way to store it on the tech, and I don't want to have like a file that gets imported in both the data and control stages.
+	}
+	if tech.normal ~= nil then
+		table.insert(tech.normal.effects, effect)
+	end
+	if tech.expensive ~= nil then
+		table.insert(tech.expensive.effects, effect)
+	end
+	if tech.effects ~= nil then
+		table.insert(tech.effects, effect)
+	end
+
+	-- Add small icon in the corner of the tech.
+	if tech.icons == nil then -- First, if it has one icon, switch to icons list.
+		tech.icons = {{icon = tech.icon, icon_size = tech.icon_size, icon_mipmaps = tech.icon_mipmaps}}
+	end
+	table.insert(tech.icons, {
+		icon = "__Desolation__/graphics/evolution-outlined.png",
+		icon_size = 64,
+		icon_mipmaps = 2,
+		shift = {-80, 80},
+	})
+
+	-- TODO event handler
+end
+
 return Tech
