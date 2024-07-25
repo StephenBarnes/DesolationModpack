@@ -12,6 +12,10 @@
 
 local Table = require("code.util.table")
 
+-- TODO simplify this code by refactoring stuff to these modules. Instead of having a lot of nil-checks in here, etc.
+local Recipe = require("code.util.recipe")
+local Tech = require("code.util.tech")
+
 -- Local var to hold a list of all techs' names, sorted so that all dependencies only go forwards.
 local toposortedTechs = nil
 
@@ -114,6 +118,13 @@ local function checkTechUnlockOrder()
 		"iron-ore",
 		"coal",
 		"stone",
+		"gold-ore",
+
+		"ruby-gem",
+		"diamond-gem",
+
+		"copper-scrap",
+		"tin-scrap",
 
 		-- Schematics that come from items available at start.
 		"schematic-ir-charcoal", -- for stone furnace tech
@@ -137,24 +148,34 @@ local function checkTechUnlockOrder()
 	local unlockedImplicitlyByItem = {
 		["transfer-plate-2x2"] = {"Desolation-transfer-plate-unlocks-tech"},
 		["transfer-plate"] = {"Desolation-transfer-plate-unlocks-tech"},
-		["pumpjack"] = {"schematic-ir-crude-oil-processing"},
-		["gold-ingot"] = {"schematic-ir-gold-milestone"},
-		["steel-ingot"] = {"schematic-ir-steel-milestone"},
-		["iron-ingot"] = {"schematic-ir-iron-milestone"},
-		["glass"] = {"schematic-ir-glass-milestone"},
-		["bronze-ingot"] = {"schematic-ir-bronze-milestone"},
+
+		["pumpjack"] = {"schematic-ir-crude-oil-processing", "crude-oil"},
+
+		["satellite"] = {"space-science-pack"},
+
+		["gold-ingot"] = {"schematic-ir-gold-milestone", "gold-scrap"},
+		["steel-ingot"] = {"schematic-ir-steel-milestone", "steel-scrap"},
+		["iron-ingot"] = {"schematic-ir-iron-milestone", "iron-scrap"},
+		["glass"] = {"schematic-ir-glass-milestone", "glass-scrap"},
+		["bronze-ingot"] = {"schematic-ir-bronze-milestone", "bronze-scrap"},
 		["copper-ingot"] = {"schematic-ir-copper-working-1"},
 		["tin-ingot"] = {"schematic-ir-tin-working-1"},
 		["copper-plate"] = {"schematic-ir-copper-working-2"},
 		["tin-gear-wheel"] = {"schematic-ir-tin-working-2"},
-		["brass-ingot"] = {"schematic-ir-brass-milestone"},
+		["brass-ingot"] = {"schematic-ir-brass-milestone", "brass-scrap"},
 		["electrum-gem"] = {"schematic-ir-electrum-milestone"},
 		["uranium-235"] = {"schematic-kovarex-enrichment-process"},
 
-		["lead-ingot"] = {"schematic-ir-lead-smelting"},
-		["chromium-ingot"] = {"schematic-ir-chromium-smelting"},
-		["nickel-ingot"] = {"schematic-ir-nickel-smelting"},
-		["platinum-ingot"] = {"schematic-ir-platinum-smelting"},
+		["lead-ingot"] = {"schematic-ir-lead-smelting", "lead-scrap"},
+		["chromium-ingot"] = {"schematic-ir-chromium-smelting", "chromium-scrap"},
+		["nickel-ingot"] = {"schematic-ir-nickel-smelting", "nickel-scrap"},
+		["platinum-ingot"] = {"schematic-ir-platinum-smelting", "platinum-scrap"},
+
+		["steel-derrick"] = {"dirty-steam", "fossil-gas"},
+
+		["sulfuric-acid"] = {"uranium-ore"},
+
+		["uranium-fuel-cell"] = {"used-up-uranium-fuel-cell"},
 	}
 
 	-- TODO special tables for stuff like the barrelling recipes.
@@ -233,11 +254,6 @@ local function checkTechUnlockOrder()
 		availableAfterTech[techName] = availableAfterThisTech
 	end
 
-	--log(serpent.block(availableAfterTech["ir-copper-working-1"]))
-	--log(serpent.block(availableAfterTech["ir-copper-working-2"]))
-	--log(serpent.block(availableAfterTech["automation"]))
-	-- So far, this seems to run correctly. TODO the rest.
-
 	-- Check that science packs of all techs are included in it's prereqs' available-after-tech.
 	for _, techName in pairs(toposortedTechs) do
 		local tech = data.raw.technology[techName]
@@ -246,7 +262,7 @@ local function checkTechUnlockOrder()
 			local sciencePackName = sciencePack.name or sciencePack[1]
 			if sciencePackName == nil then
 				log("ERROR: Tech "..techName.." has science pack "..serpent.block(sciencePack).." which has no name. This should never happen.")
-				return
+				return false
 			end
 			--local isSchematic = string.match(sciencePackName, "^schematic-") -- IR3 Inspiration mod adds schematic items, which can't actually be produced.
 			--if not isSchematic and not availableBeforeTech[techName][sciencePackName] then
@@ -257,7 +273,40 @@ local function checkTechUnlockOrder()
 		end
 	end
 
-	-- TODO check all requirements of all techs are included in available after tech.
+	-- Check all ingredients of all techs's unlocked recipes are included in available after tech.
+	for _, techName in pairs(toposortedTechs) do
+		local tech = data.raw.technology[techName]
+		if tech.effects == nil then
+			log("ERROR: Tech "..techName.." has no effects. This should never happen.")
+			successfulSoFar = false
+		end
+		for _, effect in pairs(tech.effects or {}) do
+			if effect.type == "unlock-recipe" then
+				local recipe = data.raw.recipe[effect.recipe]
+				if recipe == nil then
+					log("ERROR: Tech "..techName.." has recipe "..effect.recipe.." which is nil; this should never happen.")
+					return false
+				end
+				local ingredients = recipe.ingredients or Table.maybeGet(recipe.normal, "ingredients")
+				if ingredients == nil then
+					log("ERROR: Recipe "..effect.recipe.." has no ingredients; this should never happen. Recipe: "..serpent.block(recipe))
+					log("recipe.normal.ingredients == "..serpent.block(recipe.normal.ingredients))
+					return false
+				end
+				for _, ingredient in pairs(ingredients) do
+					local ingredientName = ingredient.name or ingredient[1]
+					if ingredientName == nil then
+						log("ERROR: Recipe "..effect.recipe.." has ingredient "..serpent.block(ingredient).." which has no name; this should never happen.")
+						return false
+					end
+					if not availableAfterTech[techName][ingredientName] then
+						log("ERROR: Tech "..techName.." unlocks recipe "..effect.recipe.." which requires ingredient "..ingredientName.." but that ingredient has not been unlocked yet.")
+						successfulSoFar = false
+					end
+				end
+			end
+		end
+	end
 
 	return successfulSoFar
 end

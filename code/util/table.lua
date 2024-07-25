@@ -25,7 +25,7 @@ end
 Table.maybeGet = function(t, k)
 	-- Equivalent to the "?." operator.
 	if t == nil then return nil end
-	return t.k
+	return t[k]
 end
 
 Table.listToSet = function(l)
