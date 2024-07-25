@@ -7,11 +7,25 @@ Table.extend = function(t, l)
 end
 
 Table.copy = function(t)
+	-- TODO delete this, should rather use that existing deepcopy function. Not sure if this is being used anywhere.
 	local new = {}
 	for k, v in pairs(t) do
 		new[k] = v
 	end
 	return new
+end
+
+Table.overwriteInto = function(a, b)
+	-- Given tables a and b, set b[.] to a[.] for all keys in b.
+	for k, v in pairs(a) do
+		b[k] = v
+	end
+end
+
+Table.maybeGet = function(t, k)
+	-- Equivalent to the "?." operator.
+	if t == nil then return nil end
+	return t.k
 end
 
 return Table
