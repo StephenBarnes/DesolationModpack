@@ -20,15 +20,19 @@ local function toposortTechsAndCache()
 	local numTechs = 0
 	local numTechsAdded = 0
 	for techName, tech in pairs(data.raw.technology) do
-		techsAdded[techName] = false
-		numTechs = numTechs + 1
+		if tech.enabled ~= false and not tech.hidden then
+			techsAdded[techName] = false
+			numTechs = numTechs + 1
+		else
+			--log("Skipping disabled tech "..techName)
+			--log("Tech: "..serpent.block(tech))
+		end
 	end
 	while numTechsAdded < numTechs do
 		local anyAddedThisLoop = false
 		for techName, beenAdded in pairs(techsAdded) do
 			if not beenAdded then
 				local allPrereqsAdded = true
-				log("Checking prereqs of "..techName)
 				local tech = data.raw.technology[techName]
 				local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
 				for _, prereqName in pairs(prereqs) do
@@ -45,8 +49,16 @@ local function toposortTechsAndCache()
 				end
 			end
 		end
+
 		if not anyAddedThisLoop then
-			log("ERROR: Cycle detected in tech dependency graph. This shouldn't happen.")
+			log("ERROR: Cycle or unreachable tech detected in tech dependency graph. This shouldn't happen.")
+			for techName, beenAdded in pairs(techsAdded) do
+				if not beenAdded then
+					local tech = data.raw.technology[techName]
+					local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
+					log("Could not rearch tech "..techName..", which has prereqs: "..serpent.line(prereqs))
+				end
+			end
 			log("Techs added: "..serpent.block(techsAdded))
 			return false
 		end
@@ -86,11 +98,19 @@ local function checkTechUnlockOrder()
 	-- We want to compute that minimal unlocked set for every tech, and then check that the set of required items is a subset of the minimal unlocked set.
 
 	local successfulSoFar = true
+	if toposortedTechs == nil then
+		log("ERROR: Cannot check tech unlock order without toposorted techs.")
+		return false
+	end
 
 	-- Table of stuff that's already available when the game starts.
 	local unlockedAtStart = {
 		["wood"] = true,
-		-- TODO
+		["copper-ore"] = true,
+		["tin-ore"] = true,
+		["iron-ore"] = true,
+		["coal"] = true,
+		["stone"] = true,
 	}
 
 	-- Table from tech to stuff that's unlocked by that tech, but not explicitly in its recipe list.
@@ -99,10 +119,79 @@ local function checkTechUnlockOrder()
 		-- TODO add steam from the first steam mechanism thing
 	}
 
+	-- TODO special tables for stuff like the barrelling recipes.
+
 	-- Table from tech to stuff that's available after that tech is researched.
 	-- This is later required to be a superset of the tech's required things.
 	local availableAfterTech = {}
-	-- TODO
+	for _, techName in pairs(toposortedTechs) do
+		local tech = data.raw.technology[techName]
+		local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites")
+		local availableAfterThisTech = {}
+		if prereqs == nil or #prereqs == 0 then
+			-- If no prereqs, it's only things unlocked at start.
+			Table.overwriteInto(unlockedAtStart, availableAfterThisTech)
+		else
+			-- If it has prereqs, copy in stuff from prereqs.
+			for _, prereqName in pairs(prereqs) do
+				local availableAfterPrereq = availableAfterTech[prereqName]
+				if availableAfterPrereq == nil then
+					log("ERROR: Tech "..techName.." has prereq "..prereqName.." which has not been processed; this should never happen.")
+					return false
+				end
+				Table.overwriteInto(availableAfterPrereq, availableAfterThisTech)
+			end
+		end
+
+		-- Add products of unlocked recipes.
+		-- TODO
+		if tech.effects == nil then
+			log("ERROR: Tech "..techName.." has no effects.")
+			return false
+		end
+		for _, effect in pairs(tech.effects or {}) do
+			if effect.type == "unlock-recipe" then
+				local recipe = data.raw.recipe[effect.recipe]
+				if recipe == nil then
+					log("ERROR: Tech "..techName.." has recipe "..effect.recipe.." which is nil; this should never happen.")
+					return false
+				end
+				local results = recipe.results or Table.maybeGet(recipe.normal, "results")
+				if results == nil then
+					local singleResult = recipe.result or Table.maybeGet(recipe.normal, "result")
+					if singleResult == nil then
+						results = {}
+					else
+						results = {{singleResult}}
+					end
+				end
+
+				for _, result in pairs(results) do
+					local resultName = result.name or result[1]
+					if resultName == nil then
+						log("ERROR: Recipe "..effect.recipe.." has result "..serpent.block(result).." which has no name; this should never happen.")
+						return false
+					end
+					availableAfterThisTech[resultName] = true
+				end
+			end
+		end
+
+		-- Add anything implicitly unlocked by this tech.
+		if unlockedImplicitlyByTech[techName] ~= nil then
+			Table.overwriteInto(unlockedImplicitlyByTech[techName], availableAfterThisTech)
+		end
+		availableAfterTech[techName] = availableAfterThisTech
+	end
+
+	--log(serpent.block(availableAfterTech["ir-copper-working-1"]))
+	--log(serpent.block(availableAfterTech["ir-copper-working-2"]))
+	--log(serpent.block(availableAfterTech["automation"]))
+	-- So far, this seems to run correctly. TODO the rest.
+
+	-- TODO check that science packs of all techs are included in it's prereqs' available-after-tech.
+
+	-- TODO check all requirements of all techs are included in available after tech.
 
 	return successfulSoFar
 end

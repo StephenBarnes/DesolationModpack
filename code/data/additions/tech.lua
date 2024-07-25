@@ -122,7 +122,7 @@ local techSeriesToDisable = {
 	["energy-weapons-damage"] = {1, 2, 3, 4, 5, 6, 7},
 	["worker-robots-speed"] = {1, 2, 3, 4, 5, 6},
 	["weapon-shooting-speed"] = {1, 2, 3, 4, 5, 6},
-	["laser-shooting-speed"] = {1, 2, 3, 4, 5, 7},
+	["laser-shooting-speed"] = {1, 2, 3, 4, 5, 6, 7},
 	["braking-force"] = {1, 2, 3},
 	["research-speed"] = {1, 2, 3, 4, 5, 6},
 }
