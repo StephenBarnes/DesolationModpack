@@ -27,7 +27,7 @@ local one = tne(1)
 local function makeCondition(varMinMax, extraNandTerms)
 	-- Takes a table mapping var names to min/max values, and returns a noise expression that yields 1 if all conditions are met, 0 otherwise.
 	-- The arg extraNandTerms can be used to de-duplicate expressions.
-	log("Making a new condition")
+	--log("Making a new condition")
 	local nandedTerms = {} -- We collect all terms which would make this condition FALSE.
 	if extraNandTerms ~= nil then
 		for _, term in pairs(extraNandTerms) do
@@ -38,13 +38,13 @@ local function makeCondition(varMinMax, extraNandTerms)
 		local thisVar = var(varName)
 		local varMin = minMax[1]
 		local varMax = minMax[2]
-		log("Var "..varName.." min/max: "..(varMin or "nil").." / "..(varMax or "nil"))
+		--log("Var "..varName.." min/max: "..(varMin or "nil").." / "..(varMax or "nil"))
 		if varMin ~= nil then
-			log("insert lt("..varName..", "..varMin..")")
+			--log("insert lt("..varName..", "..varMin..")")
 			table.insert(nandedTerms, lt(thisVar, varMin))
 		end
 		if varMax ~= nil then
-			log("insert lte("..varMax..", "..varName..")")
+			--log("insert lte("..varMax..", "..varName..")")
 			table.insert(nandedTerms, lte(varMax, thisVar))
 				-- Use lte instead of lt, so that you can have two conditions like {nil, 10} and {10, nil} that will cover the whole range.
 		end

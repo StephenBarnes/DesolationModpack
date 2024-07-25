@@ -42,19 +42,22 @@ require("code.data.tweaks.searchlight-assault")
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
 -- Temporary: printing out tile prototype info
-for _, tile in pairs(data.raw.tile) do
-	if tile.autoplace ~= nil then
-		log("Tile with autoplace: " .. (tile.name or ""))
-	else
-		log("Tile with nil autoplace: " .. (tile.name or ""))
-	end
-end
+--for _, tile in pairs(data.raw.tile) do
+--	if tile.autoplace ~= nil then
+--		log("Tile with autoplace: " .. (tile.name or ""))
+--	else
+--		log("Tile with nil autoplace: " .. (tile.name or ""))
+--	end
+--end
 --for _, tile in pairs(data.raw.tile) do
 --	if tile.autoplace ~= nil then
 --		log("Tile autoplace:" .. (serpent.block(tile.autoplace)))
 --	end
 --end
 
-for _, control in pairs(data.raw["autoplace-control"]) do
-	log("Autoplace control: " .. (control.name or ""))
-end
+--for _, control in pairs(data.raw["autoplace-control"]) do
+--	log("Autoplace control: " .. (control.name or ""))
+--end
+
+-- Should be the very last thing run in the data stage:
+require("code.data.additions.debug-progression").runFullDebug()

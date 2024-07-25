@@ -171,7 +171,7 @@ Tech.addEvolutionEffect = function(techName, evolutionPercent)
 		icon = "__Desolation__/graphics/evolution-outlined.png",
 		icon_size = 64,
 		icon_mipmaps = 2,
-		shift = {-85, 85},
+		shift = {-90, 90},
 	})
 end
 

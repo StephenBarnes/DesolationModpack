@@ -21,4 +21,6 @@ return {
 	unifySnowTileNames = true, -- Whether to unify the names of snow tiles, so they all say "frigid terrain" instead of "Snow 0" etc.
 
 	colorBuildableTiles = false, -- Whether to color the buildable tiles in bright colors, for debugging.
+
+	debugProgression = isDebug, -- Whether to enable debug code in debug-progression.lua.
 }
