@@ -19,26 +19,33 @@ end
 
 ------------------------------------------------------------------------
 -- The resource-type layers.
--- It's positive for the one type, and negative for the other.
+-- It's positive for the one resource group (eg coal+tin), and negative for the other (eg copper+iron).
 -- We start by deciding a sorta-random vector, by picking random x and y. Then rotate by 90 degrees to get the other axis for that resource layer.
 -- Rotating by 90 degrees means swapping x and y, and then negating one of them.
 
--- We use Desolation-resource-type-A for coal+tin and copper+iron.
--- We use Desolation-resource-type-B for gold and oil.
--- We use Desolation-resource-type-C for uranium and magic-fissure.
+-- We use resource A for coal+tin and copper+iron.
+-- We use resource B for gold and oil.
+-- We use resource C for uranium and magic-fissure.
 
-U.nameNoiseExprXY("Desolation-resource-vector-A", {
-	U.mapRandBetween(-1, 1),
-	U.mapRandBetween(-1, 1),
-})
-U.nameNoiseExpr("Desolation-resource-A1",
-	var("x") * var("Desolation-resource-vector-A-x") + var("y") * var("Desolation-resource-vector-A-y"))
-U.nameNoiseExpr("Desolation-resource-A2",
-	var("y") * var("Desolation-resource-vector-A-x") - var("x") * var("Desolation-resource-vector-A-y"))
-U.nameNoiseExpr("Desolation-resource-type-A",
-	var("Desolation-resource-A1") * var("Desolation-resource-A2"))
-U.nameNoiseExpr("Desolation-resource-type-A-ramp01",
-	U.ramp(var("Desolation-resource-type-A"), -40, 40, 0, 1))
+local function makeResourceType()
+	local x = U.mapRandBetween(-1, 1)
+	local y = U.mapRandBetween(-1, 1)
+	local factor1 = var("x") * x + var("y") * y
+	local factor2 = var("y") * x - var("x") * y
+	return factor1 * factor2
+end
+
+local resourceA = makeResourceType()
+U.nameNoiseExpr("Desolation-resource-A-ramp01",
+	U.ramp(resourceA, -40, 40, 0, 1))
+
+local resourceB = makeResourceType()
+U.nameNoiseExpr("Desolation-resource-B-ramp01",
+	U.ramp(resourceB, -80, 80, 0, 1))
+
+local resourceC = makeResourceType()
+U.nameNoiseExpr("Desolation-resource-C-ramp01",
+	U.ramp(resourceC, -200, 200, 0, 1))
 
 ------------------------------------------------------------------------
 -- Map colors
@@ -137,7 +144,7 @@ local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
-otherIslandIronFactor = otherIslandIronFactor * var("Desolation-resource-type-A-ramp01")
+otherIslandIronFactor = otherIslandIronFactor * var("Desolation-resource-A-ramp01")
 
 local ironFactor = noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
 
@@ -192,7 +199,7 @@ local otherIslandCoalFactor = coalNoise + makeSpotNoiseFactor {
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
-otherIslandCoalFactor = otherIslandCoalFactor * (1 - var("Desolation-resource-type-A-ramp01"))
+otherIslandCoalFactor = otherIslandCoalFactor * (1 - var("Desolation-resource-A-ramp01"))
 
 local coalFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
 
@@ -234,7 +241,7 @@ local otherIslandCopperFactor = copperNoise + makeSpotNoiseFactor {
 	patchFavorability = var("temperature"),
 	regionSize = 2048,
 }
-otherIslandCopperFactor = otherIslandCopperFactor * var("Desolation-resource-type-A-ramp01")
+otherIslandCopperFactor = otherIslandCopperFactor * var("Desolation-resource-A-ramp01")
 
 local copperFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
 
@@ -274,7 +281,7 @@ local otherIslandTinFactor = tinNoise + makeSpotNoiseFactor {
 	patchFavorability = var("temperature"),
 	regionSize = 2048,
 }
-otherIslandTinFactor = otherIslandTinFactor * (1 - var("Desolation-resource-type-A-ramp01"))
+otherIslandTinFactor = otherIslandTinFactor * (1 - var("Desolation-resource-A-ramp01"))
 
 local tinFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandTinFactor, otherIslandTinFactor)
 
