@@ -21,6 +21,12 @@ X.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal symmetry
 
 X.buildableTiles = {"volcanic-orange-heat-1", "volcanic-orange-heat-2", "vegetation-turquoise-grass-1", "vegetation-turquoise-grass-2"}
 
+X.temperatureThresholdForSnow = 15
+X.temperatureBoundaryVolcanic1And2 = 35
+X.moistureBoundaryVolcanicAndGrass = 0.3
+X.moistureBoundaryGrass1And2 = 5.0
+X.stoneTemperatureWidth = 10 -- How big of a range of temperatures stone can be spawned in. It spawns where temp is from the snow threshold to the snow threshold + this width.
+
 ------------------------------------------------------------------------
 -- Starting island
 -- TODO implement sliders for these
@@ -227,18 +233,18 @@ X.distSpawnToStartPatches = (X.spawnOasisMinRad / 2) * 0.5
 
 X.startCoalPatchMinRad = 6.5 * slider("coal", "size")
 X.startCoalPatchMidRad = 10 * slider("coal", "size")
-X.startCoalPatchMaxRad = 20 * slider("coal", "size")
-X.startCoalPatchCenterWeight = 10
+X.startCoalPatchMaxRad = 40 * slider("coal", "size")
+X.startCoalPatchCenterWeight = 15
 
 X.startCopperPatchMinRad = 5 * slider("copper-ore", "size")
 X.startCopperPatchMidRad = 8 * slider("copper-ore", "size")
-X.startCopperPatchMaxRad = 16 * slider("copper-ore", "size")
-X.startCopperPatchCenterWeight = 10
+X.startCopperPatchMaxRad = 32 * slider("copper-ore", "size")
+X.startCopperPatchCenterWeight = 15
 
 X.startTinPatchMinRad = 5 * slider("tin-ore", "size")
 X.startTinPatchMidRad = 7 * slider("tin-ore", "size")
-X.startTinPatchMaxRad = 15 * slider("tin-ore", "size")
-X.startTinPatchCenterWeight = 10
+X.startTinPatchMaxRad = 30 * slider("tin-ore", "size")
+X.startTinPatchCenterWeight = 15
 
 ------------------------------------------------------------------------
 

@@ -2,6 +2,7 @@ local noise = require "noise"
 local tne = noise.to_noise_expression
 local litexp = noise.literal_expression
 local var = noise.var
+local lt = noise.less_than
 
 local resourceAutoplace = require("resource-autoplace")
 
@@ -17,11 +18,9 @@ end
 
 ------------------------------------------------------------------------
 -- Map colors
--- Trying to make the ores more obvious against the white/greyblue background.
 
-data.raw.resource["iron-ore"].map_color = {r=0, g=0.5, b=1}
+--data.raw.resource["iron-ore"].map_color = {r=0, g=0.5, b=1}
 --data.raw.resource["tin-ore"].map_color = {r=0, g=0, b=0.7}
-
 
 ------------------------------------------------------------------------
 -- Common functions for resources.
@@ -260,17 +259,22 @@ autoplaceFor("tin-ore").tile_restriction = C.buildableTiles
 ------------------------------------------------------------------------
 -- Stone
 
--- TODO
 local stoneNoise = makeResourceNoise(slider("stone", "size"))
 
+-- Try to place stone in areas that are on the edges of buildable oases.
+local stoneTempBand = U.ramp(var("temperature"),
+	C.temperatureThresholdForSnow, C.temperatureThresholdForSnow + C.stoneTemperatureWidth,
+	1, 0)
+
 local stoneFactor = stoneNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 32,
-	density = 0.07,
+	candidateSpotCount = 128,
+	density = 0.5,
 	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("stone", "size") * 16,
-	patchFavorability = var("temperature"),
-	regionSize = 512,
+	patchRad = slider("stone", "size") * 32,
+	patchFavorability = stoneTempBand,
+	regionSize = 256,
 }
+stoneFactor = stoneFactor * stoneTempBand
 
 autoplaceFor("stone").probability_expression = factorToProb(stoneFactor, 0.8)
 autoplaceFor("stone").richness_expression = (stoneFactor

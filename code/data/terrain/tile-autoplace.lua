@@ -4,6 +4,7 @@
 local noise = require "noise"
 local var = noise.var
 local globalParams = require("code.global-params")
+local C = require("code.data.terrain.constants")
 
 -- Disable autoplace for the hotter volcanic terrain, bc we want to use the greyer rock ones as buildable land.
 data.raw.tile["volcanic-orange-heat-3"].autoplace = nil
@@ -50,22 +51,22 @@ end
 
 -- Cache some values, to try to speed up the noise expressions.
 local dryEnoughForVolcanic = noise.delimit_procedure(lte(moisture, 0.3))
-local warmEnoughToBuild = noise.delimit_procedure(lt(15, temp))
+local warmEnoughToBuild = noise.delimit_procedure(lt(C.temperatureThresholdForSnow, temp))
 setTileConditionVarMinMax("volcanic-orange-heat-1", {
-	temperature = {15, 35},
+	temperature = {C.temperatureThresholdForSnow, C.temperatureBoundaryVolcanic1And2},
 	--moisture = {nil, 0.3},
 }, {dryEnoughForVolcanic})
 setTileConditionVarMinMax("volcanic-orange-heat-2", {
-	temperature = {35, nil},
+	temperature = {C.temperatureBoundaryVolcanic1And2, nil},
 	--moisture = {nil, 0.3},
 }, {dryEnoughForVolcanic})
 setTileConditionVarMinMax("vegetation-turquoise-grass-1", {
 	--temperature = {15, nil},
-	moisture = {0.3, 5.0},
+	moisture = {C.moistureBoundaryVolcanicAndGrass, C.moistureBoundaryGrass1And2},
 }, {warmEnoughToBuild})
 setTileConditionVarMinMax("vegetation-turquoise-grass-2", {
 	--temperature = {15, nil},
-	moisture = {5.0, nil},
+	moisture = {C.moistureBoundaryGrass1And2, nil},
 }, {warmEnoughToBuild})
 -- Set tile colors temporarily, so I can see what the conditions look like.
 if globalParams.colorBuildableTiles then
@@ -80,7 +81,7 @@ local snowOrder = {0, 1, 3, 2, 4, 8, 9, 5, 6} -- Snow types in order from lighte
 data.raw.tile["frozen-snow-7"].autoplace = nil
 local snowAuxes = {0.1, 0.3, 0.4, 0.55, 0.7, 0.8, 0.915, 0.95}
 assert(#snowAuxes == 9 - 1) -- Each snow type occupies the range between consecutive snow aux values, including the endpoints with nil min/max.
-local coldEnoughForSnow = noise.delimit_procedure(lte(temp, 15))
+local coldEnoughForSnow = noise.delimit_procedure(lte(temp, C.temperatureThresholdForSnow))
 for i = 1, 9 do
 	local snowAuxMin = snowAuxes[i - 1]
 	local snowAuxMax = snowAuxes[i]

@@ -192,7 +192,7 @@ X.ramp01 = function(v, v1, v2)
 	local vAbove = noise.less_than(v2, v)
 	local interpolationFrac = (v - v1) / (v2 - v1)
 	local interpolated = interpolationFrac
-	return noise.if_else_chain(vBelow, 0, vAbove, 1, interpolated)
+	return noise.delimit_procedure(noise.if_else_chain(vBelow, 0, vAbove, 1, interpolated))
 end
 
 X.rampDouble = function(v, v1, v2, v3, out1, out2, out3)
