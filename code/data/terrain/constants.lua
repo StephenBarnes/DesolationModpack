@@ -125,7 +125,7 @@ local resourceNoiseScaleSlider = tne(1) / slider("Desolation-resource-noise", "f
 local resourceNoiseAmplitudeSlider = slider("Desolation-resource-noise", "size")
 
 -- Noise amplitude and input scale for starting island's resource patches. Shared between resource probability and richness.
-X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 2
+X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 5
 X.resourceNoiseInputScale = resourceNoiseScaleSlider * (1/30)
 
 ------------------------------------------------------------------------
@@ -225,22 +225,24 @@ X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 7
 
 X.distSpawnToStartPatches = (X.spawnOasisMinRad / 2) * 0.5
 
-X.startCoalPatchMinRad = 5 * slider("coal", "size")
+X.startCoalPatchMinRad = 6.5 * slider("coal", "size")
 X.startCoalPatchMidRad = 10 * slider("coal", "size")
-X.startCoalPatchMaxRad = 15 * slider("coal", "size")
-X.startCoalPatchCenterWeight = 4
+X.startCoalPatchMaxRad = 20 * slider("coal", "size")
+X.startCoalPatchCenterWeight = 10
 
-X.startCopperPatchMinRad = 4 * slider("copper-ore", "size")
-X.startCopperPatchMidRad = 7 * slider("copper-ore", "size")
-X.startCopperPatchMaxRad = 12 * slider("copper-ore", "size")
-X.startCopperPatchCenterWeight = 6
+X.startCopperPatchMinRad = 5 * slider("copper-ore", "size")
+X.startCopperPatchMidRad = 8 * slider("copper-ore", "size")
+X.startCopperPatchMaxRad = 16 * slider("copper-ore", "size")
+X.startCopperPatchCenterWeight = 10
 
-X.startTinPatchMinRad = 3.5 * slider("tin-ore", "size")
-X.startTinPatchMidRad = 5 * slider("tin-ore", "size")
-X.startTinPatchMaxRad = 10 * slider("tin-ore", "size")
-X.startTinPatchCenterWeight = 6
+X.startTinPatchMinRad = 5 * slider("tin-ore", "size")
+X.startTinPatchMidRad = 7 * slider("tin-ore", "size")
+X.startTinPatchMaxRad = 15 * slider("tin-ore", "size")
+X.startTinPatchCenterWeight = 10
 
-X.stonePatchDesiredAmount = 100000
+------------------------------------------------------------------------
+
+X.stonePatchDesiredAmount = 1000000
 
 ------------------------------------------------------------------------
 -- Distance-minimum resources

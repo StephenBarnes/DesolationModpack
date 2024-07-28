@@ -35,7 +35,7 @@ local function makeResourceNoise(scaleMult)
 	-- `scaleMult` should be the size slider for the resource; it's here so that ore patches maintain roughly similar shape as that slider is adjusted.
 	return noise.define_noise_function(function(x, y, tile, map)
 		local scale = scaleMult / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return U.multiBasisNoise(3, 2, 2, C.resourceNoiseInputScale / scale, C.resourceNoiseAmplitude)
+		return U.multiBasisNoise(4, 2, 2, C.resourceNoiseInputScale / scale, C.resourceNoiseAmplitude)
 	end)
 end
 
@@ -74,7 +74,7 @@ local function makeSpotNoiseFactor(params)
 			spot_quantity_expression = litexp(params.patchResourceAmt), -- Amount of resource per patch, from totalling up all the tiles.
 			spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
 			spot_favorability_expression = litexp(params.patchFavorability),
-			basement_value = tne(C.resourceNoiseAmplitude) * (-2), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
+			basement_value = tne(C.resourceNoiseAmplitude) * (-3), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
 			-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
 			maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
 			region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
@@ -110,7 +110,7 @@ local otherIslandIronFactor = makeSpotNoiseFactor {
 	candidateSpotCount = 32,
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("iron-ore", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
+	patchRad = slider("iron-ore", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
@@ -164,7 +164,7 @@ local otherIslandCoalFactor = makeSpotNoiseFactor {
 	candidateSpotCount = 32,
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("coal", "size") * 32, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
+	patchRad = slider("coal", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
@@ -205,7 +205,7 @@ local otherIslandCopperFactor = makeSpotNoiseFactor {
 	candidateSpotCount = 32,
 	density = 0.05,
 	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("copper-ore", "size") * 32,
+	patchRad = slider("copper-ore", "size") * 16,
 	patchFavorability = var("temperature"),
 	regionSize = 2048,
 }
@@ -240,9 +240,16 @@ local secondTinFactor = makeResourceFactorForPatch(
 
 local startIslandTinFactor = noise.max(startPatchTinFactor, secondTinFactor)
 
--- TODO implement other-island tin factor
+local otherIslandTinFactor = makeSpotNoiseFactor {
+	candidateSpotCount = 32,
+	density = 0.05,
+	patchResourceAmt = 10000, -- TODO take distance into account
+	patchRad = slider("tin-ore", "size") * 16,
+	patchFavorability = var("temperature"),
+	regionSize = 2048,
+}
 
-local tinFactor = tinNoise + startIslandTinFactor
+local tinFactor = tinNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandTinFactor, otherIslandTinFactor)
 
 autoplaceFor("tin-ore").probability_expression = factorToProb(tinFactor, 0.8)
 autoplaceFor("tin-ore").richness_expression = (tinFactor
@@ -254,13 +261,23 @@ autoplaceFor("tin-ore").tile_restriction = C.buildableTiles
 -- Stone
 
 -- TODO
+local stoneNoise = makeResourceNoise(slider("stone", "size"))
 
-local stoneFactor = tne(0)
+local stoneFactor = stoneNoise + makeSpotNoiseFactor {
+	candidateSpotCount = 32,
+	density = 0.07,
+	patchResourceAmt = 10000, -- TODO take distance into account
+	patchRad = slider("stone", "size") * 16,
+	patchFavorability = var("temperature"),
+	regionSize = 512,
+}
 
 autoplaceFor("stone").probability_expression = factorToProb(stoneFactor, 0.8)
 autoplaceFor("stone").richness_expression = (stoneFactor
 	* slider("stone", "richness")
 	* (C.stonePatchDesiredAmount / 2500))
+autoplaceFor("stone").order = "zzz" -- Place it last, so other resources can be placed on top of it.
+autoplaceFor("stone").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Uranium
