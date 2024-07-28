@@ -19,6 +19,8 @@ X.terrainScaleSlider = slider("Desolation-scale", "frequency")
 
 X.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal symmetry.
 
+X.buildableTiles = {"volcanic-orange-heat-1", "volcanic-orange-heat-2", "vegetation-turquoise-grass-1", "vegetation-turquoise-grass-2"}
+
 ------------------------------------------------------------------------
 -- Starting island
 -- TODO implement sliders for these

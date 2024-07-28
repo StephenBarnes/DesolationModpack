@@ -181,6 +181,7 @@ local function checkTechUnlockOrder()
 	}
 
 	-- TODO special tables for stuff like the barrelling recipes.
+	-- TODO figure out why the barrelling tech isn't currently reporting any errors.
 
 	-- Tables from tech to stuff that's available before/after that tech is researched.
 	-- Later, we require that the stuff available before the tech contains all science packs required by the tech.

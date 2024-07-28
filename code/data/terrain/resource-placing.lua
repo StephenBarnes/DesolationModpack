@@ -11,6 +11,10 @@ local C = require("code.data.terrain.constants")
 
 U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-start-island-rim"), 200 * var("scale")))
 
+local function autoplaceFor(resourceName)
+	return data.raw.resource[resourceName].autoplace
+end
+
 ------------------------------------------------------------------------
 -- Map colors
 -- Trying to make the ores more obvious against the white/greyblue background.
@@ -79,7 +83,9 @@ local function makeSpotNoiseFactor(params)
 			minimum_candidate_point_spacing = params.minSpacing,
 		},
 	}
-	return noise.if_else_chain(var("buildable-temperature"), spotNoise, -1000)
+	--return noise.if_else_chain(var("buildable-temperature"), spotNoise, -1000)
+		-- We could use this, but it's easier to just set the autoplace.tile_restriction field to restrict the resource to buildable tiles.
+	return spotNoise
 end
 -- Example patchFavorability:
 --   0.5 - uniform
@@ -111,12 +117,12 @@ local otherIslandIronFactor = makeSpotNoiseFactor {
 
 local ironFactor = ironNoise + noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
 
-data.raw.resource["iron-ore"].autoplace.probability_expression = factorToProb(ironFactor, 0.8)
-
-data.raw.resource["iron-ore"].autoplace.richness_expression = (ironFactor
+autoplaceFor("iron-ore").probability_expression = factorToProb(ironFactor, 0.8)
+autoplaceFor("iron-ore").richness_expression = (ironFactor
 	* slider("iron-ore", "richness")
 	* (C.ironPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake.
 	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
+autoplaceFor("iron-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Coal
@@ -165,11 +171,12 @@ local otherIslandCoalFactor = makeSpotNoiseFactor {
 
 local coalFactor = coalNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
 
-data.raw.resource["coal"].autoplace.probability_expression = factorToProb(coalFactor, 0.8)
-data.raw.resource["coal"].autoplace.richness_expression = (coalFactor
+autoplaceFor("coal").probability_expression = factorToProb(coalFactor, 0.8)
+autoplaceFor("coal").richness_expression = (coalFactor
 	* slider("coal", "richness")
 	* (C.coalPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake. TODO
 	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
+autoplaceFor("coal").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Copper
@@ -205,10 +212,11 @@ local otherIslandCopperFactor = makeSpotNoiseFactor {
 
 local copperFactor = copperNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
 
-data.raw.resource["copper-ore"].autoplace.probability_expression = factorToProb(copperFactor, 0.8)
-data.raw.resource["copper-ore"].autoplace.richness_expression = (copperFactor
+autoplaceFor("copper-ore").probability_expression = factorToProb(copperFactor, 0.8)
+autoplaceFor("copper-ore").richness_expression = (copperFactor
 	* slider("copper-ore", "richness")
 	* (C.secondCopperPatchDesiredAmount / 2500))
+autoplaceFor("copper-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Tin
@@ -236,10 +244,11 @@ local startIslandTinFactor = noise.max(startPatchTinFactor, secondTinFactor)
 
 local tinFactor = tinNoise + startIslandTinFactor
 
-data.raw.resource["tin-ore"].autoplace.probability_expression = factorToProb(tinFactor, 0.8)
-data.raw.resource["tin-ore"].autoplace.richness_expression = (tinFactor
+autoplaceFor("tin-ore").probability_expression = factorToProb(tinFactor, 0.8)
+autoplaceFor("tin-ore").richness_expression = (tinFactor
 	* slider("tin-ore", "richness")
 	* (C.secondTinPatchDesiredAmount / 2500))
+autoplaceFor("tin-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Stone
@@ -248,27 +257,30 @@ data.raw.resource["tin-ore"].autoplace.richness_expression = (tinFactor
 
 local stoneFactor = tne(0)
 
-data.raw.resource["stone"].autoplace.probability_expression = factorToProb(stoneFactor, 0.8)
-data.raw.resource["stone"].autoplace.richness_expression = (stoneFactor
+autoplaceFor("stone").probability_expression = factorToProb(stoneFactor, 0.8)
+autoplaceFor("stone").richness_expression = (stoneFactor
 	* slider("stone", "richness")
 	* (C.stonePatchDesiredAmount / 2500))
 
 ------------------------------------------------------------------------
--- All resources that fade in at a certain distance from the starting island.
+-- Uranium
 
 -- TODO I want these to be partially dependent on elevation, so they spawn near the centers of islands, not overlapping the edges of islands.
-data.raw.resource["uranium-ore"].autoplace = resourceAutoplace.resource_autoplace_settings {
-	name = "uranium-ore",
-	order = "c",
-	base_density = 0.9,
-	base_spots_per_km2 = 1.25,
-	has_starting_area_placement = false,
-	random_spot_size_minimum = 2,
-	random_spot_size_maximum = 4,
-	regular_rq_factor_multiplier = 1
-}
+--autoplaceFor("uranium-ore") = resourceAutoplace.resource_autoplace_settings {
+--	name = "uranium-ore",
+--	order = "c",
+--	base_density = 0.9,
+--	base_spots_per_km2 = 1.25,
+--	has_starting_area_placement = false,
+--	random_spot_size_minimum = 2,
+--	random_spot_size_maximum = 4,
+--	regular_rq_factor_multiplier = 1
+--}
 
---log(serpent.block(data.raw.resource["uranium-ore"].autoplace.probability_expression))
+------------------------------------------------------------------------
+-- Gold
+
+--log(serpent.block(autoplaceFor("uranium-ore").probability_expression))
 local goldOreSpotNoise = makeSpotNoiseFactor {
 	candidateSpotCount = 256,
 	density = 0.1,
@@ -278,8 +290,9 @@ local goldOreSpotNoise = makeSpotNoiseFactor {
 	regionSize = 2048,
 }
 data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}
-data.raw.resource["gold-ore"].autoplace.probability_expression = goldOreSpotNoise
-data.raw.resource["gold-ore"].autoplace.richness_expression = goldOreSpotNoise * slider("gold-ore", "richness")
+autoplaceFor("gold-ore").probability_expression = goldOreSpotNoise
+autoplaceFor("gold-ore").richness_expression = goldOreSpotNoise * slider("gold-ore", "richness")
+autoplaceFor("gold-ore").tile_restriction = C.buildableTiles
 
 
 ------------------------------------------------------------------------
