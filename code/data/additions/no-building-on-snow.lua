@@ -54,7 +54,7 @@ local forbiddenTypes = {
 	"programmable-speaker",
 	"pump",
 	"radar",
-	"rail-chain-signal",
+	--"rail-chain-signal",
 	"roboport",
 	"rocket-silo",
 	"simple-entity-with-force",
@@ -69,9 +69,21 @@ local forbiddenTypes = {
 	"roboport",
 	"rocket-silo",
 	"solar-panel",
+	"wall",
+	"pipe",
+	"underground-belt",
 }
 local namesBuildableAnywhere = {
 	["seismic-scanner"] = true,
+}
+
+local forbiddenPlacedTiles = {
+	"stone-brick",
+	"concrete",
+	"hazard-concrete",
+	"refined-concrete",
+	"refined-hazard-concrete",
+	"tarmac",
 }
 
 local collisionMaskUtil = require("__core__/lualib/collision-mask-util")
@@ -108,4 +120,9 @@ for _, entityType in pairs(forbiddenTypes) do
 			updateCollisionMaskToForbidBuilding(entity)
 		end
 	end
+end
+
+-- Also add this collision mask to all the tiles that can't be built on snow/ice.
+for _, tileName in pairs(forbiddenPlacedTiles) do
+	table.insert(data.raw.item[tileName].place_as_tile.condition, forbidBuildingLayer)
 end

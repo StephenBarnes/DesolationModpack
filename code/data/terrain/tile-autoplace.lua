@@ -93,12 +93,12 @@ for i = 1, 9 do
 end
 
 -- Muddy water should generate around buildable regions that touch the coast, ie where elevation is just barely underwater and temperature is high.
-setTileConditionVarMinMax("water-shallow", {
+setTileConditionVarMinMax("water-mud", {
 	elevation = {-1, 0},
 }, {warmEnoughToBuild})
 -- Multiply by 1000 to make it overpower the other water.
-data.raw.tile["water-shallow"].autoplace.probability_expression = 1000 * data.raw.tile["water-shallow"].autoplace.probability_expression
-data.raw.tile["water-shallow"].autoplace.richness_expression = 1000 * data.raw.tile["water-shallow"].autoplace.richness_expression
+data.raw.tile["water-mud"].autoplace.probability_expression = 1000 * data.raw.tile["water-mud"].autoplace.probability_expression
+data.raw.tile["water-mud"].autoplace.richness_expression = 1000 * data.raw.tile["water-mud"].autoplace.richness_expression
 -- The above works; could use this to get different cutoffs for starting island vs other islands. But rather just change elevation for that.
 --setTileCondition("water-shallow", noise.delimit_procedure(noise.if_else_chain(
 --	tooColdToBuild, 0,
@@ -112,3 +112,5 @@ data.raw.tile["water-shallow"].autoplace.richness_expression = 1000 * data.raw.t
 --		1)
 --) * 1000)) -- Multiply by 1000 to make it overpower the other water.
 
+-- There's a separate tile for "shallow water", which looks worse than the mud-water, so disable it.
+data.raw.tile["water-shallow"].autoplace = nil
