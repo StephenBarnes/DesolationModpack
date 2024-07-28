@@ -370,7 +370,6 @@ autoplaceFor("gold-ore").tile_restriction = C.buildableTiles
 local oilRamp = U.rampDouble(var("dist-to-start-island-rim"),
 	C.resourceMinDist["crude-oil"][1], C.resourceMinDist["crude-oil"][2], C.resourceMinDist["crude-oil"][3],
 	0, 0.5, 1)
-oilRamp = tne(1)
 
 --local oilPossibleAreas = makeSpotNoiseFactor {
 --	candidateSpotCount = 128,
@@ -382,32 +381,29 @@ oilRamp = tne(1)
 --}
 --oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
 
-local oilPossibleAreas = U.multiBasisNoise(2, 2, 2, (slider("crude-oil", "size") / 500) / var("scale"), 5) - 1
+local oilPossibleAreas = U.multiBasisNoise(2, 2, 2, (slider("crude-oil", "size") / 1000) / var("scale"), 5) - 4
 oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
-oilPossibleAreas = oilRamp * oilPossibleAreas
+oilPossibleAreas = oilRamp * oilPossibleAreas * (1 - var("Desolation-resource-B-ramp01"))
 
 local oilSpotNoise = makeSpotNoiseFactor {
 	candidateSpotCount = 128,
-	density = 0.8,
+	density = 1.0,
 	patchResourceAmt = 10000,
-	patchRad = 7, --1,
-	patchFavorability = 1,--oilPossibleAreas,
-	regionSize = 512,
-	--minSpacing = 3,
+	patchRad = 1,
+	patchFavorability = oilPossibleAreas,
+	regionSize = 256,
+	minSpacing = 3,
 }
 
--- Make crude oil factor
-local oilFactor = oilSpotNoise * oilPossibleAreas --* (1 - var("Desolation-resource-B-ramp01"))
+local oilFactor = oilSpotNoise * oilPossibleAreas
 
-data.raw.resource["crude-oil"].autoplace = {}
-autoplaceFor("crude-oil").probability_expression = oilFactor
-autoplaceFor("crude-oil").richness_expression = (oilFactor
-	* slider("crude-oil", "richness")
-	* (C.oilPatchDesiredAmount / 2500)
-	* 100000)
-autoplaceFor("crude-oil").richness_expression = tne(1000000000)
-autoplaceFor("crude-oil").tile_restriction = C.buildableTiles
-
+data.raw.resource["crude-oil"].autoplace = {
+	probability_expression = oilFactor,
+	richness_expression = (oilFactor
+		* slider("crude-oil", "richness")
+		* (C.oilPatchDesiredAmount / 2500)),
+	tile_restriction = C.buildableTiles,
+}
 
 ------------------------------------------------------------------------
 -- Fossil gas
