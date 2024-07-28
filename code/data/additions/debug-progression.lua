@@ -41,7 +41,7 @@ local function toposortTechsAndCache()
 			if not beenAdded then
 				local allPrereqsAdded = true
 				local tech = data.raw.technology[techName]
-				local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
+				local prereqs = Tech.getPrereqList(tech)
 				for _, prereqName in pairs(prereqs) do
 					if not techsAdded[prereqName] then
 						allPrereqsAdded = false
@@ -62,7 +62,7 @@ local function toposortTechsAndCache()
 			for techName, beenAdded in pairs(techsAdded) do
 				if not beenAdded then
 					local tech = data.raw.technology[techName]
-					local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
+					local prereqs = Tech.getPrereqList(tech)
 					log("Could not rearch tech "..techName..", which has prereqs: "..serpent.line(prereqs))
 				end
 			end
@@ -80,7 +80,7 @@ local function checkTotalEvo()
 	for _, tech in pairs(data.raw.technology) do
 		if tech.effects ~= nil then
 			for _, effect in pairs(tech.effects) do
-				if effect.type == "nothing" and effect.effect_description[1] == "effect-description.evolution" then
+				if Tech.isEvolutionEffect(effect) then
 					totalEvo = totalEvo + effect.effect_description[2]
 				end
 			end
@@ -176,6 +176,8 @@ local function checkTechUnlockOrder()
 		["sulfuric-acid"] = {"uranium-ore"},
 
 		["uranium-fuel-cell"] = {"used-up-uranium-fuel-cell"},
+
+		["quantum-satellite"] = {"comet-ice-ore"}, -- For deep space mining.
 	}
 
 	-- TODO special tables for stuff like the barrelling recipes.
@@ -187,7 +189,7 @@ local function checkTechUnlockOrder()
 	local availableBeforeTech = {}
 	for _, techName in pairs(toposortedTechs) do
 		local tech = data.raw.technology[techName]
-		local prereqs = tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites")
+		local prereqs = Tech.getPrereqList(tech)
 		local availableBeforeThisTech = {}
 		local availableAfterThisTech = {}
 		if prereqs == nil or #prereqs == 0 then
@@ -220,18 +222,9 @@ local function checkTechUnlockOrder()
 					log("ERROR: Tech "..techName.." has recipe "..effect.recipe.." which is nil; this should never happen.")
 					return false
 				end
-				local results = recipe.results or Table.maybeGet(recipe.normal, "results")
-				if results == nil then
-					local singleResult = recipe.result or Table.maybeGet(recipe.normal, "result")
-					if singleResult == nil then
-						results = {}
-					else
-						results = {{singleResult}}
-					end
-				end
-
+				local results = Recipe.getResults(recipe)
 				for _, result in pairs(results) do
-					local resultName = result.name or result[1]
+					local resultName = Recipe.resultToName(result)
 					if resultName == nil then
 						log("ERROR: Recipe "..effect.recipe.." has result "..serpent.block(result).." which has no name; this should never happen.")
 						successfulSoFar = false
@@ -258,8 +251,12 @@ local function checkTechUnlockOrder()
 	for _, techName in pairs(toposortedTechs) do
 		local tech = data.raw.technology[techName]
 		local sciencePacks = tech.unit.ingredients or Table.maybeGet(Table.maybeGet(tech.normal, "unit"), "ingredients")
+		if sciencePacks == nil then
+			log("ERROR: Tech "..techName.." has no science packs. This should never happen.")
+			return false
+		end
 		for _, sciencePack in pairs(sciencePacks) do
-			local sciencePackName = sciencePack.name or sciencePack[1]
+			local sciencePackName = Recipe.resultToName(sciencePack)
 			if sciencePackName == nil then
 				log("ERROR: Tech "..techName.." has science pack "..serpent.block(sciencePack).." which has no name. This should never happen.")
 				return false
@@ -294,7 +291,7 @@ local function checkTechUnlockOrder()
 					return false
 				end
 				for _, ingredient in pairs(ingredients) do
-					local ingredientName = ingredient.name or ingredient[1]
+					local ingredientName = Recipe.resultToName(ingredient)
 					if ingredientName == nil then
 						log("ERROR: Recipe "..effect.recipe.." has ingredient "..serpent.block(ingredient).." which has no name; this should never happen.")
 						return false

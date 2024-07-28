@@ -1,5 +1,7 @@
 local Tech = {}
 
+local Table = require("code.util.table")
+
 Tech.addRecipeToTech = function(recipeName, techName, index)
 	local unlock = {
 		type = "unlock-recipe",
@@ -173,6 +175,14 @@ Tech.addEvolutionEffect = function(techName, evolutionPercent)
 		icon_mipmaps = 2,
 		shift = {-90, 90},
 	})
+end
+
+Tech.getPrereqList = function(tech)
+	return tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
+end
+
+Tech.isEvolutionEffect = function(effect)
+	return effect.type == "nothing" and effect.effect_description[1] == "effect-description.evolution"
 end
 
 return Tech

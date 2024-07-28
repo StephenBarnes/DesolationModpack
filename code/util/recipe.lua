@@ -99,4 +99,30 @@ Recipe.setResults = function(recipeName, results)
 	end
 end
 
+Recipe.getResults = function(recipe)
+	local r = recipe.results or Table.maybeGet(recipe.normal, "results")
+	if r ~= nil then return r end
+
+	local singleResult = recipe.result or Table.maybeGet(recipe.normal, "result")
+	if singleResult == nil then
+		return {}
+	else
+		local singleResultAmount = recipe.result_count or Table.maybeGet(recipe.normal, "result_count")
+		return {{singleResult, singleResultAmount}}
+	end
+end
+
+Recipe.resultToName = function(result)
+	-- Given an entry of format {itemName, amount}, or {type="fluid", name="fluidName", amount=amount}, return the name of the item.
+	-- If the latter format, and type is "fluid", then prefix the name with "fluid:".
+	-- Also works for entries of recipe.ingredients, and tech.unit.ingredients.
+	local name = result.name or result[1]
+	if result.type == "fluid" then
+		return "fluid:"..name
+	else
+		return name
+	end
+end
+
+
 return Recipe
