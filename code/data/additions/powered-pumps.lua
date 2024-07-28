@@ -4,7 +4,7 @@
 -- Used some code from that mod by darkfrei. It's MIT licensed.
 -- It seems there's no way to make normal pumps require electricity or burnable fuel.
 -- So instead, we have to make new entities that replace those as soon as they're placed. The new entities are registered as assembling-machines.
--- (Minor issue: this isn't compatible with blueprints. However, not a big problem since landfill / waterfill will be expensive, so you'll probably manually place pumps anyway.)
+-- (Minor issue: this isn't compatible with blueprints. However, not a big problem since landfill / waterfill is so restricted in this modpack that you have to place pumps manually anyway.)
 
 -- Entity copper-pump should require burnable fuel.
 -- Entity offshore-pump should require electricity.

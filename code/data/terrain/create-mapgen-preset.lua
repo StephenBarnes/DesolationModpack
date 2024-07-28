@@ -99,9 +99,13 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
         --default_enable_all_autoplace_controls = false,
         -- Wanted to use this to disable rubber trees, but, it seems to cause issues with showing terrain, so rather not using.
 
-        terrain_segmentation = 1/3, -- Inverse of water scale.
+        --terrain_segmentation = 1/3, -- Inverse of water scale.
             -- Using a default setting of 1/3 for 300% scale, not 100%, because I want to be able to see surrounding islands from map-gen view.
-        water = 1, -- Water coverage; increasing will hide most of the islands, decreasing will connect them more.
+        --water = 1, -- Water coverage; increasing will hide most of the islands, decreasing will connect them more.
+
+        -- For debugging, TODO remove:
+        terrain_segmentation = 3,
+        water = 1/3,
     },
     advanced_settings = {
         enemy_evolution = {

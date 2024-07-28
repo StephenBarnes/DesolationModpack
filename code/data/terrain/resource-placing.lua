@@ -52,6 +52,7 @@ U.nameNoiseExpr("Desolation-resource-C-ramp01",
 
 --data.raw.resource["iron-ore"].map_color = {r=0, g=0.5, b=1}
 --data.raw.resource["tin-ore"].map_color = {r=0, g=0, b=0.7}
+--data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}
 
 ------------------------------------------------------------------------
 -- Common functions for resources.
@@ -63,10 +64,8 @@ end
 local function makeResourceNoise(scaleMult)
 	-- Returns a multi-basis noise function to be used for a specific resource. Probably don't share between resources.
 	-- `scaleMult` should be the size slider for the resource; it's here so that ore patches maintain roughly similar shape as that slider is adjusted.
-	return noise.define_noise_function(function(x, y, tile, map)
-		local scale = scaleMult / (C.terrainScaleSlider * map.segmentation_multiplier)
-		return U.multiBasisNoise(4, 2, 2, C.resourceNoiseInputScale / scale, C.resourceNoiseAmplitude)
-	end)
+	local scale = scaleMult * var("scale")
+	return U.multiBasisNoise(4, 2, 2, C.resourceNoiseInputScale / scale, C.resourceNoiseAmplitude)
 end
 
 local function makeResourceFactorForPatch(patchPos, minRad, midRad, maxRad, centerWeight)
@@ -90,6 +89,8 @@ end
 
 local function makeSpotNoiseFactor(params)
 	local scale = var("scale")
+	local minSpacing
+	if params.minSpacing ~= nil then minSpacing = tne(params.minSpacing) else minSpacing = nil end
 	local spotNoise = tne {
 		type = "function-application",
 		function_name = "spot-noise",
@@ -108,9 +109,7 @@ local function makeSpotNoiseFactor(params)
 			-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
 			maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
 			region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
-
-			-- For starting patches.
-			minimum_candidate_point_spacing = params.minSpacing,
+			minimum_candidate_point_spacing = minSpacing,
 		},
 	}
 	--return noise.if_else_chain(var("buildable-temperature"), spotNoise, -1000)
@@ -335,21 +334,85 @@ autoplaceFor("stone").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Gold
+-- Gold
 
---log(serpent.block(autoplaceFor("uranium-ore").probability_expression))
+local goldNoise = makeResourceNoise(slider("gold-ore", "size"))
+
+local goldRamp = U.rampDouble(var("dist-to-start-island-rim"),
+	C.resourceMinDist["gold-ore"][1], C.resourceMinDist["gold-ore"][2], C.resourceMinDist["gold-ore"][3],
+	0, 0.5, 1)
+
 local goldOreSpotNoise = makeSpotNoiseFactor {
-	candidateSpotCount = 256,
+	candidateSpotCount = 128,
 	density = 0.1,
 	patchResourceAmt = 10000,
-	patchRad = 10,
-	patchFavorability = var("dist-to-start-island-center"),
+	patchRad = slider("gold-ore", "size") * 7,
+	patchFavorability = goldRamp,
 	regionSize = 2048,
 }
-data.raw.resource["gold-ore"].map_color = {r=1, g=0, b=1}
-autoplaceFor("gold-ore").probability_expression = goldOreSpotNoise
-autoplaceFor("gold-ore").richness_expression = goldOreSpotNoise * slider("gold-ore", "richness")
+
+-- Make gold ore factor
+local goldFactor = goldRamp * (goldOreSpotNoise + goldNoise) * var("Desolation-resource-B-ramp01")
+
+autoplaceFor("gold-ore").probability_expression = factorToProb(goldFactor, 0.8)
+autoplaceFor("gold-ore").richness_expression = (goldFactor
+	* slider("gold-ore", "richness")
+	* (C.goldPatchDesiredAmount / 2500))
 autoplaceFor("gold-ore").tile_restriction = C.buildableTiles
 
+------------------------------------------------------------------------
+-- Crude Oil
+
+-- So, I tried a strategy of generating big patches with spot-noise, and then generating individual tiles within those patches using a 2nd layer of spot-noise.
+-- However, that seems to be extremely slow.
+-- So instead, use multibasis noise for the first layer, then generate spot noise on that layer.
+
+local oilRamp = U.rampDouble(var("dist-to-start-island-rim"),
+	C.resourceMinDist["crude-oil"][1], C.resourceMinDist["crude-oil"][2], C.resourceMinDist["crude-oil"][3],
+	0, 0.5, 1)
+oilRamp = tne(1)
+
+--local oilPossibleAreas = makeSpotNoiseFactor {
+--	candidateSpotCount = 128,
+--	density = 0.5,
+--	patchResourceAmt = 10000,
+--	patchRad = slider("crude-oil", "size") * 20,
+--	patchFavorability = oilRamp,
+--	regionSize = 512,
+--}
+--oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
+
+local oilPossibleAreas = U.multiBasisNoise(2, 2, 2, (slider("crude-oil", "size") / 500) / var("scale"), 5) - 1
+oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
+oilPossibleAreas = oilRamp * oilPossibleAreas
+
+local oilSpotNoise = makeSpotNoiseFactor {
+	candidateSpotCount = 128,
+	density = 0.8,
+	patchResourceAmt = 10000,
+	patchRad = 7, --1,
+	patchFavorability = 1,--oilPossibleAreas,
+	regionSize = 512,
+	--minSpacing = 3,
+}
+
+-- Make crude oil factor
+local oilFactor = oilSpotNoise * oilPossibleAreas --* (1 - var("Desolation-resource-B-ramp01"))
+
+data.raw.resource["crude-oil"].autoplace = {}
+autoplaceFor("crude-oil").probability_expression = oilFactor
+autoplaceFor("crude-oil").richness_expression = (oilFactor
+	* slider("crude-oil", "richness")
+	* (C.oilPatchDesiredAmount / 2500)
+	* 100000)
+autoplaceFor("crude-oil").richness_expression = tne(1000000000)
+autoplaceFor("crude-oil").tile_restriction = C.buildableTiles
+
+
+------------------------------------------------------------------------
+-- Fossil gas
+
+-- TODO
 
 ------------------------------------------------------------------------
 
