@@ -16,6 +16,30 @@ local function autoplaceFor(resourceName)
 	return data.raw.resource[resourceName].autoplace
 end
 
+
+------------------------------------------------------------------------
+-- The resource-type layers.
+-- It's positive for the one type, and negative for the other.
+-- We start by deciding a sorta-random vector, by picking random x and y. Then rotate by 90 degrees to get the other axis for that resource layer.
+-- Rotating by 90 degrees means swapping x and y, and then negating one of them.
+
+-- We use Desolation-resource-type-A for coal+tin and copper+iron.
+-- We use Desolation-resource-type-B for gold and oil.
+-- We use Desolation-resource-type-C for uranium and magic-fissure.
+
+U.nameNoiseExprXY("Desolation-resource-vector-A", {
+	U.mapRandBetween(-1, 1, var("map_seed"), 87),
+	U.mapRandBetween(-1, 1, var("map_seed"), 10203)
+})
+U.nameNoiseExpr("Desolation-resource-A1",
+	var("x") * var("Desolation-resource-vector-A-x") + var("y") * var("Desolation-resource-vector-A-y"))
+U.nameNoiseExpr("Desolation-resource-A2",
+	var("y") * var("Desolation-resource-vector-A-x") - var("x") * var("Desolation-resource-vector-A-y"))
+U.nameNoiseExpr("Desolation-resource-type-A",
+	var("Desolation-resource-A1") * var("Desolation-resource-A2"))
+U.nameNoiseExpr("Desolation-resource-type-A-ramp01",
+	U.ramp(var("Desolation-resource-type-A"), -40, 40, 0, 1))
+
 ------------------------------------------------------------------------
 -- Map colors
 
@@ -97,7 +121,7 @@ end
 
 local ironNoise = makeResourceNoise(slider("iron-ore", "size"))
 
-local startingPatchIronFactor = makeResourceFactorForPatch(
+local startingPatchIronFactor = ironNoise + makeResourceFactorForPatch(
 	U.varXY("start-island-iron-patch-center"),
 	C.startIronPatchMinRad,
 	C.startIronPatchMidRad,
@@ -105,16 +129,17 @@ local startingPatchIronFactor = makeResourceFactorForPatch(
 	C.startIronPatchCenterWeight)
 	-- TODO this function should probably take an argument for total amount of ore.
 
-local otherIslandIronFactor = makeSpotNoiseFactor {
+local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
 	candidateSpotCount = 32,
-	density = 0.05,
+	density = 0.3,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("iron-ore", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
+otherIslandIronFactor = otherIslandIronFactor * var("Desolation-resource-type-A-ramp01")
 
-local ironFactor = ironNoise + noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
+local ironFactor = noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
 
 autoplaceFor("iron-ore").probability_expression = factorToProb(ironFactor, 0.8)
 autoplaceFor("iron-ore").richness_expression = (ironFactor
@@ -157,18 +182,19 @@ local secondPatchCoalFactor = makeResourceFactorForPatch(
 	C.secondCoalPatchMaxRad,
 	C.secondCoalPatchCenterWeight)
 
-local startIslandCoalFactor = noise.max(startPatchCoalFactor, secondPatchCoalFactor)
+local startIslandCoalFactor = coalNoise + noise.max(startPatchCoalFactor, secondPatchCoalFactor)
 
-local otherIslandCoalFactor = makeSpotNoiseFactor {
+local otherIslandCoalFactor = coalNoise + makeSpotNoiseFactor {
 	candidateSpotCount = 32,
-	density = 0.05,
+	density = 0.3,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("coal", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
 	regionSize = 2048,
 }
+otherIslandCoalFactor = otherIslandCoalFactor * (1 - var("Desolation-resource-type-A-ramp01"))
 
-local coalFactor = coalNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
+local coalFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
 
 autoplaceFor("coal").probability_expression = factorToProb(coalFactor, 0.8)
 autoplaceFor("coal").richness_expression = (coalFactor
@@ -198,18 +224,19 @@ local secondCopperFactor = makeResourceFactorForPatch(
 	-- TODO this function should probably take an argument for total amount of ore.
 	-- TODO abstract this stuff so we rather have a "patch" object with min/mid/max rad and center weight.
 
-local startIslandCopperFactor = noise.max(startPatchCopperFactor, secondCopperFactor)
+local startIslandCopperFactor = copperNoise + noise.max(startPatchCopperFactor, secondCopperFactor)
 
-local otherIslandCopperFactor = makeSpotNoiseFactor {
+local otherIslandCopperFactor = copperNoise + makeSpotNoiseFactor {
 	candidateSpotCount = 32,
-	density = 0.05,
+	density = 0.3,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("copper-ore", "size") * 16,
 	patchFavorability = var("temperature"),
 	regionSize = 2048,
 }
+otherIslandCopperFactor = otherIslandCopperFactor * var("Desolation-resource-type-A-ramp01")
 
-local copperFactor = copperNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
+local copperFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
 
 autoplaceFor("copper-ore").probability_expression = factorToProb(copperFactor, 0.8)
 autoplaceFor("copper-ore").richness_expression = (copperFactor
@@ -237,18 +264,19 @@ local secondTinFactor = makeResourceFactorForPatch(
 	C.secondTinPatchCenterWeight)
 	-- TODO this function should probably take an argument for total amount of ore.
 
-local startIslandTinFactor = noise.max(startPatchTinFactor, secondTinFactor)
+local startIslandTinFactor = tinNoise + noise.max(startPatchTinFactor, secondTinFactor)
 
-local otherIslandTinFactor = makeSpotNoiseFactor {
+local otherIslandTinFactor = tinNoise + makeSpotNoiseFactor {
 	candidateSpotCount = 32,
-	density = 0.05,
+	density = 0.3,
 	patchResourceAmt = 10000, -- TODO take distance into account
 	patchRad = slider("tin-ore", "size") * 16,
 	patchFavorability = var("temperature"),
 	regionSize = 2048,
 }
+otherIslandTinFactor = otherIslandTinFactor * (1 - var("Desolation-resource-type-A-ramp01"))
 
-local tinFactor = tinNoise + noise.if_else_chain(var("apply-start-island-resources"), startIslandTinFactor, otherIslandTinFactor)
+local tinFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandTinFactor, otherIslandTinFactor)
 
 autoplaceFor("tin-ore").probability_expression = factorToProb(tinFactor, 0.8)
 autoplaceFor("tin-ore").richness_expression = (tinFactor

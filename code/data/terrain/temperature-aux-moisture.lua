@@ -66,18 +66,17 @@ U.nameNoiseExpr("Desolation-temperature",
 	temperature)
 
 U.nameNoiseExpr("buildable-temperature",
-	noise.less_than(15, temperature))
+	noise.less_than(C.temperatureThresholdForSnow, temperature))
 
 ------------------------------------------------------------------------
 -- Aux -- this determines snow vs ice.
 
 U.nameNoiseExpr("Desolation-aux",
-	U.multiBasisNoise(5, 2, 2,
+	U.multiBasisNoise(4, 2, 2,
 		C.auxScale / var("scale"),
 		C.auxAmplitude)
 	+ C.auxBias
 )
-
 
 ------------------------------------------------------------------------
 -- Moisture -- this determines grass vs volcanic rock.
