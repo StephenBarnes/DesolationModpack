@@ -17,6 +17,8 @@ function addSetting(name, default_value, type, stage)
     })
 end
 
+addSetting("complex-sliders", false, "bool", "startup")
+
 addSetting("remove-mapgen-presets", true, "bool", "startup")
 addSetting("unminable-vehicles", true, "bool", "startup")
 

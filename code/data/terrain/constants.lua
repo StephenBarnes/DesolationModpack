@@ -1,3 +1,4 @@
+local Settings = require("code.util.settings")
 local noise = require "noise"
 local tne = noise.to_noise_expression
 local var = noise.var
@@ -5,10 +6,16 @@ local var = noise.var
 local X = {} -- Exported values.
 
 local function slider(ore, dim)
-	return var("control-setting:"..ore..":"..dim..":multiplier")
+	if Settings.startupSetting("complex-sliders") then
+		return var("control-setting:"..ore..":"..dim..":multiplier")
+	else
+		return 1
+	end
+	-- TODO Add a startup setting to toggle between these.
+	-- TODO add utility functions so that instead of if_else_chain etc, we can do comptime stuff if the sliders are disabled.
 end
 
-X.terrainScaleSlider = var("control-setting:Desolation-scale:frequency:multiplier")
+X.terrainScaleSlider = slider("Desolation-scale", "frequency")
 
 X.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal symmetry.
 

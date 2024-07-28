@@ -68,9 +68,9 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             },
 
             -- Desolation scale; using smaller value for debug, increase when releasing.
-            ["Desolation-scale"] = {
-                frequency = 1, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
-            },
+            --["Desolation-scale"] = {
+            --    frequency = 1, -- Inverse of the "scale" slider. So setting this number higher here makes the island smaller.
+            --},
 
 			-- Temperature controls for Alien Biomes
             -- TODO in resource-placing.lua, create custom noise expressions for these, then set these here to 1.
