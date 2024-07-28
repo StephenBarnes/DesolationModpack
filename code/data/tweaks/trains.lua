@@ -1,5 +1,7 @@
 -- A few tweaks to trains.
 
+local Recipe = require("code.util.recipe")
+
 -- Adjust locomotives.
 local steamLocomotive = data.raw.locomotive["meat:steam-locomotive"]
 local steamLocomotive2 = data.raw.locomotive["meat:steam-locomotive-placement-entity"] -- Edit this as well, so the item correctly shows the stats.
@@ -24,3 +26,5 @@ steelLocomotive.minable = nil
 
 -- Disable fluid wagons. I'm rather using barrels.
 data.raw.recipe["fluid-wagon"].hidden = true
+
+Recipe.orderRecipes{"rail", "train-stop", "rail-signal", "rail-chain-signal", "meat:steam-locomotive-recipe", "locomotive", "cargo-wagon", "artillery-wagon", "chrome-transmat", "cargo-transmat"}

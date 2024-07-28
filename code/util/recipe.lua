@@ -124,5 +124,18 @@ Recipe.resultToName = function(result)
 	end
 end
 
+Recipe.orderRecipes = function(recipeNames)
+	local order = 1
+	for _, recipeName in pairs(recipeNames) do
+		local recipe = data.raw.recipe[recipeName]
+		if recipe == nil then
+			log("ERROR: Couldn't find recipe "..recipeName.." to order.")
+			return
+		end
+		recipe.order = string.format("%04d", order)
+		order = order + 1
+	end
+end
+
 
 return Recipe
