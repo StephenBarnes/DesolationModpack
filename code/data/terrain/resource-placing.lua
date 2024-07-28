@@ -28,8 +28,8 @@ end
 -- We use Desolation-resource-type-C for uranium and magic-fissure.
 
 U.nameNoiseExprXY("Desolation-resource-vector-A", {
-	U.mapRandBetween(-1, 1, var("map_seed"), 87),
-	U.mapRandBetween(-1, 1, var("map_seed"), 10203)
+	U.mapRandBetween(-1, 1),
+	U.mapRandBetween(-1, 1),
 })
 U.nameNoiseExpr("Desolation-resource-A1",
 	var("x") * var("Desolation-resource-vector-A-x") + var("y") * var("Desolation-resource-vector-A-y"))
@@ -346,7 +346,6 @@ autoplaceFor("gold-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 
--- TODO handle the starting patch resources with extra patches at edges: copper, tin, coal, stone.
 -- TODO handle gas fissures.
 -- TODO handle starting-area steam fissures; maybe multiple.
 -- TODO handle crude oil.

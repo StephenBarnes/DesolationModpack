@@ -106,11 +106,6 @@ X.varXY = function(varName)
 	return { var(varName.."-x"), var(varName.."-y") }
 end
 
-X.mapRandBetween = function(a, b, seed, steps)
-	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
-	return noise.delimit_procedure((noise.fmod(seed, steps) / steps) * (b - a) + a)
-end
-
 X.moveInDir = function(x, y, angle, distance)
 	return {
 		x + distance * noise.cos(angle),
@@ -230,6 +225,19 @@ X.between = function(v, v1, v2, ifTrue, ifFalse)
 	-- Assumes v1 < v2.
 	return noise.if_else_chain(noise.less_than(v, v1), ifFalse,
 		noise.less_than(v2, v), ifFalse, ifTrue)
+end
+
+------------------------------------------------------------------------
+
+-- Factorio map seeds are like 1382314055 -- so, ~10 digits. So for modulo'ing it, pick values up to 8 digits.
+local randomNumsIndex = 1
+local randomNums = {6862808, 7854936, 7677328, 8975025, 8812060, 2980917, 5163711, 9308995, 5193514, 8338678, 772996, 7836706, 7787890, 9891058, 9501182, 1536341, 6386639, 9228936, 8560424, 7775101, 8195307, 5825229, 9006593, 9559052, 766782, 1030400, 603984, 1567883, 2897843, 9046408, 5994324, 4418976, 6166455, 4476880, 2184938, 9507513, 8825453, 7783138, 3286155, 3452420, 1503204, 1421705, 8219945, 9659927, 8554698, 4017017, 9216071, 2534806, 9797010, 6192979}
+
+X.mapRandBetween = function(a, b)
+	-- Returns a random number between a and b, that will be constant at every point on the map for the given seed.
+	local steps = randomNums[randomNumsIndex]
+	randomNumsIndex = randomNumsIndex + 1
+	return noise.delimit_procedure((noise.fmod(var("map_seed"), steps) / steps) * (b - a) + a)
 end
 
 ------------------------------------------------------------------------

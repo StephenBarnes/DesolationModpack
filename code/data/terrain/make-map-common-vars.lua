@@ -18,7 +18,7 @@ U.nameNoiseExpr("scale",
 ------------------------------------------------------------------------
 
 U.nameNoiseExpr("spawn-to-start-island-center-angle",
-	U.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax, var("map_seed"), 23))
+	U.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax))
 
 U.nameNoiseExprXY("start-island-center",
 	U.moveInDirScaled(tne(0), tne(0), var("spawn-to-start-island-center-angle"), C.spawnToStartIslandCenter))
@@ -30,7 +30,7 @@ U.nameNoiseExpr("dist-to-start-island-center",
 
 U.nameNoiseExpr("center-to-iron-blob-angle",
 	var("spawn-to-start-island-center-angle") -- Use this angle, so it's on the other side of the island from where player spawns.
-	+ U.mapRandBetween(C.startIslandIronMaxDeviationAngle, -C.startIslandIronMaxDeviationAngle, var("map_seed"), 14))
+	+ U.mapRandBetween(C.startIslandIronMaxDeviationAngle, -C.startIslandIronMaxDeviationAngle))
 
 U.nameNoiseExpr("dist-to-iron-arc",
 	noise.define_noise_function(function(x, y, tile, map)
@@ -61,7 +61,7 @@ U.nameNoiseExpr("dist-to-iron-arc",
 		local dy1 = y - arcEndXY[2]
 		local dx2 = x - var("start-island-center-x")
 		local dy2 = y - var("start-island-center-y")
-		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1, var("map_seed"), 7))
+		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1))
 		local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
 		local isLeftSide = 1 - isRightSide
 		local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
@@ -76,12 +76,12 @@ U.nameNoiseExprXY("start-island-iron-arc-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-iron-blob-angle"), C.distCenterToIronArcCenter))
 
 U.nameNoiseExpr("iron-blob-to-iron-patch-angle",
-	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 43))
+	U.mapRandBetween(0, 2 * C.pi))
 
 local ironCoalShiftScale = 30
 local ironCoalShift = { -- Just to make it a bit more random.
-	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale, var("map_seed"), 842),
-	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale, var("map_seed"), 141),
+	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale),
+	U.mapRandBetween(-ironCoalShiftScale, ironCoalShiftScale),
 }
 
 local ironCoalPatchesCenter = U.shiftVarScaled("start-island-iron-blob-center", ironCoalShift)
@@ -102,7 +102,7 @@ U.nameNoiseExpr("center-to-copper-tin-blob-angle",
 	-- Angle is center-to-iron-blob angle, plus pi (to flip it), plus some random angle.
 	var("center-to-iron-blob-angle")
 	+ C.pi
-	+ U.mapRandBetween(C.startIslandCopperTinMaxDeviationAngle, -C.startIslandCopperTinMaxDeviationAngle, var("map_seed"), 9))
+	+ U.mapRandBetween(C.startIslandCopperTinMaxDeviationAngle, -C.startIslandCopperTinMaxDeviationAngle))
 
 U.nameNoiseExpr("dist-to-copper-tin-arc",
 	noise.define_noise_function(function(x, y, tile, map)
@@ -125,7 +125,7 @@ U.nameNoiseExpr("dist-to-copper-tin-arc",
 		local dy1 = y - arcEndXY[2]
 		local dx2 = x - var("start-island-center-x")
 		local dy2 = y - var("start-island-center-y")
-		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1, var("map_seed"), 472))
+		local whichSide = noise.less_than(0.5, U.mapRandBetween(0, 1))
 		local isRightSide = noise.less_than(dx1 * dy2, dx2 * dy1)
 		local isLeftSide = 1 - isRightSide
 		local isCorrectSide = noise.if_else_chain(whichSide, isRightSide, isLeftSide)
@@ -140,13 +140,12 @@ U.nameNoiseExprXY("start-island-copper-tin-arc-center",
 	U.moveVarInDirScaled("start-island-center", var("center-to-copper-tin-blob-angle"), C.distCenterToCopperTinArcCenter))
 
 U.nameNoiseExpr("copper-tin-blob-to-copper-patch-angle",
-	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 9932))
-	-- TODO refactor mapRandBetween to just assume map seed, and find the mod itself.
+	U.mapRandBetween(0, 2 * C.pi))
 
 local copperTinShiftScale = 15
 local copperTinShift = {
-	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 199),
-	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale, var("map_seed"), 1812),
+	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale),
+	U.mapRandBetween(-copperTinShiftScale, copperTinShiftScale),
 }
 local copperTinPatchesCenter = U.shiftVarScaled("start-island-copper-tin-blob-center", copperTinShift)
 U.nameNoiseExprXY("start-island-second-copper-patch-center",
@@ -178,15 +177,15 @@ U.nameNoiseExpr("dist-to-start-island-rim",
 local startPatchesShiftX = {-12, 8}
 local startPatchesShiftY = {-28, -20} -- Bias to shift north, so you can build southward.
 local startPatchesShift = {
-	U.mapRandBetween(startPatchesShiftX[1], startPatchesShiftX[2], var("map_seed"), 92),
-	U.mapRandBetween(startPatchesShiftY[1], startPatchesShiftY[2], var("map_seed"), 4087),
+	U.mapRandBetween(startPatchesShiftX[1], startPatchesShiftX[2]),
+	U.mapRandBetween(startPatchesShiftY[1], startPatchesShiftY[2]),
 }
 local startPatchesCenter = U.shiftScaled({0, 0}, startPatchesShift)
 
 U.nameNoiseExpr("start-patch-angle",
-	U.mapRandBetween(0, 2 * C.pi, var("map_seed"), 11430))
+	U.mapRandBetween(0, 2 * C.pi))
 U.nameNoiseExpr("start-patch-rot-each",
-	(2 * C.pi / 3) + U.mapRandBetween(-0.5, 0.5, var("map_seed"), 94820))
+	(2 * C.pi / 3) + U.mapRandBetween(-0.5, 0.5))
 
 U.nameNoiseExprXY("start-coal-patch-center",
 	U.moveInDirScaled(startPatchesCenter[1], startPatchesCenter[2], var("start-patch-angle"), C.distSpawnToStartPatches))
