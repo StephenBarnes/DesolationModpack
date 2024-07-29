@@ -13,20 +13,15 @@ local G = require("code.util.general")
 
 U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-start-island-rim"), 200 * var("scale")))
 
-local function autoplaceFor(resourceName)
-	return data.raw.resource[resourceName].autoplace
-end
-
-
 ------------------------------------------------------------------------
 -- The resource-type layers.
 -- It's positive for the one resource group (eg coal+tin), and negative for the other (eg copper+iron).
 -- We start by deciding a sorta-random vector, by picking random x and y. Then rotate by 90 degrees to get the other axis for that resource layer.
 -- Rotating by 90 degrees means swapping x and y, and then negating one of them.
 
--- We use resource A for coal+tin and copper+iron.
--- We use resource B for gold+fossilgas and oil+sourgas.
--- We use resource C for uranium and magic-fissure.
+-- We use resource A for copper+iron, and coal+tin (inverted).
+-- We use resource B for gold+fossilgas, and oil+sourgas (inverted).
+-- We use resource C for uranium, and magic-fissure (inverted).
 
 local function makeResourceType()
 	local x = U.mapRandBetween(-1, 1)
@@ -135,8 +130,8 @@ local function setResourceAutoplace(params)
 	local startPatches = params.startPatches or {}
 	-- params.outsideFade is {minDist, midDist, maxDist} for fading in patches outside the starting region.
 	local outsideFade = params.outsideFade
-	-- params.fissureLike is a bool for whether the resource is fissure-like, ie spawns in patches of size 1 that should be close to each other but with a min distance.
-	local fissureLike = params.fissureLike
+	-- params.dots is a bool for whether the resource spawns in patches of size 1 that should be close to each other but with a min distance. Used for crude oil and fissures.
+	local dots = params.dots
 	-- params.outsideDensity is the density of resource patches outside the starting island.
 	local outsideDensity = params.outsideDensity or 0.5
 	-- params.outsideRad is the radius of resource patches outside the starting island.
@@ -240,18 +235,21 @@ local function setResourceAutoplace(params)
 		resourceFactor = noise.if_else_chain(var("apply-start-island-resources"), combinedStartPatchFactor, outsideFactor)
 	end
 
-	if fissureLike then
-		-- TODO
-		assert(false)
-		resourceFactor = makeSpotNoiseFactor {
-			candidateSpotCount = 128,
-			density = freqSlider,
-			patchResourceAmt = 1,
+	if dots then
+		-- For dot-placed resources, we first place the big spots as above. Then we make a second layer of spot noise, with 1 tile patches. Then multiply them together.
+		local dotFactor = makeSpotNoiseFactor {
+			candidateSpotCount = 64,
+			density = 64, -- number in each region
+			patchResourceAmt = 100000,
 			patchRad = 1,
-			patchFavorability = resourceFactor,
-			regionSize = 256,
-			minSpacing = 3,
+			patchFavorability = 1,
+			regionSize = 128,
+			minSpacing = 5,
 		}
+		resourceFactor = resourceFactor * noise.clamp(dotFactor, 0, 1)
+
+		-- Increase radius that gets aggregated together in the tooltip on the map.
+		data.raw.resource[id].resource_patch_search_radius = outsideRad
 	end
 
 	data.raw.resource[id].autoplace = {
@@ -358,8 +356,9 @@ local stoneTempBand = U.ramp(var("temperature"),
 setResourceAutoplace {
 	id = "stone",
 	order = "zzz", -- Place it last, so other resources can be placed on top of it.
-	outsideDensity = 0.5,
-	outsideRad = 90,
+	outsideDensity = 0.4,
+	outsideRad = 80,
+	desiredAmount = 1000000,
 	extraCondition = stoneTempBand,
 	normalSpawnInStartIsland = true,
 }
@@ -367,93 +366,71 @@ setResourceAutoplace {
 ------------------------------------------------------------------------
 -- Uranium
 
--- TODO I want these to be partially dependent on elevation, so they spawn near the centers of islands, not overlapping the edges of islands.
---autoplaceFor("uranium-ore") = resourceAutoplace.resource_autoplace_settings {
---	name = "uranium-ore",
---	order = "c",
---	base_density = 0.9,
---	base_spots_per_km2 = 1.25,
---	has_starting_area_placement = false,
---	random_spot_size_minimum = 2,
---	random_spot_size_maximum = 4,
---	regular_rq_factor_multiplier = 1
---}
+setResourceAutoplace {
+	id = "uranium-ore",
+	outsideDensity = 0.5,
+	outsideRad = 16,
+	desiredAmount = 100000,
+	resourceType = "C",
+	outsideFade = C.resourceMinDist["uranium-ore"],
+}
 
 ------------------------------------------------------------------------
 -- Gold
--- Gold
 
-local goldNoise = makeResourceNoise(slider("gold-ore", "size"))
-
-local goldRamp = U.rampDouble(var("dist-to-start-island-rim"),
-	C.resourceMinDist["gold-ore"][1], C.resourceMinDist["gold-ore"][2], C.resourceMinDist["gold-ore"][3],
-	0, 0.5, 1)
-
-local goldOreSpotNoise = makeSpotNoiseFactor {
-	candidateSpotCount = 128,
-	density = 0.1,
-	patchResourceAmt = 10000,
-	patchRad = slider("gold-ore", "size") * 7,
-	patchFavorability = goldRamp,
-	regionSize = 2048,
+setResourceAutoplace {
+	id = "gold-ore",
+	outsideDensity = 0.5,
+	outsideRad = 16,
+	desiredAmount = 100000,
+	resourceType = "B",
+	outsideFade = C.resourceMinDist["gold-ore"],
 }
-
--- Make gold ore factor
-local goldFactor = goldRamp * (goldOreSpotNoise + goldNoise) * var("Desolation-resource-B-ramp01")
-
-autoplaceFor("gold-ore").probability_expression = factorToProb(goldFactor, 0.8)
-autoplaceFor("gold-ore").richness_expression = (goldFactor
-	* slider("gold-ore", "richness")
-	* (C.goldPatchDesiredAmount / 2500))
-autoplaceFor("gold-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Crude Oil
 
--- So, I tried a strategy of generating big patches with spot-noise, and then generating individual tiles within those patches using a 2nd layer of spot-noise.
--- However, that seems to be extremely slow.
--- So instead, use multibasis noise for the first layer, then generate spot noise on that layer.
+-- So, to make oil patches, I tried a strategy of using 2 layers of spot noise.
+--   Big spot noise creates oil locations, then smaller spot noise creates individual tiles inside that first layer.
+--   However, that seems to be extremely slow. Probably because I was using first layer as favorability.
+-- Also tried using multibasis noise for the first layer, then generate spot noise on that layer. This works, but the spots aren't clustered as much as I want them to be.
+-- So instead, I'm now generating 2 spot noise layers, and multiplying them together.
 
-local oilRamp = U.rampDouble(var("dist-to-start-island-rim"),
-	C.resourceMinDist["crude-oil"][1], C.resourceMinDist["crude-oil"][2], C.resourceMinDist["crude-oil"][3],
-	0, 0.5, 1)
-
---local oilPossibleAreas = makeSpotNoiseFactor {
---	candidateSpotCount = 128,
---	density = 0.5,
---	patchResourceAmt = 10000,
---	patchRad = slider("crude-oil", "size") * 20,
---	patchFavorability = oilRamp,
---	regionSize = 512,
---}
---oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
-
-local oilPossibleAreas = U.multiBasisNoise(2, 2, 2, (slider("crude-oil", "size") / 1000) / var("scale"), 5) - 4
-oilPossibleAreas = noise.clamp(oilPossibleAreas, 0, 1)
-oilPossibleAreas = oilRamp * oilPossibleAreas * (1 - var("Desolation-resource-B-ramp01"))
-
-local oilSpotNoise = makeSpotNoiseFactor {
-	candidateSpotCount = 128,
-	density = 1.0,
-	patchResourceAmt = 10000,
-	patchRad = 1,
-	patchFavorability = oilPossibleAreas,
-	regionSize = 256,
-	minSpacing = 3,
-}
-
-local oilFactor = oilSpotNoise * oilPossibleAreas
-
-data.raw.resource["crude-oil"].autoplace = {
-	probability_expression = oilFactor,
-	richness_expression = (oilFactor
-		* slider("crude-oil", "richness")
-		* (C.oilPatchDesiredAmount / 2500)),
-	tile_restriction = C.buildableTiles,
+setResourceAutoplace {
+	id = "crude-oil",
+	outsideRad = 32, -- This is the size of the big region that contains the smaller spots.
+	outsideDensity = 0.15,
+	desiredAmount = 500000000, -- Must be very high, because it's a percentage yield.
+	dots = true,
+	outsideFade = C.resourceMinDist["crude-oil"],
+	resourceType = "B",
+	resourceTypeInverted = true,
 }
 
 ------------------------------------------------------------------------
+-- Sour gas
+
+-- TODO
+data.raw.resource["sulphur-gas-fissure"].autoplace = nil
+
+------------------------------------------------------------------------
+-- Natural gas
+
+-- TODO
+
+------------------------------------------------------------------------
+-- Polluted steam
+
+-- TODO
+
+------------------------------------------------------------------------
 -- Fossil gas
+
+-- TODO
+data.raw.resource["fossil-gas-fissure"].autoplace = nil
+
+------------------------------------------------------------------------
+-- Magic gas
 
 -- TODO
 
