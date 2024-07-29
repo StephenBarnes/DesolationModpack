@@ -22,8 +22,8 @@ local immateriaFluid = {
 	subgroup = data.raw.fluid.water.subgroup,
 	order = "zzzz-s",
 	auto_barrel = false, -- don't create barrelling recipes.
+	localised_description = {"fluid-description.immateria"},
 }
--- TODO need to make IR3 create pollution when this is flushed, like the other gases.
 
 local elixirStoneTech = {
 	type = "technology",
@@ -32,7 +32,7 @@ local elixirStoneTech = {
 	icon_size = 256,
 	icon_mipmaps = 2,
 	order = "099",
-	prerequisites = {"ir-arc-furnace-2"},
+	prerequisites = {"ir-arc-furnace-2", "ir-quantum-mining"},
 	effects = {
 		{type = "unlock-recipe", recipe = "elixir-stone"},
 		{type = "unlock-recipe", recipe = "gold-from-stone"},
@@ -158,6 +158,7 @@ immateriaFissure.localised_name = {
 	"entity-name.gas-fissure",
 	{ "fluid-name.immateria" },
 }
+immateriaFissure.localised_description = {"entity-description.immateria-fissure"}
 immateriaFissure.minable.results[1].name = "immateria"
 
 local immateriaParticleSource = table.deepcopy(data.raw["particle-source"]["fossil-gas-fissure-smoke"])
@@ -172,7 +173,17 @@ immateriaSmoke.color = {
 	g = 0.04,
 	b = 0.04,
 }
---log("SMOKE: " .. serpent.block(immateriaSmoke))
--- TODO Currently it appears if you place and remove a pump, but not if you just encounter the fissure.
 
-data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, goldRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke})
+-- IR3 seems to use fake items called eg "fossil-gas-spill-data" to store the pollution spill multiplier, etc.
+--log("for item 'fossil-gas-spill-data': "..serpent.block(data.raw.item["fossil-gas-spill-data"]))
+--log("for item 'crude-oil-spill-data': "..serpent.block(data.raw.item["crude-oil-spill-data"]))
+local immateriaSpillData = table.deepcopy(data.raw.item["fossil-gas-spill-data"])
+immateriaSpillData.name = "immateria-spill-data"
+immateriaSpillData.localised_name[2] = {"fluid-name.immateria"}
+immateriaSpillData.icon = "__Desolation__/graphics/immateria-no-outline-4mipmaps.png"
+immateriaSpillData.icon_size = 64
+immateriaSpillData.icon_mipmaps = 4
+immateriaSpillData.fuel_emissions_multiplier = 1.0 -- This field stores pollution multiplier. It's 1 for crude oil, 0.5 for fossil gas.
+-- I've checked, this works.
+
+data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, goldRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke, immateriaSpillData})
