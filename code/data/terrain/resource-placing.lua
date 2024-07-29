@@ -127,29 +127,34 @@ end
 
 local function setResourceAutoplace(params)
 	-- Creates the autoplace rules for a resource.
-	-- @param params.id is the name of the resource entity, such as "iron-ore"
-	-- @param params.sliderName is the name of the slider with size/richness/frequency
-	-- @param params.startPatches is a list of patch tables on the start island, each patch table being: {{xCenter, yCenter}, minRad, midRad, maxRad, centerWeight}
-	-- @param params.outsideFade is {minDist, midDist, maxDist} for fading in patches outside the starting region.
-	-- @param params.fissureLike is a bool for whether the resource is fissure-like, ie spawns in patches of size 1 that should be close to each other but with a min distance.
-	-- @param params.outsideDensity is the density of resource patches outside the starting island.
-	-- @param params.outsideRad is the radius of resource patches outside the starting island.
-	-- @param params.resourceType is the resource type, such as "A" or "B"
-	-- @param params.resourceTypeInverted is a bool for whether the resource type is inverted.
-	-- @param params.desiredAmount is the desired amount of the resource.
+	-- params.id is the name of the resource entity, such as "iron-ore"
+	local id = params.id or G.die("setResourceAutoplace: id is required")
+	-- params.sliderName is the name of the slider with size/richness/frequency
+	local sliderName = params.sliderName or id
+	-- params.startPatches is a list of patch tables on the start island, each patch table being: {{xCenter, yCenter}, minRad, midRad, maxRad, centerWeight}
+	local startPatches = params.startPatches or {}
+	-- params.outsideFade is {minDist, midDist, maxDist} for fading in patches outside the starting region.
+	local outsideFade = params.outsideFade
+	-- params.fissureLike is a bool for whether the resource is fissure-like, ie spawns in patches of size 1 that should be close to each other but with a min distance.
+	local fissureLike = params.fissureLike
+	-- params.outsideDensity is the density of resource patches outside the starting island.
+	local outsideDensity = params.outsideDensity or 0.5
+	-- params.outsideRad is the radius of resource patches outside the starting island.
+	local outsideRad = params.outsideRad or 16
+	-- params.resourceType is the resource type, such as "A" or "B"
+	local resourceType = params.resourceType
+	-- params.resourceTypeInverted is a bool for whether the resource type is inverted.
+	local resourceTypeInverted = params.resourceTypeInverted
+	-- params.desiredAmount is the desired amount of the resource.
+	local desiredAmount = params.desiredAmount or 100000
+	-- params.order is placement order.
+	local order = params.order or ""
+	-- params.extraCondition is an extra condition required to place the resource in a spot, eg stone requires temperature to be in a certain band so it spawns on the edges of oases.
+	local extraCondition = params.extraCondition
+	-- params.normalSpawnInStartIsland is a bool for whether the resource should spawn normally in the starting island, using the "outside" settings.
+	local normalSpawnInStartIsland = params.normalSpawnInStartIsland
 
 	-- TODO actually each patch table should specify the amount in that patch, and then have a separate outsidePatchAmount that is the per-patch amount for patches outside starting island.
-
-	local id = params.id or G.die("setResourceAutoplace: id is required")
-	local sliderName = params.sliderName or id
-	local startPatches = params.startPatches or {}
-	local outsideFade = params.outsideFade
-	local fissureLike = params.fissureLike
-	local outsideDensity = params.outsideDensity or 0.2
-	local outsideRad = params.outsideRad or 16
-	local resourceType = params.resourceType
-	local resourceTypeInverted = params.resourceTypeInverted
-	local desiredAmount = params.desiredAmount or 10000
 
 	local sizeSlider = slider(sliderName, "size")
 	local richnessSlider = slider(sliderName, "richness")
@@ -180,19 +185,18 @@ local function setResourceAutoplace(params)
 		combinedStartPatchFactor = tne(0)
 	end
 
+	local possibleRegions = extraCondition or tne(1)
+
 	-- The "outsideFadeFactor" is used to enforce the restriction that some resources only spawn far from the start island.
 	-- The outsideFadeFactor is 0 close to start island, then fades to 1 as we move further away. For some resources, it's just 1 everywhere.
-	local outsideFadeFactor
 	if outsideFade ~= nil then
-		outsideFadeFactor = U.rampDouble(
+		local outsideFadeFactor = U.rampDouble(
 			var("dist-to-start-island-rim"),
 			outsideFade[1], outsideFade[2], outsideFade[3],
 			0, 0.5, 1
 		)
-	else
-		outsideFadeFactor = tne(1)
+		possibleRegions = possibleRegions * outsideFadeFactor
 	end
-	local possibleRegions = outsideFadeFactor
 
 	-- Apply resource type filters, to make it only spawn in two opposite quadrants of the map.
 	if resourceType ~= nil then
@@ -225,7 +229,16 @@ local function setResourceAutoplace(params)
 	outsideFactor = outsideFactor * possibleRegions
 
 	-- The "resourceFactor" determines all resource placement. It contains the combined start patch factor, and the outside factor.
-	local resourceFactor = noise.if_else_chain(var("apply-start-island-resources"), combinedStartPatchFactor, outsideFactor)
+	local resourceFactor
+	if normalSpawnInStartIsland then
+		if #startPatches > 0 then
+			resourceFactor = noise.max(combinedStartPatchFactor, outsideFactor)
+		else
+			resourceFactor = outsideFactor
+		end
+	else
+		resourceFactor = noise.if_else_chain(var("apply-start-island-resources"), combinedStartPatchFactor, outsideFactor)
+	end
 
 	if fissureLike then
 		-- TODO
@@ -245,6 +258,7 @@ local function setResourceAutoplace(params)
 		probability_expression = factorToProb(resourceFactor, 0.8),
 		richness_expression = resourceFactor * (desiredAmount / 2500), -- TODO this should probably take rad into account
 		tile_restriction = C.buildableTiles,
+		order = order,
 	}
 end
 
@@ -260,7 +274,7 @@ setResourceAutoplace {
 			C.startIronPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.3,
+	outsideDensity = 0.5,
 	desiredAmount = C.ironPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -282,7 +296,7 @@ setResourceAutoplace {
 			C.secondCoalPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.3,
+	outsideDensity = 0.5,
 	desiredAmount = C.coalPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -305,7 +319,7 @@ setResourceAutoplace {
 			C.secondCopperPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.3,
+	outsideDensity = 0.5,
 	desiredAmount = C.copperPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -327,7 +341,7 @@ setResourceAutoplace {
 			C.secondTinPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.3,
+	outsideDensity = 0.5,
 	desiredAmount = C.tinPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -336,29 +350,19 @@ setResourceAutoplace {
 ------------------------------------------------------------------------
 -- Stone
 
-local stoneNoise = makeResourceNoise(slider("stone", "size"))
-
 -- Try to place stone in areas that are on the edges of buildable oases.
 local stoneTempBand = U.ramp(var("temperature"),
 	C.temperatureThresholdForSnow, C.temperatureThresholdForSnow + C.stoneTemperatureWidth,
 	1, 0)
 
-local stoneFactor = stoneNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 128,
-	density = 0.5,
-	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("stone", "size") * 32,
-	patchFavorability = stoneTempBand,
-	regionSize = 256,
+setResourceAutoplace {
+	id = "stone",
+	order = "zzz", -- Place it last, so other resources can be placed on top of it.
+	outsideDensity = 0.5,
+	outsideRad = 90,
+	extraCondition = stoneTempBand,
+	normalSpawnInStartIsland = true,
 }
-stoneFactor = stoneFactor * stoneTempBand
-
-autoplaceFor("stone").probability_expression = factorToProb(stoneFactor, 0.8)
-autoplaceFor("stone").richness_expression = (stoneFactor
-	* slider("stone", "richness")
-	* (C.stonePatchDesiredAmount / 2500))
-autoplaceFor("stone").order = "zzz" -- Place it last, so other resources can be placed on top of it.
-autoplaceFor("stone").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Uranium
