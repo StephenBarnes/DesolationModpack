@@ -8,6 +8,7 @@ local resourceAutoplace = require("resource-autoplace")
 
 local U = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
+local G = require("code.util.general")
 
 
 U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-start-island-rim"), 200 * var("scale")))
@@ -24,7 +25,7 @@ end
 -- Rotating by 90 degrees means swapping x and y, and then negating one of them.
 
 -- We use resource A for coal+tin and copper+iron.
--- We use resource B for gold and oil.
+-- We use resource B for gold+fossilgas and oil+sourgas.
 -- We use resource C for uranium and magic-fissure.
 
 local function makeResourceType()
@@ -123,172 +124,214 @@ end
 --   var("dist-to-start-island-center")
 
 ------------------------------------------------------------------------
+
+local function setResourceAutoplace(params)
+	-- Creates the autoplace rules for a resource.
+	-- @param params.id is the name of the resource entity, such as "iron-ore"
+	-- @param params.sliderName is the name of the slider with size/richness/frequency
+	-- @param params.startPatches is a list of patch tables on the start island, each patch table being: {{xCenter, yCenter}, minRad, midRad, maxRad, centerWeight}
+	-- @param params.outsideFade is {minDist, midDist, maxDist} for fading in patches outside the starting region.
+	-- @param params.fissureLike is a bool for whether the resource is fissure-like, ie spawns in patches of size 1 that should be close to each other but with a min distance.
+	-- @param params.outsideDensity is the density of resource patches outside the starting island.
+	-- @param params.outsideRad is the radius of resource patches outside the starting island.
+	-- @param params.resourceType is the resource type, such as "A" or "B"
+	-- @param params.resourceTypeInverted is a bool for whether the resource type is inverted.
+	-- @param params.desiredAmount is the desired amount of the resource.
+
+	-- TODO actually each patch table should specify the amount in that patch, and then have a separate outsidePatchAmount that is the per-patch amount for patches outside starting island.
+
+	local id = params.id or G.die("setResourceAutoplace: id is required")
+	local sliderName = params.sliderName or id
+	local startPatches = params.startPatches or {}
+	local outsideFade = params.outsideFade
+	local fissureLike = params.fissureLike
+	local outsideDensity = params.outsideDensity or 0.2
+	local outsideRad = params.outsideRad or 16
+	local resourceType = params.resourceType
+	local resourceTypeInverted = params.resourceTypeInverted
+	local desiredAmount = params.desiredAmount or 10000
+
+	local sizeSlider = slider(sliderName, "size")
+	local richnessSlider = slider(sliderName, "richness")
+	local freqSlider = slider(sliderName, "frequency")
+
+	outsideRad = outsideRad * sizeSlider
+	desiredAmount = desiredAmount * richnessSlider
+	outsideDensity = outsideDensity * freqSlider
+
+	local resourceNoise = makeResourceNoise(sizeSlider)
+
+	-- Create a factor for the patches on the starting island.
+	local combinedStartPatchFactor
+	if #startPatches > 0 then
+		local startPatchFactors = {}
+		for i, patch in pairs(startPatches) do
+			local center, minRad, midRad, maxRad, centerWeight = table.unpack(patch)
+			startPatchFactors[i] = makeResourceFactorForPatch(
+				center,
+				minRad,
+				midRad,
+				maxRad,
+				centerWeight
+			)
+		end
+		combinedStartPatchFactor = resourceNoise + noise.max(table.unpack(startPatchFactors))
+	else
+		combinedStartPatchFactor = tne(0)
+	end
+
+	-- The "outsideFadeFactor" is used to enforce the restriction that some resources only spawn far from the start island.
+	-- The outsideFadeFactor is 0 close to start island, then fades to 1 as we move further away. For some resources, it's just 1 everywhere.
+	local outsideFadeFactor
+	if outsideFade ~= nil then
+		outsideFadeFactor = U.rampDouble(
+			var("dist-to-start-island-rim"),
+			outsideFade[1], outsideFade[2], outsideFade[3],
+			0, 0.5, 1
+		)
+	else
+		outsideFadeFactor = tne(1)
+	end
+	local possibleRegions = outsideFadeFactor
+
+	-- Apply resource type filters, to make it only spawn in two opposite quadrants of the map.
+	if resourceType ~= nil then
+		local resourceTypeVar = var("Desolation-resource-"..resourceType.."-ramp01")
+		if resourceTypeInverted then
+			resourceTypeVar = 1 - resourceTypeVar
+		end
+		possibleRegions = possibleRegions * resourceTypeVar
+	end
+
+	-- Also confine to buildable regions, so it doesn't place the patches in cold regions or water, have them disappear, and then think that's enough.
+	-- But, this adds significant lag, perhaps because it makes resource placement depend on elevation.
+	-- So instead of this, let's just triple the number of spots placed.
+	-- I've tested with this line and without it, and it's definitely a significant performance hit.
+	--possibleRegions = possibleRegions * var("buildable")
+
+	-- Cache as procedure, might improve performance
+	possibleRegions = noise.delimit_procedure(possibleRegions)
+
+	-- The "outsideFactor" determines resource placement outside the starting island.
+	local outsideFactor = resourceNoise + makeSpotNoiseFactor {
+		candidateSpotCount = 32,
+		density = outsideDensity,
+		patchResourceAmt = 10000, -- TODO should this be desiredAmount? or account for that below when setting richness.
+			-- TODO take distance into account
+		patchRad = outsideRad, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
+		patchFavorability = possibleRegions, -- TODO take something else into account, eg temperature
+		regionSize = 2048,
+	}
+	outsideFactor = outsideFactor * possibleRegions
+
+	-- The "resourceFactor" determines all resource placement. It contains the combined start patch factor, and the outside factor.
+	local resourceFactor = noise.if_else_chain(var("apply-start-island-resources"), combinedStartPatchFactor, outsideFactor)
+
+	if fissureLike then
+		-- TODO
+		assert(false)
+		resourceFactor = makeSpotNoiseFactor {
+			candidateSpotCount = 128,
+			density = freqSlider,
+			patchResourceAmt = 1,
+			patchRad = 1,
+			patchFavorability = resourceFactor,
+			regionSize = 256,
+			minSpacing = 3,
+		}
+	end
+
+	data.raw.resource[id].autoplace = {
+		probability_expression = factorToProb(resourceFactor, 0.8),
+		richness_expression = resourceFactor * (desiredAmount / 2500), -- TODO this should probably take rad into account
+		tile_restriction = C.buildableTiles,
+	}
+end
+
+------------------------------------------------------------------------
 -- Iron goes on the starting island (at the end of the land route) and then in patches on other islands.
 
-local ironNoise = makeResourceNoise(slider("iron-ore", "size"))
-
-local startingPatchIronFactor = ironNoise + makeResourceFactorForPatch(
-	U.varXY("start-island-iron-patch-center"),
-	C.startIronPatchMinRad,
-	C.startIronPatchMidRad,
-	C.startIronPatchMaxRad,
-	C.startIronPatchCenterWeight)
-	-- TODO this function should probably take an argument for total amount of ore.
-
-local otherIslandIronFactor = ironNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 32,
-	density = 0.3,
-	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("iron-ore", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
-	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
-	regionSize = 2048,
+setResourceAutoplace {
+	id = "iron-ore",
+	startPatches = {
+		{
+			U.varXY("start-island-iron-patch-center"),
+			C.startIronPatchMinRad, C.startIronPatchMidRad, C.startIronPatchMaxRad,
+			C.startIronPatchCenterWeight
+		},
+	},
+	outsideDensity = 0.3,
+	desiredAmount = C.ironPatchDesiredAmount,
+	resourceType = "A",
 }
-otherIslandIronFactor = otherIslandIronFactor * var("Desolation-resource-A-ramp01")
-
-local ironFactor = noise.if_else_chain(var("apply-start-island-resources"), startingPatchIronFactor, otherIslandIronFactor)
-
-autoplaceFor("iron-ore").probability_expression = factorToProb(ironFactor, 0.8)
-autoplaceFor("iron-ore").richness_expression = (ironFactor
-	* slider("iron-ore", "richness")
-	* (C.ironPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake.
-	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
-autoplaceFor("iron-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Coal
 
-local coalNoise = makeResourceNoise(slider("coal", "size"))
-
--- Create starting patch factor -- attempt using spot noise.
---local coalRad = slider("coal", "size") * 16 -- TODO move to constants
---local startPatchMaxRad = coalRad -- TODO move to constants, take max of multiple
---local startPatchCoalFactor = startingPatchSpotNoiseFactor {
---	patchResourceAmt = 1000,
---	patchRad = coalRad / var("scale"),
---	patchFavorability = -var("distance") + noise.random(0.5),
---	--patchFavorability = 1,
---	regionSize = C.spawnPatchesDist / var("scale"),
---	minSpacing = startPatchMaxRad * 3 / var("scale"),
---}
---startPatchCoalFactor = noise.if_else_chain(noise.less_than(var("distance"), C.spawnPatchesDist / var("scale")), startPatchCoalFactor, -1000)
-
--- Create starting patch factor -- attempt using a var for center and dist.
-local startPatchCoalFactor = makeResourceFactorForPatch(
-	U.varXY("start-coal-patch-center"),
-	C.startCoalPatchMinRad,
-	C.startCoalPatchMidRad,
-	C.startCoalPatchMaxRad,
-	C.startCoalPatchCenterWeight)
-
--- The "second patch" is the patch close to the starting iron patch.
-local secondPatchCoalFactor = makeResourceFactorForPatch(
-	U.varXY("start-island-second-coal-center"),
-	C.secondCoalPatchMinRad,
-	C.secondCoalPatchMidRad,
-	C.secondCoalPatchMaxRad,
-	C.secondCoalPatchCenterWeight)
-
-local startIslandCoalFactor = coalNoise + noise.max(startPatchCoalFactor, secondPatchCoalFactor)
-
-local otherIslandCoalFactor = coalNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 32,
-	density = 0.3,
-	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("coal", "size") * 16, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
-	patchFavorability = var("elevation"), -- TODO take something else into account, eg temperature
-	regionSize = 2048,
+setResourceAutoplace {
+	id = "coal",
+	startPatches = {
+		{ -- Patch in starting oasis
+			U.varXY("start-coal-patch-center"),
+			C.startCoalPatchMinRad, C.startCoalPatchMidRad, C.startCoalPatchMaxRad,
+			C.startCoalPatchCenterWeight
+		},
+		{ -- Patch at the end of the land route
+			U.varXY("start-island-second-coal-center"),
+			C.secondCoalPatchMinRad, C.secondCoalPatchMidRad, C.secondCoalPatchMaxRad,
+			C.secondCoalPatchCenterWeight
+		},
+	},
+	outsideDensity = 0.3,
+	desiredAmount = C.coalPatchDesiredAmount,
+	resourceType = "A",
+	resourceTypeInverted = true,
 }
-otherIslandCoalFactor = otherIslandCoalFactor * (1 - var("Desolation-resource-A-ramp01"))
-
-local coalFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCoalFactor, otherIslandCoalFactor)
-
-autoplaceFor("coal").probability_expression = factorToProb(coalFactor, 0.8)
-autoplaceFor("coal").richness_expression = (coalFactor
-	* slider("coal", "richness")
-	* (C.coalPatchDesiredAmount / 2500)) -- This 2500 number was found by experimenting. Should experiment more, especially since this is with the marker lake. TODO
-	-- TODO this uses the same startIronPatchDesiredAmount constant for patches outside the starting island. Maybe adjust, use noise.if_else_chain to choose between a within-island and outside-island multiplier.
-autoplaceFor("coal").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Copper
 
-local copperNoise = makeResourceNoise(slider("copper-ore", "size"))
-
-local startPatchCopperFactor = makeResourceFactorForPatch(
-	U.varXY("start-copper-patch-center"),
-	C.startCopperPatchMinRad,
-	C.startCopperPatchMidRad,
-	C.startCopperPatchMaxRad,
-	C.startCopperPatchCenterWeight)
-
-local secondCopperFactor = makeResourceFactorForPatch(
-	U.varXY("start-island-second-copper-patch-center"),
-	C.secondCopperPatchMinRad,
-	C.secondCopperPatchMidRad,
-	C.secondCopperPatchMaxRad,
-	C.secondCopperPatchCenterWeight)
-	-- TODO this function should probably take an argument for total amount of ore.
-	-- TODO abstract this stuff so we rather have a "patch" object with min/mid/max rad and center weight.
-
-local startIslandCopperFactor = copperNoise + noise.max(startPatchCopperFactor, secondCopperFactor)
-
-local otherIslandCopperFactor = copperNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 32,
-	density = 0.3,
-	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("copper-ore", "size") * 16,
-	patchFavorability = var("temperature"),
-	regionSize = 2048,
+setResourceAutoplace {
+	id = "copper-ore",
+	startPatches = {
+		{ -- Patch in starting oasis
+			U.varXY("start-copper-patch-center"),
+			C.startCopperPatchMinRad, C.startCopperPatchMidRad, C.startCopperPatchMaxRad,
+			C.startCopperPatchCenterWeight
+		},
+		{ -- Patch at the end of the land route
+			U.varXY("start-island-second-copper-patch-center"),
+			C.secondCopperPatchMinRad, C.secondCopperPatchMidRad, C.secondCopperPatchMaxRad,
+			C.secondCopperPatchCenterWeight
+		},
+	},
+	outsideDensity = 0.3,
+	desiredAmount = C.copperPatchDesiredAmount,
+	resourceType = "A",
 }
-otherIslandCopperFactor = otherIslandCopperFactor * var("Desolation-resource-A-ramp01")
-
-local copperFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandCopperFactor, otherIslandCopperFactor)
-
-autoplaceFor("copper-ore").probability_expression = factorToProb(copperFactor, 0.8)
-autoplaceFor("copper-ore").richness_expression = (copperFactor
-	* slider("copper-ore", "richness")
-	* (C.secondCopperPatchDesiredAmount / 2500))
-autoplaceFor("copper-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Tin
 
-local tinNoise = makeResourceNoise(slider("tin-ore", "size"))
-
-local startPatchTinFactor = makeResourceFactorForPatch(
-	U.varXY("start-tin-patch-center"),
-	C.startTinPatchMinRad,
-	C.startTinPatchMidRad,
-	C.startTinPatchMaxRad,
-	C.startTinPatchCenterWeight)
-
-local secondTinFactor = makeResourceFactorForPatch(
-	U.varXY("start-island-second-tin-patch-center"),
-	C.secondTinPatchMinRad,
-	C.secondTinPatchMidRad,
-	C.secondTinPatchMaxRad,
-	C.secondTinPatchCenterWeight)
-	-- TODO this function should probably take an argument for total amount of ore.
-
-local startIslandTinFactor = tinNoise + noise.max(startPatchTinFactor, secondTinFactor)
-
-local otherIslandTinFactor = tinNoise + makeSpotNoiseFactor {
-	candidateSpotCount = 32,
-	density = 0.3,
-	patchResourceAmt = 10000, -- TODO take distance into account
-	patchRad = slider("tin-ore", "size") * 16,
-	patchFavorability = var("temperature"),
-	regionSize = 2048,
+setResourceAutoplace {
+	id = "tin-ore",
+	startPatches = {
+		{ -- Patch in starting oasis
+			U.varXY("start-tin-patch-center"),
+			C.startTinPatchMinRad, C.startTinPatchMidRad, C.startTinPatchMaxRad,
+			C.startTinPatchCenterWeight
+		},
+		{ -- Patch at the end of the land route
+			U.varXY("start-island-second-tin-patch-center"),
+			C.secondTinPatchMinRad, C.secondTinPatchMidRad, C.secondTinPatchMaxRad,
+			C.secondTinPatchCenterWeight
+		},
+	},
+	outsideDensity = 0.3,
+	desiredAmount = C.tinPatchDesiredAmount,
+	resourceType = "A",
+	resourceTypeInverted = true,
 }
-otherIslandTinFactor = otherIslandTinFactor * (1 - var("Desolation-resource-A-ramp01"))
-
-local tinFactor = noise.if_else_chain(var("apply-start-island-resources"), startIslandTinFactor, otherIslandTinFactor)
-
-autoplaceFor("tin-ore").probability_expression = factorToProb(tinFactor, 0.8)
-autoplaceFor("tin-ore").richness_expression = (tinFactor
-	* slider("tin-ore", "richness")
-	* (C.secondTinPatchDesiredAmount / 2500))
-autoplaceFor("tin-ore").tile_restriction = C.buildableTiles
 
 ------------------------------------------------------------------------
 -- Stone
@@ -417,3 +460,8 @@ data.raw.resource["crude-oil"].autoplace = {
 -- TODO handle crude oil.
 -- TODO handle uranium and gold.
 -- TODO place the gem-bearing rocks from IR3. They should be placed on certain ores. (Called gem-rock-diamond, gem-rock-ruby.)
+
+
+-- TODO all of these should be refactored a lot, so that we instead just have tables with the "specification" of a given resource.
+-- Specification should include a list of patch centers and radii, and then the min distance for patch generation, and some details of patch shape/size.
+-- Then we just use the same code to generate all resources.

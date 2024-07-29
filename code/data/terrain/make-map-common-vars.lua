@@ -17,6 +17,17 @@ U.nameNoiseExpr("scale",
 
 ------------------------------------------------------------------------
 
+U.nameNoiseExpr("buildable-temperature",
+	noise.less_than(C.temperatureThresholdForSnow, var("temperature")))
+
+U.nameNoiseExpr("buildable-elevation",
+	noise.less_than(0, var("elevation")))
+
+U.nameNoiseExpr("buildable",
+	var("buildable-temperature") * var("buildable-elevation"))
+
+------------------------------------------------------------------------
+
 U.nameNoiseExpr("spawn-to-start-island-center-angle",
 	U.mapRandBetween(C.startIslandAngleToCenterMin, C.startIslandAngleToCenterMax))
 
