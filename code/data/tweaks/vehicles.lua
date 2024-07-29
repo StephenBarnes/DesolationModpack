@@ -62,3 +62,6 @@ data.raw.car["heavy-picket"].resistances = {
 -- TODO increase the .weight of the heavy roller and picket, so they cause more damage to stuff they crash into.
 -- TODO also try making them bigger? Could maybe just scale up the sprites and collision box by a factor of 2.
 -- "immune to belts" -> "immune to belts, trees, rocks, walls, and other lesser vehicles. Unfortunately, its lack of weaponry and maneuverability make it less effective for mounting assaults on enemy nests."
+
+-- Recipe for the ironclad should be in the same row as cargo ships.
+data.raw["item-with-entity-data"]["ironclad"].subgroup = data.raw["item-with-entity-data"]["cargo_ship"].subgroup

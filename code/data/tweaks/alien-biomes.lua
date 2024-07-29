@@ -26,7 +26,7 @@ data.raw["simple-entity"]["rock-huge-white"].autoplace.max_probability = 0.05 --
 data.raw["optimized-decorative"]["puddle-decal"].autoplace.max_probability = 0.03 -- originally 0.1
 	-- Also looks like they have a typo, puddle-decal.lua line says infleunce instead of influence. Notified them on Discord.
 data.raw["optimized-decorative"]["sand-decal-white"].autoplace.max_probability = 0.02
-data.raw["optimized-decorative"]["stone-decal-white"].autoplace.max_probability = 0.03
+data.raw["optimized-decorative"]["stone-decal-white"].autoplace.max_probability = 0.01
 -- Reduce various vegetation.
 data.raw["optimized-decorative"]["cane-cluster"].autoplace.max_probability = 0.3
 data.raw["optimized-decorative"]["cane-single"].autoplace.max_probability = 0.3
