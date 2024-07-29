@@ -266,6 +266,8 @@ X.resourceMinDist = {
 	["uranium-ore"] = {1800, 2400, 3000},
 	["fossil-gas-fissure"] = {1800, 2400, 3000},
 	-- TODO magic gas here
+
+	-- No min distances for polluted steam or steam.
 }
 
 return X

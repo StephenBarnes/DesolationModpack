@@ -15,6 +15,8 @@ end
 
 local function isChunkPermitted(chunkArea, minLandTiles, maxLandTiles)
 	local landTileCount = game.surfaces[1].count_tiles_filtered{area = chunkArea, collision_mask = "ground-tile"}
+	-- Seems this sometimes incorrectly thinks land tile count is 0 in chunks that haven't been created yet. Only observed when using very high scan speeds (for debugging), shouldn't exist in normal gameplay.
+	-- This can cause ocean scanning pods to also scan land, and can also cause land scans (seismic or starting island) to fail to scan some land chunks.
 	if minLandTiles ~= nil and landTileCount < minLandTiles then return false end
 	if maxLandTiles ~= nil and landTileCount > maxLandTiles then return false end
 	return true
@@ -84,7 +86,7 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 		-- Actually, instead of a random number, use the parity, so it's more regular and won't get lopsided.
 		--if (chunkToScan[1] % 2) == 0 and (chunkToScan[2] % 2) == 1 then -- This produced an interesting rotated octagon pattern.
 		-- Well, that looks artificial again, so let's just do it randomly.
-		if math.random() < 0.4 then
+		if math.random() < 0.3 then
 			for _, adjacentChunk in pairs({
 				{chunkToScan[1] - 1, chunkToScan[2] - 1, chunkToScan[3]+1.41},
 				{chunkToScan[1] + 1, chunkToScan[2] - 1, chunkToScan[3]+1.41},

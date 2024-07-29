@@ -22,6 +22,7 @@ U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-sta
 -- We use resource A for copper+iron, and coal+tin (inverted).
 -- We use resource B for gold+fossilgas, and oil+sourgas (inverted).
 -- We use resource C for uranium, and magic-fissure (inverted).
+-- We don't use any of these quadrant restrictions for polluted steam.
 
 local function makeResourceType()
 	local x = U.mapRandBetween(-1, 1)
@@ -84,9 +85,22 @@ local function factorToProb(factor, floorProb)
 end
 
 local function makeSpotNoiseFactor(params)
-	local scale = var("scale")
+	-- params.shouldScale determines whether we scale by map scale.
+	--   This should be disabled for things like the dot noise, bc we want the radius to be 1 tile, not 1 tile * scale.
+	local scale
+	if params.shouldScale == nil or params.shouldScale then
+		scale = var("scale")
+	else
+		scale = 1
+	end
+
 	local minSpacing
-	if params.minSpacing ~= nil then minSpacing = tne(params.minSpacing) else minSpacing = nil end
+	if params.minSpacing ~= nil then
+		minSpacing = tne(params.minSpacing)
+	else
+		minSpacing = nil
+	end
+
 	local spotNoise = tne {
 		type = "function-application",
 		function_name = "spot-noise",
@@ -120,6 +134,21 @@ end
 
 ------------------------------------------------------------------------
 
+-- We make a "dot factor" shared between crude oil and all gas fissures.
+-- This noise layer is multiplied with separate noise layers that create the bigger areas that contain oil or gas fissures, etc.
+-- We share this between them to improve performance, since it's unnecessary to re-do this for each one.
+local dotFactor = makeSpotNoiseFactor {
+	candidateSpotCount = 128,
+	density = 128, -- number in each region
+	patchResourceAmt = 100000,
+	patchRad = 1,
+	patchFavorability = 1,
+	regionSize = 128,
+	minSpacing = 5,
+	shouldScale = false, -- No scaling, bc eg at 300% scale we don't want patch radius to be 3 tiles.
+}
+dotFactor = noise.clamp(dotFactor, 0, 1)
+
 local function setResourceAutoplace(params)
 	-- Creates the autoplace rules for a resource.
 	-- params.id is the name of the resource entity, such as "iron-ore"
@@ -132,8 +161,8 @@ local function setResourceAutoplace(params)
 	local outsideFade = params.outsideFade
 	-- params.dots is a bool for whether the resource spawns in patches of size 1 that should be close to each other but with a min distance. Used for crude oil and fissures.
 	local dots = params.dots
-	-- params.outsideDensity is the density of resource patches outside the starting island.
-	local outsideDensity = params.outsideDensity or 0.5
+	-- params.outsideDensity is the number of resource patches per region, outside the starting island.
+	local outsideDensity = params.outsideDensity or 1.0
 	-- params.outsideRad is the radius of resource patches outside the starting island.
 	local outsideRad = params.outsideRad or 16
 	-- params.resourceType is the resource type, such as "A" or "B"
@@ -237,19 +266,9 @@ local function setResourceAutoplace(params)
 
 	if dots then
 		-- For dot-placed resources, we first place the big spots as above. Then we make a second layer of spot noise, with 1 tile patches. Then multiply them together.
-		local dotFactor = makeSpotNoiseFactor {
-			candidateSpotCount = 64,
-			density = 64, -- number in each region
-			patchResourceAmt = 100000,
-			patchRad = 1,
-			patchFavorability = 1,
-			regionSize = 128,
-			minSpacing = 5,
-		}
-		resourceFactor = resourceFactor * noise.clamp(dotFactor, 0, 1)
-
+		resourceFactor = resourceFactor * dotFactor
 		-- Increase radius that gets aggregated together in the tooltip on the map.
-		data.raw.resource[id].resource_patch_search_radius = outsideRad
+		data.raw.resource[id].resource_patch_search_radius = params.outsideRad * 8 -- must be a number, not a noise-var, so we can't make it depend on map scale.
 	end
 
 	data.raw.resource[id].autoplace = {
@@ -272,7 +291,7 @@ setResourceAutoplace {
 			C.startIronPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.5,
+	outsideDensity = 2,
 	desiredAmount = C.ironPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -294,7 +313,7 @@ setResourceAutoplace {
 			C.secondCoalPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.5,
+	outsideDensity = 2,
 	desiredAmount = C.coalPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -317,7 +336,7 @@ setResourceAutoplace {
 			C.secondCopperPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.5,
+	outsideDensity = 2,
 	desiredAmount = C.copperPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -339,7 +358,7 @@ setResourceAutoplace {
 			C.secondTinPatchCenterWeight
 		},
 	},
-	outsideDensity = 0.5,
+	outsideDensity = 2,
 	desiredAmount = C.tinPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -356,8 +375,8 @@ local stoneTempBand = U.ramp(var("temperature"),
 setResourceAutoplace {
 	id = "stone",
 	order = "zzz", -- Place it last, so other resources can be placed on top of it.
-	outsideDensity = 0.4,
-	outsideRad = 80,
+	outsideDensity = 0.3,
+	outsideRad = 60,
 	desiredAmount = 1000000,
 	extraCondition = stoneTempBand,
 	normalSpawnInStartIsland = true,
@@ -368,7 +387,7 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "uranium-ore",
-	outsideDensity = 0.5,
+	outsideDensity = 1,
 	outsideRad = 16,
 	desiredAmount = 100000,
 	resourceType = "C",
@@ -380,7 +399,7 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "gold-ore",
-	outsideDensity = 0.5,
+	outsideDensity = 1,
 	outsideRad = 16,
 	desiredAmount = 100000,
 	resourceType = "B",
@@ -398,9 +417,9 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "crude-oil",
-	outsideRad = 32, -- This is the size of the big region that contains the smaller spots.
-	outsideDensity = 0.15,
-	desiredAmount = 500000000, -- Must be very high, because it's a percentage yield.
+	outsideRad = 24, -- This is the size of the big region that contains the smaller spots.
+	outsideDensity = 0.3,
+	desiredAmount = 1e9, -- Must be very high, because it's a percentage yield.
 	dots = true,
 	outsideFade = C.resourceMinDist["crude-oil"],
 	resourceType = "B",
@@ -410,27 +429,74 @@ setResourceAutoplace {
 ------------------------------------------------------------------------
 -- Sour gas
 
--- TODO
-data.raw.resource["sulphur-gas-fissure"].autoplace = nil
+setResourceAutoplace {
+	id = "sulphur-gas-fissure",
+	outsideRad = 24,
+	outsideDensity = 0.25,
+	desiredAmount = 1e9,
+	dots = true,
+	resourceType = "B",
+	resourceTypeInverted = true,
+	outsideFade = C.resourceMinDist["sulphur-gas-fissure"],
+}
 
 ------------------------------------------------------------------------
--- Natural gas
+-- Natural gas fissures
 
--- TODO
+-- We don't autoplace any natural gas fissures. Instead we autoplace fossil gas fissures.
+-- Fossil gas can be easily processed into natgas, or natgas+nitrogen+helium. IR3 doesn't autoplace natural gas fissures anyway.
+-- In the real world, "fossil gas" is just another name for natural gas. I think IR3 calls it "fossil gas" just to differentiate from the purer natural gas.
+data.raw.resource["natural-gas-fissure"].autoplace = nil
 
 ------------------------------------------------------------------------
 -- Polluted steam
 
--- TODO
+setResourceAutoplace {
+	id = "dirty-steam-fissure",
+	outsideRad = 24,
+	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
+	desiredAmount = 1e9,
+	dots = true,
+	normalSpawnInStartIsland = true, -- So can spawn on starting island.
+}
+
+------------------------------------------------------------------------
+-- Clean steam
+-- IR3 places one near player spawn point automatically.
+
+setResourceAutoplace {
+	id = "steam-fissure",
+	outsideRad = 24,
+	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
+	desiredAmount = 5e8,
+	dots = true,
+}
 
 ------------------------------------------------------------------------
 -- Fossil gas
 
--- TODO
-data.raw.resource["fossil-gas-fissure"].autoplace = nil
+setResourceAutoplace {
+	id = "fossil-gas-fissure",
+	outsideRad = 24,
+	outsideDensity = 0.4,
+	desiredAmount = 1e9,
+	resourceType = "B",
+	dots = true,
+	outsideFade = C.resourceMinDist["fossil-gas-fissure"],
+}
 
 ------------------------------------------------------------------------
 -- Magic gas
+
+-- TODO
+
+------------------------------------------------------------------------
+-- Enemy bases
+
+-- TODO
+
+------------------------------------------------------------------------
+-- Trees
 
 -- TODO
 
@@ -446,3 +512,5 @@ data.raw.resource["fossil-gas-fissure"].autoplace = nil
 -- TODO all of these should be refactored a lot, so that we instead just have tables with the "specification" of a given resource.
 -- Specification should include a list of patch centers and radii, and then the min distance for patch generation, and some details of patch shape/size.
 -- Then we just use the same code to generate all resources.
+
+-- TODO idea: spawn gem rocks among enemy bases.
