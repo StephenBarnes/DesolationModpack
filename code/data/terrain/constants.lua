@@ -259,13 +259,14 @@ X.coalPatchDesiredAmount = 100000
 
 -- Map resource name to minimum distance from starting island, and fade-in max distance from starting island.
 X.resourceMinDist = {
+	["fossil-gas-fissure"] = {600, 1000, 1400},
+
 	["crude-oil"] = {700, 1200, 2000},
 	["sour-gas-fissure"] = {700, 1200, 2000},
 	["gold-ore"] = {800, 1400, 2300},
 
 	["uranium-ore"] = {1800, 2400, 3000},
-	["fossil-gas-fissure"] = {1800, 2400, 3000},
-	-- TODO magic gas here
+	["immateria-fissure"] = {1800, 2400, 3000},
 
 	-- No min distances for polluted steam or steam.
 }

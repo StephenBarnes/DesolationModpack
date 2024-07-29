@@ -32,7 +32,7 @@ local elixirStoneTech = {
 	icon_size = 256,
 	icon_mipmaps = 2,
 	order = "099",
-	prerequisites = {"ir-quantum-mining"},
+	prerequisites = {"ir-arc-furnace-2"},
 	effects = {
 		{type = "unlock-recipe", recipe = "elixir-stone"},
 		{type = "unlock-recipe", recipe = "gold-from-stone"},
@@ -62,15 +62,27 @@ local elixirItem = {
 	order = "zzz-z-z",
 }
 
+local elixirRecipeCategory = {
+	type = "recipe-category",
+	name = "elixir-stone-category",
+	order = "z",
+}
+local elixirItemSubgroup = {
+	type = "item-subgroup",
+	name = "elixir-stone-subgroup",
+	group = data.raw["item-subgroup"]["ir-molten-molten"].group,
+	order = "z",
+}
 local elixirRecipe = {
 	type = "recipe",
 	name = "elixir-stone",
-	category = data.raw.recipe["electrum-gem-charged"].category,
-	subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
-	energy_required = 60,
+	category = "elixir-stone-category",
+	subgroup = "elixir-stone-subgroup",
+	--subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
+	energy_required = 150,
 	ingredients = {
 		{type = "item", name = "spagyric-crystal", amount = 1},
-		{type = "fluid", name = "immateria", amount = 100}
+		{type = "fluid", name = "immateria", amount = 1000}
 	},
 	results = {
 		{type = "item", name = "elixir-stone", amount = 1}
@@ -78,15 +90,26 @@ local elixirRecipe = {
 	enabled = false,
 	always_show_made_in = true,
 	main_product = "elixir-stone",
+	-- TODO set crafting machine tints
 }
+elixirRecipe.crafting_machine_tint = data.raw.recipe["chromium-molten-from-ingot"].crafting_machine_tint
+elixirRecipe.crafting_machine_tint[1] = {1, 1, 1} -- It doesn't look like this is actually used by the arc furnace.
+-- Un-fix the recipe for the supermagnet, since we're now adding alternative recipes.
+--data.raw["assembling-machine"]["supermagnet"].fixed_recipe = nil
+-- Actually, supermagnet's animation shows it as being for the field-aligned electrum crystal. So rather use the blast furnace.
+
+-- Add this new category to the list of crafting categories for the arc furnace.
+table.insert(data.raw["assembling-machine"]["arc-furnace"].crafting_categories, "elixir-stone-category")
 
 local goldRecipe = {
 	type = "recipe",
 	name = "gold-from-stone",
 	localised_name = {"recipe-name.gold-from-stone"},
-	category = data.raw.recipe["electrum-gem-charged"].category,
+	--category = data.raw.recipe["electrum-gem-charged"].category,
+	category = "crafting", -- so it's hand-craftable
 	subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
-	energy_required = 2,
+	order = "zzz-z-z2",
+	energy_required = 1,
 	ingredients = {
 		{type = "item", name = "elixir-stone", amount = 1},
 		{type = "item", name = "stone", amount = 10}
@@ -96,7 +119,7 @@ local goldRecipe = {
 		{type = "item", name = "elixir-stone", amount = 1},
 	},
 	enabled = false,
-	always_show_made_in = true,
+	--always_show_made_in = true,
 	main_product = "gold-ore",
 	icons = {
 		{ icon = "__Desolation__/graphics/empty_icon.png", icon_size = 64, icon_mipmaps = 4, scale = 0.5 },
@@ -106,4 +129,50 @@ local goldRecipe = {
 	},
 }
 
-data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipe, goldRecipe})
+--log(serpent.block(data.raw.resource["fossil-gas-fissure"]))
+local immateriaFissure = table.deepcopy(data.raw.resource["fossil-gas-fissure"])
+immateriaFissure.name = "immateria-fissure"
+immateriaFissure.icons = {
+	{
+		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/generic-fissure.png",
+		icon_mipmaps = 4,
+		icon_size = 64
+	},
+	{
+		icon = "__Desolation__/graphics/immateria-no-outline-4mipmaps.png",
+		icon_mipmaps = 4,
+		icon_size = 64,
+		scale = 0.25,
+		shift = {
+			0,
+			-8
+		}
+	},
+}
+immateriaFissure.map_color = {
+	r = 1.0,
+	g = 0.3,
+	b = 0.3,
+}
+immateriaFissure.localised_name = {
+	"entity-name.gas-fissure",
+	{ "fluid-name.immateria" },
+}
+immateriaFissure.minable.results[1].name = "immateria"
+
+local immateriaParticleSource = table.deepcopy(data.raw["particle-source"]["fossil-gas-fissure-smoke"])
+immateriaParticleSource.name = "immateria-fissure-smoke"
+immateriaParticleSource.smoke[1].name = "immateria-fissure-soft-smoke"
+
+local immateriaSmoke = table.deepcopy(data.raw["trivial-smoke"]["fossil-gas-fissure-soft-smoke"])
+immateriaSmoke.name = "immateria-fissure-soft-smoke"
+immateriaSmoke.color = {
+	a = 0.25,
+	r = 0.25,
+	g = 0.04,
+	b = 0.04,
+}
+--log("SMOKE: " .. serpent.block(immateriaSmoke))
+-- TODO Currently it appears if you place and remove a pump, but not if you just encounter the fissure.
+
+data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, goldRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke})

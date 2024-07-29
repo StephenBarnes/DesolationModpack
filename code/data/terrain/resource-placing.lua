@@ -488,7 +488,16 @@ setResourceAutoplace {
 ------------------------------------------------------------------------
 -- Magic gas
 
--- TODO
+setResourceAutoplace {
+	id = "immateria-fissure",
+	outsideRad = 24,
+	outsideDensity = 0.4,
+	desiredAmount = 1e9,
+	resourceType = "C",
+	resourceTypeInverted = true,
+	dots = true,
+	outsideFade = C.resourceMinDist["immateria-fissure"],
+}
 
 ------------------------------------------------------------------------
 -- Enemy bases

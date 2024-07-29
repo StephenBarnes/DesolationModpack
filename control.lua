@@ -10,6 +10,7 @@ local startIslandScan = require("code.control.map-scanning.start-island-scan")
 local seismicScanning = require("code.control.map-scanning.seismic-scanning")
 local oceanScanning = require("code.control.map-scanning.ocean-scanning")
 local evolution = require("code.control.evolution")
+local immateriaFissureSmoke = require("code.control.immateria-fissure-smoke")
 
 script.on_init(function()
 	ir3StartCalls.onInit()
@@ -57,6 +58,10 @@ end)
 script.on_event(defines.events.on_research_finished, function(event)
 	startIslandScan.onResearchFinished(event)
 	evolution.onResearchFinished(event)
+end)
+
+script.on_event(defines.events.on_chunk_generated, function(event)
+	immateriaFissureSmoke.onChunkGenerated(event.surface, event.area)
 end)
 
 script.on_nth_tick(globalParams.scanEveryNTicks, function(event)
