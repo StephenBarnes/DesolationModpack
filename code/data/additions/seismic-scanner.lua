@@ -23,7 +23,7 @@ data:extend({
 		ingredients = {
 			{"iron-frame-large", 1},
 			{"copper-cable-heavy", 1},
-			{"electronic-circuit", 4}
+			{"telemetry-unit", 1}
 		},
 		result = "seismic-scanner",
 		subgroup = data.raw.recipe["radar"].subgroup,

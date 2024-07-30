@@ -32,9 +32,9 @@ data:extend({
 		order = "zz1",
 		enabled = false,
 		ingredients = {
-			{"steel-frame-small", 1},
 			{"steel-plate-heavy", 4},
-			{"electronic-circuit", 4},
+			{"programmable-speaker", 1},
+			{"telemetry-unit", 1},
 		},
 		result = "ocean-scanner",
 	},

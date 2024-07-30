@@ -31,6 +31,9 @@ require("code.data.additions.transfer-plate-unlocks-tech")
 
 require("code.data.tweaks.adjust-scrap") -- Must be in data-final-fixes.lua, so it runs after the production scrap mod.
 
+require("code.data.tweaks.cargo-ships")
+require("code.data.tweaks.circuit-network")
+
 require("code.data.additions.no-building-on-snow")
 require("code.data.additions.landfill-only-on-shallow-water")
 

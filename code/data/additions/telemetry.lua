@@ -33,20 +33,30 @@ local telemetryUnitRecipe = {
 	enabled = false,
 	energy_required = 10,
 	ingredients = {
-		{"iron-frame-small", 1},
-		{"electronic-circuit", 4},
-		{"copper-cable", 2},
+		{"iron-plate", 2}, -- instead of a small frame
+		{"iron-rivet", 1},
+		{"electronic-circuit", 2},
+		{"copper-cable", 1},
 	},
 	order = "a", -- TODO
 	result = "telemetry-unit",
 }
 
 -- TODO add as ingredient for airship station
--- TODO add as ingredient for radar, seismic scanner, oceanic scanner pod, roboports, rockets, rocket turrets, searchlights, roboport equipment, laser turret, combat bots, spidertron, deep space miner, artillery turret, artillery cannon, maybe more.
+-- TODO add as ingredient for roboports, rockets, rocket turrets, searchlights, roboport equipment, laser turret, combat bots, spidertron, deep space miner, artillery turret, artillery cannon, maybe more.
 -- TODO add as ingredient in rocket control unit
 -- TODO add as ingredient in airships, and maybe other vehicles
 -- TODO add as ingredient in the logistic and construction bots
--- TODO colorize the icons
 -- TODO maybe get an alternative icon for the tech, or the item?
 
 data:extend({telemetryTech, telemetryItem, telemetryUnitRecipe})
+
+-- Adjust recipe for radar to include this.
+data.raw.recipe["radar"].ingredients = {
+	{"iron-frame-large", 1},
+	{"iron-plate", 2}, -- for the "dish"
+	{"telemetry-unit", 1},
+	{"copper-coil", 2}, -- iron core EM coil
+	{"copper-cable-heavy", 1}, -- heavy copper cable - requires rubber.
+}
+data.raw.recipe["radar"].energy_required = 10 -- bc 1 second seems too little.
