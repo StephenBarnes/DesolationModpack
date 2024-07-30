@@ -44,7 +44,7 @@ data:extend({
 		icon = "__Desolation__/graphics/ocean-scanner.png",
 		icon_size = 256,
 		icon_mipmaps = 4,
-		prerequisites = {"water_transport", "ir-radar"},
+		prerequisites = {"water_transport", "telemetry"},
 		unit = {
 			count = 100,
 			ingredients = {

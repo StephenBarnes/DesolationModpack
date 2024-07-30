@@ -28,3 +28,12 @@ steelLocomotive.minable = nil
 data.raw.recipe["fluid-wagon"].hidden = true
 
 Recipe.orderRecipes{"rail", "train-stop", "rail-signal", "rail-chain-signal", "meat:steam-locomotive-recipe", "locomotive", "cargo-wagon", "artillery-wagon", "chrome-transmat", "cargo-transmat"}
+
+-- Adjust the recipe for the steam locomotive.
+Recipe.setIngredients("meat:steam-locomotive-recipe", {
+	{"copper-engine-unit", 1},
+	{"steam-pipe", 16},
+	{"iron-plate-heavy", 16},
+	{"iron-beam", 4},
+	{"iron-piston", 8},
+})

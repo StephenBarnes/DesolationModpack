@@ -22,9 +22,7 @@ Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
 Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
 Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")
 
--- Since logistics-2 now has lubricant as prereq, let's add some of it to the recipes, same as vanilla has for blue belts.
-data.raw.recipe["fast-transport-belt"].category = data.raw.recipe["express-transport-belt"].category -- Needed to have a fluid ingredient
-Recipe.addIngredients("fast-transport-belt", {{type="fluid", name="lubricant", amount=5}})
+Tech.addTechDependency("ir-iron-motor", "logistics-2")
 
 -- For IR3 Loaders and Stacking mod
 ------------------------------------------------------------------------
@@ -39,10 +37,15 @@ Tech.addRecipeToTech("ir3-loader-steam", "logistics")
 
 Tech.hideTech("ir3-beltbox")
 Tech.hideTech("ir3-loader")
-Tech.addRecipeToTech("ir3-beltbox", "ir-iron-motor")
-Tech.addRecipeToTech("ir3-loader", "ir-iron-motor")
+Tech.addRecipeToTech("ir3-beltbox", "ir-steam-power") -- electricity tech
+Tech.addRecipeToTech("ir3-loader", "ir-steam-power") -- electricity tech
 Recipe.removeIngredient("ir3-beltbox", "electronic-circuit")
 Recipe.removeIngredient("ir3-loader", "electronic-circuit")
+Recipe.setIngredients("ir3-beltbox", {
+	{"iron-frame-small", 1},
+	{"iron-piston", 2},
+	{"iron-gear-wheel", 4},
+})
 
 Tech.hideTech("ir3-fast-beltbox")
 Tech.hideTech("ir3-fast-loader")

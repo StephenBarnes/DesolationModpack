@@ -208,7 +208,7 @@ data:extend({
 		icon = "__Desolation__/graphics/seismic-scanner/seismic-scanner-icon-big.png",
 		icon_size = 178,
 		icon_mipmaps = 1,
-		prerequisites = {"explosives", "ir-radar"},
+		prerequisites = {"explosives", "telemetry"},
 		unit = {
 			count = 100,
 			ingredients = {

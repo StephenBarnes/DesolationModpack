@@ -73,7 +73,7 @@ Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
 Tech.addRecipeToTech("buoy", "automated_water_transport")
 Tech.addRecipeToTech("chain_buoy", "automated_water_transport")
 data.raw.technology["water_transport"].prerequisites = {"ir-steel-milestone"}
-data.raw.technology["automated_water_transport"].prerequisites = {"water_transport", "ir-radar"}
+data.raw.technology["automated_water_transport"].prerequisites = {"water_transport", "telemetry"}
 -- TODO check ingredients
 
 -- Rename landfill tech to earthworks, and add waterfill explosive.
@@ -99,7 +99,7 @@ data.raw.technology["railway"].prerequisites = {"meat:steam-locomotion-technolog
 data.raw.recipe["locomotive"].ingredients = {{"computer-mk1", 1}, {"engine-unit", 1}, {"steel-rod", 4}, {"steel-plate-heavy", 8}, {"steel-gear-wheel", 8}}
 -- TODO check ingredients
 
-Tech.setPrereqs("ir-radar", {"ir-bronze-telescope", "ir-electronics-1"})
+Tech.setPrereqs("ir-radar", {"telemetry"})
 
 -- Geothermal and electric derrick
 data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
@@ -249,7 +249,7 @@ if false then
 					shift = {0, -60},
 				}
 			},
-			prerequisites = {"fortified-defense-2", "optics", "ir-concrete-1", "ir-radar"},
+			prerequisites = {"fortified-defense-2", "optics", "ir-concrete-1", "telemetry"},
 			unit = {
 				count = 250,
 				ingredients = {
@@ -296,11 +296,10 @@ if false then
 	})
 end
 
--- Move the gate recipe to the rail tech. Actually, rather to the iron motor tech.
-data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 4}, {"iron-plate-heavy", 2}}
+-- Move the gate recipe to rail tech, and adjust recipes.
+data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 2}, {"iron-plate-heavy", 2}}
 Tech.disable("gate")
---Tech.addRecipeToTech("gate", "meat:steam-locomotion-technology")
-Tech.addRecipeToTech("gate", "ir-iron-motor")
+Tech.addRecipeToTech("gate", "meat:steam-locomotion-technology")
 
 -- Change searchlight assault tech to use the icon of the searchlight inside walls
 -- Well, the tech for concrete walls could be unlocked only after the searchlight tech, but I think it's still better to use this icon, so it's not visibly lower-res than the other techs.
@@ -322,7 +321,7 @@ data.raw.technology["searchlight-assault"].icons = {
 --data.raw.technology["searchlight-assault"].icon = "__Desolation__/graphics/searchlight-icon-modified.png"
 --data.raw.technology["searchlight-assault"].icon_mipmaps = 4
 --data.raw.technology["searchlight-assault"].icon_size = 64
-data.raw.technology["searchlight-assault"].prerequisites = {"ir-radar", "optics"}
+data.raw.technology["searchlight-assault"].prerequisites = {"telemetry", "optics"}
 
 -- Create concrete wall tech.
 data:extend({
