@@ -19,7 +19,6 @@
 	, "DeadlockLargerLamp >= 1.5.1"
 	, "ProductionScrapForIR3 >= 1.2.1"
 	, "gore-updated >= 0.19.0"
-	, "HarderBasicLogistics >= 1.2.3"
 	, "IR3_steam_locomotive >= 0.1.2"
 	, "cargo-ships >= 0.2.7"
 	, "SearchlightAssault >= 2.2.17"
@@ -27,8 +26,6 @@
 
 	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 	, "IntermodalContainers >= 2.0.8"
-	, "aai-loaders >= 0.1.4"
-	, "aai-loaders-lubricant-mult >= 0.1.0"
 
 	, "RecipeBook >= 3.5.8"
 	, "factoryplanner >= 1.1.78"

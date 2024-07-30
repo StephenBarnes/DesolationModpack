@@ -67,7 +67,7 @@ for i, val in pairs({"beltbox-steam", "beltbox", "fast-beltbox", "express-beltbo
 	setSubgroupOrder("ir3-"..val, "containerization", "0"..i)
 end
 
--- Change the icons for IR3 loaders, to distinguish from AAI loaders.
+-- Change the icon for IR3 steam loader. (Originally to distinguish from AAI loaders which were also in, but I've since removed them; keeping this though.)
 data.raw.item["ir3-loader-steam"].icons = {
 	data.raw.item["ir3-loader-steam"].icons[1] or data.raw.item["ir3-loader-steam"].icon,
 	{
@@ -123,63 +123,6 @@ for name, beltTier in pairs({["loader-steam"] = 1, ["loader"] = 1, ["fast-loader
 	data.raw.item["ir3-"..name].localised_description = sharedDescription
 	data.raw["loader-1x1"]["ir3-"..name].localised_description = sharedDescription
 end
-
--- For AAI Loaders
-------------------------------------------------------------------------
-
--- For this mod, we have 3 loaders. All 3 require lubricant.
--- Where should they go in the tech tree? After lubricant obviously, but other than that they could go anywhere.
--- Don't pay attention to their ingredients, since we can easily change those.
--- Ok, so, here's my idea: you get logistics 1, then lubricant, then logistics 2 (red belts), then logistics 3 (blue belts).
--- (This requires making logistics 2 depend on lubricant, which is actually fine, you just don't get red belts until a bit later. Again, IR3 changes progression so things like cars don't depend on logistics 2.)
--- Then just attach the loaders respectively to lubricant, logistics 2, logistics 3.
--- And change their recipes to use the corresponding belt, plus other components guaranteed discovered by that point.
-
-Tech.addRecipeToTech("aai-loader", "lubricant")
-Tech.hideTech("aai-loader")
-
-Tech.addRecipeToTech("aai-fast-loader", "logistics-2")
-Tech.hideTech("aai-fast-loader")
-
-Tech.addRecipeToTech("aai-express-loader", "logistics-3")
-Tech.hideTech("aai-express-loader")
-
-Tech.setPrereqs("logistics-2", {"lubricant"}) -- This adds lubricant as prereq, and also removes automation-2 and circuits-1 as prereqs (which is good, because they're already needed for lubricant).
-Tech.copyCosts("lubricant", "logistics-2") -- We don't want logistics 2 (after lubricant) to cost much less than lubricant.
-
--- Set ingredients
--- For first loader, the only tech we have is the beltbox tech plus lubricant, and some irrelevant stuff (concrete, oil). So just copy the recipe from beltbox to loader.
--- It's fairly realistic too. Add one more belt too, for realism and a bit of extra expense.
--- From looking it over, the same rule can be applied to the other 2 loaders.
-Recipe.copyIngredients("ir3-loader", "aai-loader")
-Recipe.copyIngredients("ir3-fast-loader", "aai-fast-loader")
-Recipe.copyIngredients("ir3-express-loader", "aai-express-loader")
-
--- Use the icons from Deadlock's loaders mod, for the AAI loaders, so that they have black belts and look the same as the others.
--- The actual placed entity doesn't look quite like the Deadlock icons, but it's fairly close and at least this way the icons won't have grey belts that stick out.
-for i, val in pairs({"loader", "fast-loader", "express-loader"}) do
-	data.raw.item["aai-"..val].icons = {
-		{
-			icon = "__IndustrialRevolution3LoadersStacking__/graphics/icons/64/ir3-"..val..".png",
-			icon_size = 64,
-			icon_mipmaps = 4
-		},
-		{
-			icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/lubricant.png",
-			icon_size = 64,
-			icon_mipmaps = 4,
-			scale = 0.25,
-			shift = {-7, 10},
-		},
-	}
-	local sharedDescription = {
-		"shared-description.ir3-loader-ALL",
-		{"belt-tier-name.tier-"..i},
-	}
-	data.raw.item["aai-"..val].localised_description = sharedDescription
-	data.raw["loader-1x1"]["aai-"..val].localised_description = sharedDescription
-end
-
 
 -- For Intermodal Containers
 ------------------------------------------------------------------------
@@ -259,7 +202,6 @@ data:extend({
 -- So, defaults are definitely unsuitable, eg the first tier of containerization machine requires only red and green science, but depends on stack inserter tech which needs red+green+blue+purple.
 -- I think I want them to not require stack inserters at all, at the bottom tier. Rather make it require multiple ordinary inserters, or fast inserters.
 -- I also want to do away with the separate techs for each tier, that's ugly.
--- I think we should move them into the logistics techs too, like for AAI loaders.
 -- Their recipes should use the large frame of corresponding resource tier.
 
 Tech.hideTech("ic-containerization-1")
