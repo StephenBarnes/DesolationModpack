@@ -186,7 +186,28 @@ immateriaSpillData.icon_mipmaps = 4
 immateriaSpillData.fuel_emissions_multiplier = 1.0 -- This field stores pollution multiplier. It's 1 for crude oil, 0.5 for fossil gas.
 -- I've checked, this works.
 
--- TODO add the spagyrite byproduct to comet ice recipe.
--- TODO and then also add the spagyrite icon to the recipe icon.
+-- Add the spagyrite byproduct to comet ice recipe.
+table.insert(data.raw.recipe["comet-ice-processing"].results, {
+	type = "item",
+	name = "spagyric-crystal",
+	amount = 1,
+	probability = 0.1,
+})
+-- Add the spagyrite icon to the recipe icon.
+data.raw.recipe["comet-ice-processing"].icons = {
+	{
+		icon = data.raw.recipe["comet-ice-processing"].icon,
+		icon_size = data.raw.recipe["comet-ice-processing"].icon_size,
+		icon_mipmaps = data.raw.recipe["comet-ice-processing"].icon_mipmaps,
+		scale = 0.5,
+	},
+	{
+		icon = "__Desolation__/graphics/spagyric-crystals.png",
+		icon_size = 64,
+		icon_mipmaps = 4,
+		scale = 0.23,
+		shift = {1, 8},
+	},
+}
 
 data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, goldRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke, immateriaSpillData})
