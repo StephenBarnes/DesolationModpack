@@ -173,12 +173,14 @@ data:extend({
 		ingredients = {
 			{ "ic-container", 1 },
 		},
-		-- Note that we get scrap when creating the container, so we can't get back all of the raw materials.
-		-- Scrap is 0.55 scrap, though user could set it to like 1.1 or so.
-		-- I think the best solution is to cap the scrap produced by the container recipe, to at most the expected loss when disassembling, which I'm setting at (chance of losing a rivet) * (ingots per rivet) = 0.5 * 0.5 = 0.25. Set it to 0.15 to be safe.
+		-- Note that we get scrap when creating the container, if production scrap mod is installed, so we can't get back all of the raw materials.
+		-- I think the best solution is to cap the scrap produced by the container recipe, to at most the expected loss when disassembling.
+		-- Doing that in adjust-scrap.lua.
+		-- TODO do the actual calculations again
 		results = {
 			{ name = "iron-plate", amount_min = 8, amount_max = 10 },
-			{ name = "iron-rivet", amount_min = 6, amount_max = 10 },
+			{ name = "iron-rivet", amount_min = 4, amount_max = 10 },
+			{ name = "iron-scrap", amount_min = 0, amount_max = 2 },
 		},
 		main_product = "iron-plate",
 		localised_name = { "recipe-name.ic-container-disassembly" },

@@ -12,7 +12,7 @@ data.raw.item["searchlight-assault"].icon = "__Desolation__/graphics/searchlight
 data.raw.recipe["searchlight-assault"].ingredients = {
 	{"deadlock-large-lamp", 1},
 	{"telemetry-unit", 1},
-	{"iron-rod", 1},
-	{"iron-plate", 8},
-	{"iron-rivet", 4},
+	{"iron-stick", 3},
+	{"iron-plate", 4},
+	{"iron-rivet", 2},
 }
