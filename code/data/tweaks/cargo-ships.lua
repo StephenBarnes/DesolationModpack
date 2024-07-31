@@ -10,7 +10,7 @@ data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
 
 -- TODO make the boat and ironclad accept more fuel types
 
--- Adjust recipe for cargo ships
+-- Adjust recipe for cargo ship, boat, ironclad
 data.raw.recipe["cargo_ship"].ingredients = {
 	{"telemetry-unit", 1},
 	{"engine-unit", 8},
@@ -18,7 +18,6 @@ data.raw.recipe["cargo_ship"].ingredients = {
 	{"steel-plate-heavy", 20},
 	{"steel-beam", 20},
 }
-
 data.raw.recipe["boat"].ingredients = {
 	{"electronic-circuit", 4},
 	{"engine-unit", 4},
@@ -26,5 +25,36 @@ data.raw.recipe["boat"].ingredients = {
 	{"steel-plate-heavy", 8},
 	{"steel-beam", 8},
 }
+data.raw.recipe["ironclad"].ingredients = {
+	{"electronic-circuit", 4},
+	{"engine-unit", 8},
+	{"steel-plate-heavy", 40},
+	{"steel-beam", 10},
+}
 
--- TODO adjust recipes for boat, ironclad, port, signal buoys.
+-- Adjust recipes for port, signal buoys, and chain buoys
+data.raw.recipe["port"].ingredients = {
+	{"steel-beam", 2},
+	{"steel-rivet", 2},
+	{"electronic-circuit", 1},
+}
+data.raw.recipe["buoy"].ingredients = { -- signal buoy
+	{"steel-rod", 2},
+	{"steel-rivet", 1},
+	{"steel-plate", 2},
+	{"electronic-circuit", 1},
+}
+data.raw.recipe["chain_buoy"].ingredients = { -- signal buoy
+	{"steel-rod", 2},
+	{"steel-rivet", 1},
+	{"steel-plate", 2},
+	{"electronic-circuit", 1},
+}
+data.raw.recipe["port"].energy_required = 5
+data.raw.recipe["buoy"].energy_required = 5
+data.raw.recipe["chain_buoy"].energy_required = 5
+
+data.raw.recipe["mortar-bomb"].ingredients = {
+	{"explosives", 2},
+	{"steel-plate", 4},
+}

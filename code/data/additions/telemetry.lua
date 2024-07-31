@@ -53,7 +53,7 @@ data:extend({telemetryTech, telemetryItem, telemetryUnitRecipe})
 
 -- Adjust recipe for radar to include this.
 data.raw.recipe["radar"].ingredients = {
-	{"iron-frame-large", 1},
+	{"iron-frame-small", 1},
 	{"iron-plate", 2}, -- for the "dish"
 	{"telemetry-unit", 1},
 	{"copper-coil", 2}, -- iron core EM coil
