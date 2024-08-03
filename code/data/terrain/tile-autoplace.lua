@@ -7,8 +7,13 @@ local globalParams = require("code.global-params")
 local C = require("code.data.terrain.constants")
 
 -- Disable autoplace for the hotter volcanic terrain, bc we want to use the greyer rock ones as buildable land.
-data.raw.tile["volcanic-orange-heat-3"].autoplace = nil
-data.raw.tile["volcanic-orange-heat-4"].autoplace = nil
+for _, tileName in pairs({"volcanic-orange-heat-3", "volcanic-orange-heat-4"}) do
+	if data.raw.tile[tileName] == nil then
+		log("ERROR: tile does not exist: "..tileName)
+	else
+		data.raw.tile[tileName].autoplace = nil
+	end
+end
 
 local temp = var("temperature")
 local aux = var("aux")

@@ -14,7 +14,6 @@ local toDisable = {
 	"dirt-tan",
 	"dirt-violet",
 	"dirt-white",
-	--"frozen",
 	"grass-blue",
 	"grass-green",
 	"grass-mauve",
@@ -22,7 +21,6 @@ local toDisable = {
 	"grass-orange",
 	"grass-purple",
 	"grass-red",
-	--"grass-turquoise",
 	"grass-violet",
 	"grass-yellow",
 	"sand-aubergine",
@@ -39,14 +37,25 @@ local toDisable = {
 	"sand-white",
 	"volcanic-blue",
 	"volcanic-green",
-	--"volcanic-orange",
 	"volcanic-purple",
 
 	"inland-shallows",
 }
 
+local toEnable = {
+	"frozen",
+	"grass-turquoise",
+	"volcanic-orange",
+}
+
+local U = require("code/util/settings")
+
+-- We need to force enable/disable tiles, bc we want to define the tile autoplaces.
 for _, v in pairs(toDisable) do
-	data.raw["string-setting"]["alien-biomes-include-"..v].default_value = "Disabled"
+	U.forceSetting("alien-biomes-include-"..v, "string", "Disabled")
+end
+for _, v in pairs(toEnable) do
+	U.forceSetting("alien-biomes-include-"..v, "string", "Enabled")
 end
 
 -- Also enable removing obsolete tiles.

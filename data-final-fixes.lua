@@ -1,6 +1,8 @@
 -- TODO maybe change pairs() to ipairs() in some places
 -- TODO add settings for everything below
 
+local globalParams = require("code.settings.global-params")
+
 require("code.data.terrain.elevation")
 require("code.data.terrain.temperature-aux-moisture")
 require("code.data.terrain.autoplace-controls")
@@ -43,8 +45,6 @@ require("code.data.additions.tech")
 
 require("code.data.tweaks.searchlight-assault")
 
-require("code.data.tweaks.aai-signal-transmission")
-
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
 -- Temporary: printing out tile prototype info
@@ -66,4 +66,7 @@ require("code.data.tweaks.aai-signal-transmission")
 --end
 
 -- Should be the very last thing run in the data stage:
-require("code.data.additions.debug-progression").runFullDebug()
+local debugProgression = require("code.data.additions.debug-progression")
+if globalParams.debugProgression then
+	debugProgression.runFullDebug()
+end
