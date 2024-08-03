@@ -26,6 +26,6 @@ Export.forceSetting = function(name, settingType, value)
 	end
 	s.default_value = value
 	s.hidden = true
-end	
+end
 
 return Export

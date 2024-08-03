@@ -1,10 +1,9 @@
-
 local updates = {}
 local nextOrder = 0
 
 function getNextOrderString()
     nextOrder = nextOrder + 1
-    return string.format("%04d", nextOrder)
+    return string.format("%03d", nextOrder)
 end
 
 function addSetting(name, default_value, type, stage)
@@ -34,9 +33,9 @@ addSetting("inventory-size-spidertron", 80, "int", "startup")
 -- TODO instead of having each of these repeated here and then also in data.tweaks.vehicles, rather make a table in constants.vehicles or something, then require that here.
 
 addSetting("modify-stack-sizes", true, "bool", "startup")
-local tweakStackSizeItems = require("constants.stack-sizes")
-for item, newStackSize in pairs(tweakStackSizeItems) do
-	addSetting("stack-size-" .. item, newStackSize, "int", "startup")
+local stackSizeGroups = require("code.common.stack-sizes")
+for groupName, groupData in pairs(stackSizeGroups) do
+	addSetting("stack-size-" .. groupName, groupData.defaultStackSize, "int", "startup")
 end
 
 data:extend(updates)

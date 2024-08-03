@@ -1,7 +1,7 @@
 -- TODO maybe change pairs() to ipairs() in some places
 -- TODO add settings for everything below
 
-local globalParams = require("code.settings.global-params")
+local globalParams = require("code.global-params")
 
 require("code.data.terrain.elevation")
 require("code.data.terrain.temperature-aux-moisture")

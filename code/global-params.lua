@@ -27,4 +27,6 @@ return {
 	colorBuildableTiles = false, -- Whether to color the buildable tiles in bright colors, for debugging.
 
 	debugProgression = isDebug, -- Whether to enable debug code in debug-progression.lua.
+
+	notifyIncorrectMapgenPreset = not isDebug, -- Whether to notify the player when they try to play a scenario with the wrong mapgen preset.
 }
