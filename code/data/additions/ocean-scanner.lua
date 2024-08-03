@@ -5,7 +5,7 @@ data:extend({
 		type = "capsule",
 		name = "ocean-scanner",
 		icon = "__Desolation__/graphics/ocean-scanner.png",
-		icon_size = 256,
+		icon_size = 64,
 		icon_mipmaps = 4,
 		--subgroup = "capsule",
 		order = "a",
@@ -43,7 +43,7 @@ data:extend({
 		name = "ocean-scanner",
 		icon = "__Desolation__/graphics/ocean-scanner.png",
 		icon_size = 256,
-		icon_mipmaps = 4,
+		icon_mipmaps = 2,
 		prerequisites = {"water_transport", "telemetry"},
 		unit = {
 			count = 100,

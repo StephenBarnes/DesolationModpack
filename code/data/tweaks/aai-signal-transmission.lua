@@ -6,8 +6,9 @@
 -- AAI Signal Transmission registers its 2 entities as roboports called "aai-signal-sender" and "aai-signal-receiver".
 
 -- Could package this separately and publish as a separate mod.
+-- Would need to change tech prereqs (remove telemetry), ingredients (with special case for IR3), and copy locale strings separately.
 
--- TODO change locale strings in the locale file.
+-- Locale strings are changed separately in the locale file.
 
 ------------------------------------------------------------------------
 -- Change images and shadows for the receiver and transmitter entities.
@@ -134,8 +135,9 @@ data.raw.technology["aai-signal-transmission"].prerequisites = {"telemetry", "ci
 -- Change energy consumption
 
 -- For comparison, a radar uses 300kW.
-data.raw.roboport["aai-signal-sender"].energy_usage = "500kW"
-data.raw.roboport["aai-signal-receiver"].energy_usage = "300kW"
+data.raw.roboport["aai-signal-sender"].energy_usage = "300kW"
+data.raw.roboport["aai-signal-receiver"].energy_usage = "200kW"
+-- TODO change the size of the battery / whatever too.
 
 ------------------------------------------------------------------------
 -- Change recipes
