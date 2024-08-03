@@ -9,7 +9,7 @@
 -- Note these are also used in the names of settings.
 local stackSizeGroups = {
 	raw = {
-		defaultStackSize = 20,
+		defaultStackSize = 40,
 		items = {
 			"copper-ore", "tin-ore", "gold-ore", "uranium-ore",
 			"coal", "stone",
@@ -17,13 +17,14 @@ local stackSizeGroups = {
 		},
 	},
 	crushed = {
-		defaultStackSize = 40,
+		defaultStackSize = 60,
 		items = {
 			"copper-crushed", "tin-crushed", "gold-crushed",
 			"gravel", "wood-chips",
 			"charcoal",
 			"carbon-crushed", -- This ID is used for crushed coal.
 			"silica",
+			"ruby-powder", "diamond-powder",
 		},
 	},
 	purified = {
@@ -32,8 +33,6 @@ local stackSizeGroups = {
 			"copper-pure", "nickel-pure", "tin-pure", "lead-pure", "iron-pure", "chromium-pure", "gold-pure", "platinum-pure",
 			"sulfur",
 			"uranium-235", "uranium-238",
-			"graphitic-coke",
-			"solid-fuel", -- This ID is used for coke.
 		},
 	},
 	processed = {
@@ -43,6 +42,8 @@ local stackSizeGroups = {
 			"glass", "nanoglass",
 			"stone-brick",
 			"rubber",
+			"graphitic-coke",
+			"solid-fuel", -- This ID is used for coke.
 		},
 	},
 

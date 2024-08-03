@@ -45,3 +45,4 @@ data:extend({
 		energy_required = 1.0,
 	},
 })
+-- TODO does molten glass exist? If so, add recipe for casting molten glass into bottles.
