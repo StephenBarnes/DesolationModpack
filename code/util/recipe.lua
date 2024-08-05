@@ -132,8 +132,23 @@ Recipe.orderRecipes = function(recipeNames)
 			log("ERROR: Couldn't find recipe "..recipeName.." to order.")
 			return
 		end
-		recipe.order = string.format("%04d", order)
+		recipe.order = string.format("%02d", order)
 		order = order + 1
+	end
+end
+
+Recipe.hide = function(recipeName)
+	local recipe = data.raw.recipe[recipeName]
+	if recipe == nil then
+		log("ERROR: Couldn't find recipe "..recipeName.." to hide.")
+		return
+	else
+		if recipe.normal then -- Recipe has separate normal and expensive
+			recipe.normal.hidden = true
+			recipe.expensive.hidden = true
+		else
+			recipe.hidden = true
+		end
 	end
 end
 
