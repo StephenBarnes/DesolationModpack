@@ -11,11 +11,15 @@ local seismicScanning = require("code.control.map-scanning.seismic-scanning")
 local oceanScanning = require("code.control.map-scanning.ocean-scanning")
 local evolution = require("code.control.evolution")
 local immateriaFissureSmoke = require("code.control.immateria-fissure-smoke")
+local victoryConditions = require("code.control.victory-conditions")
+local customIntroMessage = require("code.control.custom-intro-message")
 
 script.on_init(function()
 	ir3StartCalls.onInit()
 	transferPlateUnlocksTech.onInit()
 	evolution.onInit()
+	victoryConditions.onInit()
+	customIntroMessage.onInit()
 end)
 
 script.on_load(function()
@@ -27,6 +31,7 @@ end)
 script.on_configuration_changed(function()
 	-- TODO shouldn't other control-stage scripts also have handlers here?
 	evolution.onConfigChanged()
+	victoryConditions.onConfigChanged()
 end)
 
 script.on_event(defines.events.on_built_entity, function(event)
