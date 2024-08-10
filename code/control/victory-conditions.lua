@@ -7,6 +7,7 @@ local function interferingMods()
 end
 
 -- Disable default rocket victory condition. Code taken from Freight Forwarding.
+-- I've checked, this works.
 local function disableRocketVictory()
 	if interferingMods() then return end
 
@@ -16,6 +17,8 @@ local function disableRocketVictory()
 		end
 	end
 end
+
+-- TODO add new victory condition
 
 return {
 	onInit = disableRocketVictory,

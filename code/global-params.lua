@@ -5,7 +5,7 @@ local function ifThenElse(condition, thenValue, elseValue)
 end
 
 return {
-	runIntroCutscene = true, --not isDebug, -- Whether to run the IR3 intro cutscene.
+	runIntroCutscene = not isDebug, -- Whether to run the IR3 intro cutscene.
 
 	printEveryIslandScanChunk = false, -- Whether to print a message for every chunk scanned by the starting island scan or seismic scanners.
 	scanStartIslandMaxDist = 500, -- How many chunks away from (0,0) we'll scan chunks in the starting island scan. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
