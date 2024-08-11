@@ -5,70 +5,76 @@
 -- Note this file doesn't filter for existing items, bc we need to use it in settings stage.
 -- For example, we could have stuff like "lead-rod" here, even though they don't exist in IR3.
 
-local G = require("code.util.general")
 local T = require("code.util.table")
 
-local metals = {"copper", "tin", "iron", "steel", "bronze", "lead", "nickel", "chromium", "gold", "platinum"}
+--local metals = {"copper", "tin", "iron", "steel", "bronze", "lead", "nickel", "chromium", "gold", "platinum"}
 
-local oreLikes = {"copper-ore", "tin-ore", "gold-ore", "uranium-ore", "iron-ore", "coal", "stone"}
-local woodLikes = {"wood", "rubber-wood"}
-local rawMaterials = T.concat{oreLikes, woodLikes}
+local rawMaterials = {
+	"copper-ore", "tin-ore", "gold-ore", "uranium-ore", "iron-ore", "coal", "stone",
+	"wood", "rubber-wood",
+}
 local crushedMaterials = {
-	"copper-crushed", "tin-crushed", "gold-crushed",
+	"copper-crushed", "tin-crushed", "gold-crushed", "iron-crushed",
 	"gravel", "silica",
 	"carbon-crushed", -- This ID is used for crushed coal.
 	"wood-chips",
 	"ruby-powder", "diamond-powder",
+	"copper-scrap", "tin-scrap", "iron-scrap", "steel-scrap", "bronze-scrap", "lead-scrap", "gold-scrap", "glass-scrap", "concrete-scrap",
 }
-local pureMetals = T.stringProduct(metals, {"-pure"})
-local purifiedMaterials = T.concat{
-	pureMetals,
-	{
-			"sulfur",
-			"uranium-235", "uranium-238",
-			"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged", "elixir-stone",
-			"silicon", "graphite", "silicon-block",
-			"rubber",
-			"charcoal",
-			"graphitic-coke",
-			"solid-fuel", -- This ID is used for coke.
-	}}
-local metalIngots = T.stringProduct(metals, {"-ingot"})
-local standardizedIngotsBricks = T.concat{
-	metalIngots,
-	{
-		"stone-brick", "concrete-block",
-		"plastic-bar",
-		"glass", "nanoglass",
-	},
-}
-local metalDenseIntermediates = T.stringProduct(metals,
-	{"-pellet", "-rivet", "-cable", "-foil", "-wire", "-rod", "-plate", "-beam", "-plate-heavy"})
-local denseIntermediates = T.concat{
-	metalDenseIntermediates,
-	{
-		"wood-beam", -- Renamed this to "lumber".
-		"red-wire", "green-wire",
-	},
-}
+local purifiedMaterials = {
+	"copper-pure", "tin-pure", "iron-pure", "gold-pure", "lead-pure", "chromium-pure", "nickel-pure", "platinum-pure",
 
-local metalBulkyIntermediates = T.stringProduct(metals,
-	{"-gear-wheel", "-piston"})
-local bulkyIntermediates = T.concat{
-	metalBulkyIntermediates,
-	{}, -- TODO add things like engines and motors and rotor bases
+	"sulfur",
+	"uranium-235", "uranium-238",
+	"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged", "elixir-stone",
+	"silicon", "graphite", "silicon-block",
+	"rubber",
+	"charcoal",
+	"graphitic-coke",
+	"solid-fuel", -- This ID is used for coke.
 }
+local standardizedIngotsBricks = {
+	"copper-ingot", "tin-ingot", "iron-ingot", "steel-ingot", "bronze-ingot", "lead-ingot", "nickel-ingot", "chromium-ingot", "gold-ingot", "platinum-ingot", "brass-ingot",
+	"stone-brick", "concrete-block",
+	"plastic-bar",
+	"glass", "nanoglass",
+}
+local smallItems = {
+	"copper-plate", "tin-plate", "iron-plate", "steel-plate", "bronze-plate", "lead-plate", "gold-plate", "chromium-plate", "brass-plate",
+	"bronze-plate-heavy", "iron-plate-heavy", "steel-plate-heavy", "chromium-plate-heavy",
+	"copper-rivet", "bronze-rivet", "iron-rivet", "steel-rivet", "chromium-rivet",
+	"copper-pellet", "bronze-pellet", "iron-pellet", "steel-pellet", "nickel-pellet", "platinum-pellet",
+	"copper-cable", "tin-cable", "gold-cable",
+	"copper-cable-heavy",
+	"copper-foil", "gold-foil",
+	"copper-rod", "tin-rod", "bronze-rod", "iron-stick", "steel-rod", "chromium-rod",
+	"copper-gear-wheel", "tin-gear-wheel", "iron-gear-wheel", "steel-gear-wheel", "brass-gear-wheel",
 
-local modules = T.stringProduct({"speed-module", "effectivity-module", "productivity-module"}, {"", "-2", "-3"})
-local computers = {"computer-mk1, computer-mk2", "computer-mk3"}
-local bulkyProducts = T.concat{
-	modules,
-	computers, -- Placing this in bulky products, not intermediates, bc it has to go with modules.
-	{
-		"ic-container",
-		"spidertron-remote",
-		-- TODO add repair kits
-	},
+	"wood-beam", "copper-beam", "bronze-beam", "iron-beam", "steel-beam", "chromium-beam",
+
+	"red-wire", "green-wire",
+	"electronic-circuit", "advanced-circuit", "processing-unit",
+	"diamond-gear-wheel",
+	"carbon-filter",
+}
+local bulkyItems = {
+	"copper-piston", "iron-piston", "steel-piston", "chromium-piston",
+	"telemetry-unit", "junction-box", "copper-coil", "carbon-coil",
+
+	-- TODO add things like engines and motors and rotor bases
+
+	{"module", "speed-module"}, {"module", "speed-module-2"}, {"module", "speed-module-3"},
+	{"module", "effectivity-module"}, {"module", "effectivity-module-2"}, {"module", "effectivity-module-3"},
+	{"module", "productivity-module"}, {"module", "productivity-module-2"}, {"module", "productivity-module-3"},
+	"computer-mk1", "computer-mk2", "computer-mk3",
+
+	"ic-container",
+	{"spidertron-remote", "spidertron-remote"},
+
+	{"repair-tool", "copper-repair-tool"},
+	{"repair-tool", "bronze-repair-tool"},
+	{"repair-tool", "repair-pack"},
+	{"repair-tool", "steel-repair-tool"},
 }
 
 local extraBigBuildings = {
@@ -135,8 +141,9 @@ local smallBuildings = {
 	"ir3-loader-steam", "ir3-loader", "ir3-fast-loader", "ir3-express-loader",
 	"ir3-beltbox-steam", "ir3-beltbox", "ir3-fast-beltbox", "ir3-express-beltbox",
 	"burner-inserter", "steam-inserter", "inserter", "slow-filter-inserter", "fast-inserter", "filter-inserter", "stack-inserter", "stack-filter-inserter",
-	"small-electric-pole", "small-bronze-pole", "small-iron-pole", "medium-electric-pole", "big-wooden-pole", "big-electric-pole", -- Substation is in big buildings
-	"small-steam-tank", "small-tank",
+	"long-handed-inserter",
+	"small-electric-pole", "small-bronze-pole", "small-iron-pole", "medium-electric-pole", "big-wooden-pole", "big-electric-pole", "floating-electric-pole",
+	"small-tank-steam", "small-tank",
 	"copper-pump", "offshore-pump", "pump",
 	"train-stop",
 	"rail-signal", "rail-chain-signal",
@@ -144,7 +151,7 @@ local smallBuildings = {
 	"logistic-chest-active-provider", "logistic-chest-passive-provider", "logistic-chest-requester", "logistic-chest-storage", "logistic-chest-buffer",
 	"arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
 	"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "small-lamp",
-	"steal-cleaner", -- Polluted water cleaner.
+	"steel-cleaner", -- Polluted water cleaner.
 	"small-assembler-1", "small-assembler-2", "small-assembler-3",
 	"steel-cast", -- Metal cast machine
 	"module-loader",
@@ -155,8 +162,7 @@ local smallBuildings = {
 	"steel-vaporiser",
 
 	-- Planning to remove most of these.
-	"tree-planter-tree-01", "tree-planter-tree-02", "tree-planter-tree-03", "tree-planter-tree-04", "tree-planter-tree-05",
-	"tree-planter-tree-06", "tree-planter-tree-07", "tree-planter-tree-08", "tree-planter-tree-09",
+	"tree-planter-tree-01", "tree-planter-tree-02", "tree-planter-tree-03", "tree-planter-tree-04", "tree-planter-tree-05", "tree-planter-tree-07", "tree-planter-tree-09",
 	"tree-planter-ir-rubber-tree",
 }
 local tinyPlaced = {
@@ -165,7 +171,7 @@ local tinyPlaced = {
 	"steam-pipe", "steam-valve", "steam-pipe-to-ground", "steam-pipe-to-ground-short",
 	"pipe", "valve", "pipe-to-ground", "pipe-to-ground-short",
 	"air-pipe", "air-valve", "air-pipe-to-ground", "air-pipe-to-ground-short",
-	"rail",
+	{"rail", "rail"},
 }
 local vehicles = {
 	"meat:steam-locomotive-item", "locomotive", "cargo-wagon", "artillery-wagon",
@@ -177,7 +183,8 @@ local vehicles = {
 }
 local robots = {
 	"steambot", "construction-robot", "logistic-robot",
-	"lampbot-capsule",
+	{"capsule", "lampbot-capsule"},
+	-- TODO add combat robot capsules.
 }
 -- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
 
@@ -203,17 +210,13 @@ local stackSizeGroups = {
 		defaultStackSize = 100,
 		items = standardizedIngotsBricks,
 	},
-	denseIntermediates = {
+	smallItems = {
 		defaultStackSize = 60,
-		items = denseIntermediates,
+		items = smallItems,
 	},
-	bulkyIntermediates = {
+	bulkyItems = {
 		defaultStackSize = 40,
-		items = bulkyIntermediates,
-	},
-	bulkyProducts = {
-		defaultStackSize = 40,
-		items = bulkyProducts,
+		items = bulkyItems,
 	},
 	tinyPlaced = {
 		defaultStackSize = 100,

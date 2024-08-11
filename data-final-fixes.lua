@@ -14,7 +14,6 @@ require("code.data.terrain.tile-autoplace")
 
 require("code.data.additions.start-island-scan")
 
-require("code.data.tweaks.stack-sizes") -- Seems some other mod is adjusting stack sizes, eg setting ingot stack sizes to 50. So this can't be in data.lua.
 require("code.data.tweaks.tile-recipes")
 require("code.data.tweaks.fluid-containers")
 require("code.data.tweaks.electric-poles")

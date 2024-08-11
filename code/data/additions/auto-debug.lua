@@ -17,6 +17,8 @@ local Table = require("code.util.table")
 local Recipe = require("code.util.recipe")
 local Tech = require("code.util.tech")
 
+local stackSizeCommon = require("code.common.stack-sizes")
+
 -- Local var to hold a list of all techs' names, sorted so that all dependencies only go forwards.
 local toposortedTechs = nil
 
@@ -76,6 +78,9 @@ local function toposortTechsAndCache()
 	return true
 end
 
+------------------------------------------------------------------------
+-- EVOLUTION CHECKS
+
 local function checkTotalEvo()
 	-- Checks that total evolution sums to 100%.
 	local totalEvo = 0
@@ -118,6 +123,9 @@ local function checkEndTechEvo()
 		return false
 	end
 end
+
+------------------------------------------------------------------------
+-- TECH UNLOCK ORDER CHECKS
 
 local function checkTechUnlockOrder()
 	-- Check that whenever a recipe is unlocked, all ingredients of it have been unlocked.
@@ -333,12 +341,65 @@ local function checkTechUnlockOrder()
 	return successfulSoFar
 end
 
+------------------------------------------------------------------------
+-- STACK SIZE CHECKS
+
+local function itemNeedsStackSize(itemName)
+	-- Return whether we actually care about a stack size for this item, since some items are just markers etc.
+	if itemName:match("spill%-data") then return false end
+	if itemName:match("^creative") then return false end
+	if itemName:match("^ic%-container%-") then return false end
+	if Table.hasEntry(itemName, {
+		"coin", "item-unknown",
+		"simple-entity-with-force", "simple-entity-with-owner",
+		"infinity-chest", "infinity-pipe",
+		"loader", "fast-loader", "express-loader", -- Built-in loader items, not the IR3 ones.
+	}) then return false end
+	return true
+end
+
+local function checkStackSizeGroupsOfItem(itemName)
+	-- Check that this specific item is in exactly one stack size group.
+	if not itemNeedsStackSize(itemName) then return true end
+	local groupsOfThisItem = {}
+	for groupName, groupData in pairs(stackSizeCommon.stackSizeGroups) do
+		for _, itemId in pairs(groupData.items) do
+			if itemId == itemName then
+				table.insert(groupsOfThisItem, groupName)
+			end
+		end
+	end
+	for _, itemId in pairs(stackSizeCommon.bundleItems) do
+		local bundleItemName = "stacked-"..itemId
+		if itemName == bundleItemName then
+			table.insert(groupsOfThisItem, "bundles")
+		end
+	end
+	if #groupsOfThisItem > 1 then
+		log("ERROR: Item "..itemName.." has stack sizes set in more than one group: "..serpent.block(groupsOfThisItem))
+		return false
+	elseif #groupsOfThisItem == 0 then
+		log("ERROR: Item "..itemName.." is not in any stack size group.")
+		return false
+	end
+	return true
+end
+
 local function checkStackSizesSet()
 	-- Checks that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
 	local success = true
-	-- TODO
+	for itemName, _ in pairs(data.raw.item) do
+		if not checkStackSizeGroupsOfItem(itemName) then success = false end
+			-- Avoiding short-circuit evaluation, bc I want to check all items.
+	end
+	for itemName, _ in pairs(data.raw["item-with-entity-data"]) do
+		if not checkStackSizeGroupsOfItem(itemName) then success = false end
+	end
 	return success
 end
+
+------------------------------------------------------------------------
+-- MAIN
 
 local function runFullDebug()
 	log("Desolation: running full progression debug.")

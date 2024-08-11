@@ -16,6 +16,13 @@ Table.concat = function(tables)
 	return result
 end
 
+Table.hasEntry = function(v, list)
+	for _, entry in pairs(list) do
+		if v == entry then return true end
+	end
+	return false
+end
+
 Table.stringProduct = function(strings1, strings2)
 	-- Given two lists of strings, returns a list of all combinations of the two.
 	local result = {}

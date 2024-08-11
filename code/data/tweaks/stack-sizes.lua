@@ -4,11 +4,16 @@ local stackSizeCommon = require("code.common.stack-sizes")
 if settings.startup["Desolation-modify-stack-sizes"] then
 	for groupName, groupData in pairs(stackSizeCommon.stackSizeGroups) do
 		local val = settings.startup["Desolation-stack-size-" .. groupName].value
-		for _, itemId in pairs(groupData.items) do
-			local item = data.raw.item[itemId]
-			if item == nil then item = data.raw["item-with-entity-data"][itemId] end
+		for _, itemSpecifier in pairs(groupData.items) do
+			local item
+			if type(itemSpecifier) == "string" then
+				item = data.raw.item[itemSpecifier]
+				if item == nil then item = data.raw["item-with-entity-data"][itemSpecifier] end
+			else
+				item = data.raw[itemSpecifier[1]][itemSpecifier[2]]
+			end
 			if item == nil then
-				log("Warning: item "..itemId.." not found, could not adjust stack size.")
+				log("Warning: item "..serpent.line(itemSpecifier).." not found, could not adjust stack size.")
 			else
 				item.stack_size = val
 				item.default_request_amount = val
