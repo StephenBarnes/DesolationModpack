@@ -18,3 +18,5 @@ return {
 }
 
 -- TODO rather check the list of backer names in Factorio/data/core/backers.json, and put those in a table, and then remove any entity name that's in that set.
+
+-- TODO check how this mod does it: https://mods.factorio.com/mod/Namelists?from=search

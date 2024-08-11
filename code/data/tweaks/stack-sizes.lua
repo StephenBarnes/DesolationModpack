@@ -1,3 +1,5 @@
+local T = require("code.util.table")
+
 local stackSizeCommon = require("code.common.stack-sizes")
 
 -- Tweak stack sizes for ores etc.
@@ -10,7 +12,7 @@ if settings.startup["Desolation-modify-stack-sizes"] then
 				item = data.raw.item[itemSpecifier]
 				if item == nil then item = data.raw["item-with-entity-data"][itemSpecifier] end
 			else
-				item = data.raw[itemSpecifier[1]][itemSpecifier[2]]
+				item = T.maybeGet(data.raw[itemSpecifier[1]], itemSpecifier[2])
 			end
 			if item == nil then
 				log("Warning: item "..serpent.line(itemSpecifier).." not found, could not adjust stack size.")

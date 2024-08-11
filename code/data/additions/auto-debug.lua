@@ -354,6 +354,7 @@ local function itemNeedsStackSize(itemName)
 		"simple-entity-with-force", "simple-entity-with-owner",
 		"infinity-chest", "infinity-pipe",
 		"loader", "fast-loader", "express-loader", -- Built-in loader items, not the IR3 ones.
+		"spidertron-remote", -- Stack size must be 1, so we're not setting it.
 	}) then return false end
 	return true
 end
@@ -388,12 +389,14 @@ end
 local function checkStackSizesSet()
 	-- Checks that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
 	local success = true
-	for itemName, _ in pairs(data.raw.item) do
-		if not checkStackSizeGroupsOfItem(itemName) then success = false end
-			-- Avoiding short-circuit evaluation, bc I want to check all items.
-	end
-	for itemName, _ in pairs(data.raw["item-with-entity-data"]) do
-		if not checkStackSizeGroupsOfItem(itemName) then success = false end
+	local typesToCheck = {"item", "item-with-entity-data", "ammo", "capsule", "gun", "item-with-entity-data", "item-with-label", "item-with-inventory", "item-with-tags", "module", "rail-planner", "tool", "armor", "mining-tool", "repair-tool"}
+		-- We check all entries in data.raw.TYPE for all TYPE that is a subclass of ItemPrototype.
+		-- Except for selection-tool (and subclasses), blueprint, blueprint-book, spidertron-remote
+	for _, typeName in pairs(typesToCheck) do
+		for itemName, _ in pairs(data.raw[typeName]) do
+			if not checkStackSizeGroupsOfItem(itemName) then success = false end
+				-- Avoiding short-circuit evaluation, bc I want to check all items.
+		end
 	end
 	return success
 end
