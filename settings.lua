@@ -33,7 +33,7 @@ addSetting("inventory-size-spidertron", 80, "int", "startup")
 -- TODO instead of having each of these repeated here and then also in data.tweaks.vehicles, rather make a table in constants.vehicles or something, then require that here.
 
 addSetting("modify-stack-sizes", true, "bool", "startup")
-local stackSizeGroups = require("code.common.stack-sizes")
+local stackSizeGroups = require("code.common.stack-sizes").stackSizeGroups
 for groupName, groupData in pairs(stackSizeGroups) do
 	addSetting("stack-size-" .. groupName, groupData.defaultStackSize, "int", "startup")
 end

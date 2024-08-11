@@ -26,7 +26,7 @@ local purifiedMaterials = T.concat{
 	{
 			"sulfur",
 			"uranium-235", "uranium-238",
-			"diamond", "ruby", "electrum-gem", "electrum-gem-charged", "elixir-stone",
+			"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged", "elixir-stone",
 			"silicon", "graphite", "silicon-block",
 			"rubber",
 			"charcoal",
@@ -37,22 +37,27 @@ local metalIngots = T.stringProduct(metals, {"-ingot"})
 local standardizedIngotsBricks = T.concat{
 	metalIngots,
 	{
-		"stone-brick", "concrete-block", "plastic-bar", "glass", "nanoglass",
-		"wood-beam", -- Renamed this to "lumber".
+		"stone-brick", "concrete-block",
+		"plastic-bar",
+		"glass", "nanoglass",
 	},
 }
 local metalDenseIntermediates = T.stringProduct(metals,
 	{"-pellet", "-rivet", "-cable", "-foil", "-wire", "-rod", "-plate", "-beam", "-plate-heavy"})
 local denseIntermediates = T.concat{
 	metalDenseIntermediates,
-	{},
+	{
+		"wood-beam", -- Renamed this to "lumber".
+		-- TODO include some other stuff here
+	},
 }
 local metalBulkyIntermediates = T.stringProduct(metals,
 	{"-gear-wheel", "-piston"})
 local bulkyIntermediates = T.concat{
 	metalBulkyIntermediates,
-	{},
+	{}, -- TODO add things like engines and motors and rotor bases
 }
+-- TODO make groups for things like buildings, vehicles, robots, etc.
 
 -- Define stackSizeGroups, table mapping group name to: {
 --    items = {a, b, c},
@@ -89,18 +94,18 @@ local stackSizeGroups = {
 -- Seems that IR3's bundle items are setting their stack size in data stage? Bc even with this in data.lua, the bundles still have stack size 13, from base ingots having stack size 50, it seems. But I think their stack size was higher than 50. Probably being caused by my mod, somehow.
 -- Note that player can manually unbundle - feature added by IR3.
 -- So we can't set the stack sizes of the bundles too high, or it'll break, bc unbundle product will be capped at 1 stack.
+-- This list here excludes the stacked- prefix.
 local bundleItems = {
-	"stacked-stone-brick",
-	"stacked-concrete-block",
-	"stacked-plastic-bar",
-	"stacked-copper-ingot", "stacked-tin-ingot", "stacked-bronze-ingot", "stacked-iron-ingot", "stacked-gold-ingot",
-	"stacked-lead-ingot", "stacked-steel-ingot", "stacked-brass-ingot", "stacked-nickel-ingot", "stacked-chromium-ingot",
-	"stacked-platinum-ingot",
-	"stacked-glass",
+	"stone-brick",
+	"concrete-block",
+	"plastic-bar",
+	"copper-ingot", "tin-ingot", "bronze-ingot", "iron-ingot", "gold-ingot",
+	"lead-ingot", "steel-ingot", "brass-ingot", "nickel-ingot", "chromium-ingot",
+	"platinum-ingot",
+	"glass",
 }
 
---return {
---	stackSizeGroups = stackSizeGroups,
---}
-
-return stackSizeGroups
+return {
+	stackSizeGroups = stackSizeGroups,
+	bundleItems = bundleItems,
+}
