@@ -11,7 +11,7 @@ local seismicScanning = require("code.control.map-scanning.seismic-scanning")
 local oceanScanning = require("code.control.map-scanning.ocean-scanning")
 local evolution = require("code.control.evolution")
 local immateriaFissureSmoke = require("code.control.immateria-fissure-smoke")
-local victoryConditions = require("code.control.victory-conditions")
+local victoryConditions = require("code.control.disable-rocket-victory")
 
 script.on_init(function()
 	ir3StartCalls.onInit()

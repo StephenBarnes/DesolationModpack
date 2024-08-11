@@ -185,4 +185,46 @@ Tech.isEvolutionEffect = function(effect)
 	return effect.type == "nothing" and effect.effect_description[1] == "effect-description.evolution"
 end
 
+Tech.getEvolutionPercent = function(tech)
+	-- Given a tech, returns an int with the evolution percent from that tech's effects, or 0 if none.
+	if tech.effects == nil then return 0 end
+	for _, effect in pairs(tech.effects) do
+		if Tech.isEvolutionEffect(effect) then
+			return effect.effect_description[2]
+		end
+	end
+	return 0
+end
+
+Tech.getRecursivePrereqs = function(rootTechId)
+	-- Given a tech ID, returns a set of tech IDs that are prereqs of that tech, or prereqs of its prereqs, etc.
+	-- Returns nil if there's an error.
+	local foundPrereqs = {} -- Set of prereqs, mapped to true.
+	local frontier = {} -- List of tech IDs to check.
+	-- Add initial prereqs
+	for _, prereq in pairs(Tech.getPrereqList(data.raw.technology[rootTechId])) do
+		table.insert(frontier, prereq)
+	end
+	local loops = 0 -- To prevent infinite loops.
+	while #frontier > 0 do
+		loops = loops + 1
+		if loops > 1000 then
+			log("ERROR: Too many iterations when finding prereqs of tech "..rootTechId..".")
+			return nil
+		end
+		local techId = table.remove(frontier)
+		if techId == rootTechId then
+			log("ERROR: Tech "..rootTechId.." has a prereq cycle.")
+			return nil
+		end
+		if not foundPrereqs[techId] then
+			foundPrereqs[techId] = true
+			for _, prereq in pairs(Tech.getPrereqList(data.raw.technology[techId])) do
+				table.insert(frontier, prereq)
+			end
+		end
+	end
+	return foundPrereqs
+end
+
 return Tech

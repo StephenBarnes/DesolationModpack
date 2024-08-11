@@ -3,9 +3,9 @@
 -- It has multiple check functions, which return true if the check is fine, false if it failed.
 -- Checks:
 -- * The total of all possible +evolution effects should be +100%.
+-- * For all techs, each required science pack should be unlocked by one of its prereqs.
+-- * For all techs, for all recipes they unlock, all ingredients for those recipes should be unlocked by the tech's prereqs.
 -- * TODO check that the only way to get to the final tech involves a total of +100% evolution.
--- * TODO for all techs, check required science packs and that there's a recipe for that science pack unlocked by one of its prereqs.
--- * TODO for all techs, for all recipes they unlock, check that all ingredients have been unlocked by that point.
 
 -- This might seem like more effort than just manually looking through the tech tree, but, so far it's already found multiple bugs that I hadn't noticed.
 -- So, this is good. Keep it updated.
@@ -76,21 +76,44 @@ local function toposortTechsAndCache()
 end
 
 local function checkTotalEvo()
+	-- Checks that total evolution sums to 100%.
 	local totalEvo = 0
 	for _, tech in pairs(data.raw.technology) do
-		if tech.effects ~= nil then
-			for _, effect in pairs(tech.effects) do
-				if Tech.isEvolutionEffect(effect) then
-					totalEvo = totalEvo + effect.effect_description[2]
-				end
-			end
-		end
+		totalEvo = totalEvo + Tech.getEvolutionPercent(tech)
 	end
+
 	if totalEvo == 100 then
 		log("Tech total evo check: Over all techs, sum of evolution effects is 100, passed.")
 		return true
 	else
 		log("Tech total evo check: ERROR: Sum of techs is not 100, instead it is "..(totalEvo or "nil"))
+		return false
+	end
+end
+
+local function checkEndTechEvo()
+	-- Checks that getting to the final tech involves a total of +100% evolution.
+	local finalTechId = "magnum-opus" -- TODO change this to the victory tech.
+	local finalTechPrereqs = Tech.getRecursivePrereqs(finalTechId)
+	if finalTechPrereqs == nil then
+		log("ERROR: Couldn't find prereqs of "..finalTechId..".")
+		return false
+	end
+
+	local totalEvo = 0
+	for techId, _ in pairs(finalTechPrereqs) do
+		if data.raw.technology[techId] == nil then
+			log("ERROR: Tech "..techId.." is a recursive prereq of "..finalTechId..", but it doesn't exist.")
+			return false
+		end
+		totalEvo = totalEvo + Tech.getEvolutionPercent(data.raw.technology[techId])
+	end
+
+	if totalEvo == 100 then
+		log("End tech evo check: Over all techs, sum of evolution effects is 100, passed.")
+		return true
+	else
+		log("End tech evo check: ERROR: Sum of techs is not 100, instead it is "..(totalEvo or "nil"))
 		return false
 	end
 end
@@ -315,6 +338,7 @@ local function runFullDebug()
 	success = toposortTechsAndCache() and success
 	if not success then return end -- if we can't toposort the techs, many other checks won't work anyway.
 	success = checkTotalEvo() and success
+	success = checkEndTechEvo() and success
 	success = checkTechUnlockOrder() and success
 	if success then
 		log("Desolation: full progression debug passed.")
