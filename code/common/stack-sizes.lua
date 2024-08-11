@@ -48,16 +48,70 @@ local denseIntermediates = T.concat{
 	metalDenseIntermediates,
 	{
 		"wood-beam", -- Renamed this to "lumber".
-		-- TODO include some other stuff here
+		"red-wire", "green-wire",
 	},
 }
 local metalBulkyIntermediates = T.stringProduct(metals,
 	{"-gear-wheel", "-piston"})
 local bulkyIntermediates = T.concat{
 	metalBulkyIntermediates,
-	{}, -- TODO add things like engines and motors and rotor bases
+	{
+		"ic-container",
+		"spidertron-remote",
+	}, -- TODO add things like engines and motors and rotor bases
 }
--- TODO make groups for things like buildings, vehicles, robots, etc.
+local bigBuildings = {
+	"ic-containerization-machine-1", "ic-containerization-machine-2", "ic-containerization-machine-3",
+	"roboport",
+}
+local mediumBuildings = {
+	"substation",
+	"storage-tank",
+	"chrome-transmat", "cargo-transmat",
+	"airship-station",
+	"robotower",
+	"aai-signal-sender", "aai-signal-receiver", -- Radio towers.
+}
+local smallBuildings = {
+	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "iron-chest", "steel-chest",
+	"transfer-plate", "transfer-plate-2x2",
+	"pit",
+	"underground-belt", "fast-underground-belt", "express-underground-belt",
+	"splitter", "fast-splitter", "express-splitter",
+	"ir3-loader-steam", "ir3-loader", "ir3-fast-loader", "ir3-express-loader",
+	"ir3-beltbox-steam", "ir3-beltbox", "ir3-fast-beltbox", "ir3-express-beltbox",
+	"burner-inserter", "steam-inserter", "inserter", "slow-filter-inserter", "fast-inserter", "filter-inserter", "stack-inserter", "stack-filter-inserter",
+	"small-electric-pole", "small-bronze-pole", "small-iron-pole", "medium-electric-pole", "big-wooden-pole", "big-electric-pole", -- Substation is in big buildings
+	"small-steam-tank", "small-tank",
+	"copper-pump", "offshore-pump", "pump",
+	"train-stop",
+	"rail-signal", "rail-chain-signal",
+	"port", "buoy", "chain_buoy",
+	"logistic-chest-active-provider", "logistic-chest-passive-provider", "logistic-chest-requester", "logistic-chest-storage", "logistic-chest-buffer",
+	"arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
+	"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "small-lamp", "deadlock-large-lamp", "deadlock-floor-lamp",
+}
+local tinyPlaced = {
+	"transport-belt", "fast-transport-belt", "express-transport-belt",
+	"copper-pipe", "copper-valve", "copper-pipe-to-ground", "copper-pipe-to-ground-short",
+	"steam-pipe", "steam-valve", "steam-pipe-to-ground", "steam-pipe-to-ground-short",
+	"pipe", "valve", "pipe-to-ground", "pipe-to-ground-short",
+	"air-pipe", "air-valve", "air-pipe-to-ground", "air-pipe-to-ground-short",
+	"rail",
+}
+local vehicles = {
+	"meat:steam-locomotive-item", "locomotive", "cargo-wagon", "artillery-wagon",
+	"boat", "cargo_ship", "ironclad",
+	"monowheel", "heavy-roller", "heavy-picket",
+	"car", "tank",
+	"hydrogen-airship", "helium-airship",
+	"spidertron",
+}
+local robots = {
+	"steambot", "construction-robot", "logistic-robot",
+	"lampbot-capsule",
+}
+-- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
 
 -- Define stackSizeGroups, table mapping group name to: {
 --    items = {a, b, c},
@@ -88,6 +142,30 @@ local stackSizeGroups = {
 	bulkyIntermediates = {
 		defaultStackSize = 40,
 		items = bulkyIntermediates,
+	},
+	tinyPlaced = {
+		defaultStackSize = 100,
+		items = tinyPlaced,
+	},
+	smallBuildings = {
+		defaultStackSize = 40,
+		items = smallBuildings,
+	},
+	mediumBuildings = {
+		defaultStackSize = 20,
+		items = mediumBuildings,
+	},
+	bigBuildings = {
+		defaultStackSize = 10,
+		items = bigBuildings,
+	},
+	robots = {
+		defaultStackSize = 40,
+		items = robots,
+	},
+	vehicles = {
+		defaultStackSize = 1,
+		items = vehicles,
 	},
 }
 
