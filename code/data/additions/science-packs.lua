@@ -8,8 +8,8 @@ local id = {
 	mechanicsKit = "automation-science-pack", -- red
 	electronicsKit = "logistic-science-pack", -- green
 	fluidicsKit = "chemical-science-pack", -- blue
-	chemistryKit = "production-science-pack", -- purple
-	thaumicsKit = "utility-science-pack", -- yellow
+	chemistryKit = "utility-science-pack", -- yellow
+	hermeticsKit = "production-science-pack", -- purple
 	cosmologyKit = "space-science-pack", -- white
 	ballisticsKit = "military-science-pack", -- black
 }
@@ -45,4 +45,4 @@ data:extend({
 		energy_required = 1.0,
 	},
 })
--- TODO does molten glass exist? If so, add recipe for casting molten glass into bottles.
+-- Molten glass doesn't exist, so no need for recipes for casting it into bottles.

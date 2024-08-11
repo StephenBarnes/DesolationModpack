@@ -5,11 +5,12 @@ data:extend({
 		type = "capsule",
 		name = "ocean-scanner",
 		icon = "__Desolation__/graphics/ocean-scanner.png",
-		icon_size = 64,
+		icon_size = 256,
 		icon_mipmaps = 4,
 		--subgroup = "capsule",
-		order = "a",
+		order = "z2",
 		stack_size = 20,
+		subgroup = data.raw.item.radar.subgroup,
 		capsule_action = {
 			type = "throw",
 			uses_stack = false, -- Rather remove the item by script, if thrown into valid tile.

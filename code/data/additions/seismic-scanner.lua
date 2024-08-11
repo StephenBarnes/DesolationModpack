@@ -12,7 +12,7 @@ data:extend({
 		icon_size = 64,
 		icon_mipmaps = 1,
 		subgroup = data.raw.item.radar.subgroup,
-		order = "d[radar]-b[radar]",
+		order = "z1",
 		place_result = "seismic-scanner",
 		stack_size = 1,
 	},

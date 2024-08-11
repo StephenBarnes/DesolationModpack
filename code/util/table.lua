@@ -6,6 +6,27 @@ Table.extend = function(t, l)
 	end
 end
 
+Table.concat = function(tables)
+	local result = {}
+	for _, t in pairs(tables) do
+		for _, v in pairs(t) do
+			table.insert(result, v)
+		end
+	end
+	return result
+end
+
+Table.stringProduct = function(strings1, strings2)
+	-- Given two lists of strings, returns a list of all combinations of the two.
+	local result = {}
+	for _, s1 in pairs(strings1) do
+		for _, s2 in pairs(strings2) do
+			table.insert(result, s1 .. s2)
+		end
+	end
+	return result
+end
+
 Table.copy = function(t)
 	-- TODO delete this, should rather use that existing deepcopy function. Not sure if this is being used anywhere.
 	local new = {}

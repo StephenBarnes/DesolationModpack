@@ -112,18 +112,18 @@ local goldRecipe = {
 	energy_required = 1,
 	ingredients = {
 		{type = "item", name = "elixir-stone", amount = 1},
-		{type = "item", name = "stone", amount = 10}
+		{type = "item", name = "stone", amount = 1}
 	},
 	results = {
-		{type = "item", name = "gold-ore", amount = 10},
+		{type = "item", name = "gold-pure", amount = 1},
 		{type = "item", name = "elixir-stone", amount = 1},
 	},
 	enabled = false,
 	--always_show_made_in = true,
-	main_product = "gold-ore",
+	main_product = "gold-pure",
 	icons = {
 		{ icon = "__Desolation__/graphics/empty_icon.png", icon_size = 64, icon_mipmaps = 4, scale = 0.5 },
-		{ icon = data.raw.item["gold-ore"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {7, 7} },
+		{ icon = data.raw.item["gold-pure"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {7, 7} },
 		{ icon = "__Desolation__/graphics/elixir-stone.png", icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {0, -7} },
 		{ icon = data.raw.item["stone"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {-7, 7} },
 	},

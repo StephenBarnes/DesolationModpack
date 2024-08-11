@@ -26,6 +26,7 @@ data:extend({
 		order = "a",
 		stack_size = 1,
 		durability = 1,
+		flags = {"hidden", "not-stackable"},
 	},
 })
 data.raw.technology.logistics.unit = {
