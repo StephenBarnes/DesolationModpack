@@ -5,7 +5,8 @@
 -- * The total of all possible +evolution effects should be +100%.
 -- * For all techs, each required science pack should be unlocked by one of its prereqs.
 -- * For all techs, for all recipes they unlock, all ingredients for those recipes should be unlocked by the tech's prereqs.
--- * TODO check that the only way to get to the final tech involves a total of +100% evolution.
+-- * Check that the only way to get to the final tech involves a total of +100% evolution.
+-- * Check that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
 
 -- This might seem like more effort than just manually looking through the tech tree, but, so far it's already found multiple bugs that I hadn't noticed.
 -- So, this is good. Keep it updated.
@@ -332,6 +333,13 @@ local function checkTechUnlockOrder()
 	return successfulSoFar
 end
 
+local function checkStackSizesSet()
+	-- Checks that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
+	local success = true
+	-- TODO
+	return success
+end
+
 local function runFullDebug()
 	log("Desolation: running full progression debug.")
 	local success = true
@@ -340,6 +348,7 @@ local function runFullDebug()
 	success = checkTotalEvo() and success
 	success = checkEndTechEvo() and success
 	success = checkTechUnlockOrder() and success
+	success = checkStackSizesSet() and success
 	if success then
 		log("Desolation: full progression debug passed.")
 	else

@@ -51,18 +51,65 @@ local denseIntermediates = T.concat{
 		"red-wire", "green-wire",
 	},
 }
+
 local metalBulkyIntermediates = T.stringProduct(metals,
 	{"-gear-wheel", "-piston"})
 local bulkyIntermediates = T.concat{
 	metalBulkyIntermediates,
+	{}, -- TODO add things like engines and motors and rotor bases
+}
+
+local modules = T.stringProduct({"speed-module", "effectivity-module", "productivity-module"}, {"", "-2", "-3"})
+local computers = {"computer-mk1, computer-mk2", "computer-mk3"}
+local bulkyProducts = T.concat{
+	modules,
+	computers, -- Placing this in bulky products, not intermediates, bc it has to go with modules.
 	{
 		"ic-container",
 		"spidertron-remote",
-	}, -- TODO add things like engines and motors and rotor bases
+		-- TODO add repair kits
+	},
+}
+
+local extraBigBuildings = {
+	"chrome-drill",
+	"quantum-lab",
+	"oil-refinery", "chemical-plant",
+	"nuclear-reactor",
 }
 local bigBuildings = {
 	"ic-containerization-machine-1", "ic-containerization-machine-2", "ic-containerization-machine-3",
 	"roboport",
+	"electric-mining-drill",
+	"pumpjack",
+	"bronze-forestry", "iron-forestry", "chrome-forestry",
+	"stone-furnace", "stone-alloy-furnace", "stone-charcoal-kiln",
+	"bronze-furnace", "bronze-alloy-furnace",
+	"electric-furnace", "electric-alloy-furnace",
+	"steel-furnace", -- Gas furnace.
+	"blast-furnace",
+	"arc-furnace",
+	"copper-grinder", "iron-grinder", "steel-grinder",
+	"iron-mixer", "steel-mixer",
+	"steel-washer",
+	"iron-geothermal-exchanger",
+	"chrome-press",
+	"assembling-machine-1", "assembling-machine-2", "assembling-machine-3", "laser-assembler",
+	"iron-scrapper",
+	"steel-electroplater",
+	"copper-lab", "lab",
+	"rocket-silo",
+	"steam-engine",
+	"solar-array", -- Well, we're removing this, but leave it here just in case.
+	"petro-generator",
+	"iron-battery-charger", "steel-battery-charger",
+	"iron-battery-discharger", "steel-battery-discharger",
+	"supermagnet",
+	"aai-signal-sender", "aai-signal-receiver", -- Radio towers.
+	"air-purifier",
+	"steel-cryo-tower",
+	"steam-turbine",
+	"centrifuge",
 }
 local mediumBuildings = {
 	"substation",
@@ -70,7 +117,14 @@ local mediumBuildings = {
 	"chrome-transmat", "cargo-transmat",
 	"airship-station",
 	"robotower",
-	"aai-signal-sender", "aai-signal-receiver", -- Radio towers.
+	"burner-mining-drill", "steam-drill", -- These are 7x7, vs the electric and chorme ones which are 9x9 or 11x11 and therefore placed in bigBuildings.
+	"copper-derrick", "steel-derrick",
+	"beacon",
+	"solar-panel", -- Well, we're removing this, but leave it here just in case.
+	"accumulator",
+	"deadlock-large-lamp", "deadlock-floor-lamp",
+	"iron-ice-melter", "iron-boiler",
+	"heat-exchanger",
 }
 local smallBuildings = {
 	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "iron-chest", "steel-chest",
@@ -89,7 +143,21 @@ local smallBuildings = {
 	"port", "buoy", "chain_buoy",
 	"logistic-chest-active-provider", "logistic-chest-passive-provider", "logistic-chest-requester", "logistic-chest-storage", "logistic-chest-buffer",
 	"arithmetic-combinator", "decider-combinator", "constant-combinator", "power-switch", "programmable-speaker",
-	"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "small-lamp", "deadlock-large-lamp", "deadlock-floor-lamp",
+	"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "small-lamp",
+	"steal-cleaner", -- Polluted water cleaner.
+	"small-assembler-1", "small-assembler-2", "small-assembler-3",
+	"steel-cast", -- Metal cast machine
+	"module-loader",
+	"copper-ice-melter", "electric-ice-melter",
+	"copper-boiler", "steel-boiler",
+	"steam-barrelling-machine", "barrelling-machine",
+	"iron-gas-vent", "air-compressor",
+	"steel-vaporiser",
+
+	-- Planning to remove most of these.
+	"tree-planter-tree-01", "tree-planter-tree-02", "tree-planter-tree-03", "tree-planter-tree-04", "tree-planter-tree-05",
+	"tree-planter-tree-06", "tree-planter-tree-07", "tree-planter-tree-08", "tree-planter-tree-09",
+	"tree-planter-ir-rubber-tree",
 }
 local tinyPlaced = {
 	"transport-belt", "fast-transport-belt", "express-transport-belt",
@@ -143,6 +211,10 @@ local stackSizeGroups = {
 		defaultStackSize = 40,
 		items = bulkyIntermediates,
 	},
+	bulkyProducts = {
+		defaultStackSize = 40,
+		items = bulkyProducts,
+	},
 	tinyPlaced = {
 		defaultStackSize = 100,
 		items = tinyPlaced,
@@ -158,6 +230,10 @@ local stackSizeGroups = {
 	bigBuildings = {
 		defaultStackSize = 10,
 		items = bigBuildings,
+	},
+	extraBigBuildings = {
+		defaultStackSize = 5,
+		items = extraBigBuildings,
 	},
 	robots = {
 		defaultStackSize = 40,

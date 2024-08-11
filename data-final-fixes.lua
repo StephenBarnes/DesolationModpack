@@ -68,7 +68,7 @@ require("code.data.tweaks.no-long-inserters")
 --end
 
 -- Should be the very last thing run in the data stage:
-local debugProgression = require("code.data.additions.debug-progression")
+local debugProgression = require("code.data.additions.auto-debug")
 if globalParams.debugProgression then
 	debugProgression.runFullDebug()
 end
