@@ -32,8 +32,6 @@
 
 	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 	, "IntermodalContainers >= 2.0.8"
-
-	, "SpidertronEnhancements >= 1.9.2"
 	],
 	"description": "PRE-ALPHA, NOT PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
 }

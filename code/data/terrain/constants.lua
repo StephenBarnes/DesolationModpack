@@ -223,8 +223,6 @@ X.ironCoalOasisMinRad = X.distIronToSecondCoal * 1.8
 X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 2.5
 X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 7
 
--- TODO Get rid of all these extra sliders. I think they might make the map gen slower.
-
 ------------------------------------------------------------------------
 -- Starting patches
 
@@ -249,9 +247,10 @@ X.startTinPatchCenterWeight = 15
 
 X.goldPatchDesiredAmount = 100000
 X.oilPatchDesiredAmount = 100000
-X.copperPatchDesiredAmount = 100000
-X.tinPatchDesiredAmount = 100000
-X.coalPatchDesiredAmount = 100000
+X.copperPatchDesiredAmount = 1000000
+X.tinPatchDesiredAmount = 1000000
+X.coalPatchDesiredAmount = 1000000
+X.stonePatchDesiredAmount = 1000000
 -- TODO these should be put into a table indexed by resource name, same as resourceMinDist below.
 
 ------------------------------------------------------------------------

@@ -43,3 +43,4 @@ Tech.removeRecipeFromTech("transfer-plate-2x2", "logistics")
 Tech.removeRecipeFromTech("transfer-plate", "logistics") -- This is the 3x3 transfer plate.
 Tech.addRecipeToTech("transfer-plate-2x2", "ir-basic-research")
 Tech.addRecipeToTech("transfer-plate", "ir-basic-research")
+data.raw.technology["logistics"].ignore_tech_cost_multiplier = true

@@ -377,7 +377,7 @@ setResourceAutoplace {
 	order = "zzz", -- Place it last, so other resources can be placed on top of it.
 	outsideDensity = 0.3,
 	outsideRad = 60,
-	desiredAmount = 1000000,
+	desiredAmount = C.stonePatchDesiredAmount,
 	extraCondition = stoneTempBand,
 	normalSpawnInStartIsland = true,
 }

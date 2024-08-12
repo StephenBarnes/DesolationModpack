@@ -245,11 +245,36 @@ Tech.addTechDependency("telemetry", "ir-hydrogen-airship")
 Tech.addTechDependency("telemetry", "personal-roboport-equipment")
 
 -- Add enemy evolution effects to milestone techs.
-Tech.addEvolutionEffect("fluid-handling", 20)
-Tech.addEvolutionEffect("ir-electronics-1", 10)
-Tech.addEvolutionEffect("ir-charcoal", 15)
-Tech.addEvolutionEffect("ir-copper-working-1", 15)
-Tech.addEvolutionEffect("ir-basic-research", 25)
+-- TODO these are temporary untested assignments, fix.
+local milestoneTechs = {
+	"ir-charcoal",    -- Stone furnace
+	"ir-basic-research", -- Steam mechanisms
+	"ir-grinding-1",
+	"ir-iron-smelting",
+	"ir-steam-power", -- Electricity
+	"ir-steel-smelting",
+	"water_transport",
+	"ir-gold-milestone",
+	"ir-crude-oil-processing",
+	"ir-electronics-2",
+	"ir-washing-1",
+	"ir-washing-2",
+	"ir-brass-milestone",
+	"ir-electroplating",
+	"ir-electrum-milestone",
+	"ir-electronics-3",
+	"uranium-processing",
+	"rocket-silo",
+	"ir-transmat",
+	"ir-quantum-mining",
+}
+for _, techName in pairs(milestoneTechs) do
+	Tech.addEvolutionEffect(techName, 5)
+end
+
+-- Scattergun turret shouldn't be affected by multiplier, should be attainable before your BREAM peace time runs out.
+data.raw.technology["ir-scattergun-turret"].unit.count = 50
+data.raw.technology["ir-scattergun-turret"].ignore_tech_cost_multiplier = true
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
