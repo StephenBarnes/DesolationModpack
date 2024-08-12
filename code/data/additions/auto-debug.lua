@@ -344,27 +344,40 @@ end
 ------------------------------------------------------------------------
 -- STACK SIZE CHECKS
 
+local itemNamesToIgnore = Table.listToSet{
+	"coin", "item-unknown",
+	"simple-entity-with-force", "simple-entity-with-owner",
+	"infinity-chest", "infinity-pipe",
+	"loader", "fast-loader", "express-loader", -- Built-in loader items, not the IR3 ones.
+	"Desolation-transfer-plate-unlocks-tech",
+	"electric-energy-interface", "heat-interface",
+	"item-with-label", "item-with-inventory", "item-with-tags",
+	"waterway",
+	"discharge-defense-remote", "artillery-targeting-remote",
+	"cliff-explosives", -- No cliffs.
+}
 local function itemNeedsStackSize(itemName)
 	-- Return whether we actually care about a stack size for this item, since some items are just markers etc.
+	if itemNamesToIgnore[itemName] then return false end
 	if itemName:match("spill%-data") then return false end
 	if itemName:match("^creative") then return false end
+	if itemName:match("^schematic%-") then return false end
 	if itemName:match("^ic%-container%-") then return false end
-	if Table.hasEntry(itemName, {
-		"coin", "item-unknown",
-		"simple-entity-with-force", "simple-entity-with-owner",
-		"infinity-chest", "infinity-pipe",
-		"loader", "fast-loader", "express-loader", -- Built-in loader items, not the IR3 ones.
-		"spidertron-remote", -- Stack size must be 1, so we're not setting it.
-	}) then return false end
 	return true
 end
 
-local function checkStackSizeGroupsOfItem(itemName)
+local function checkStackSizeGroupsOfItem(typeName, itemName)
 	-- Check that this specific item is in exactly one stack size group.
 	if not itemNeedsStackSize(itemName) then return true end
 	local groupsOfThisItem = {}
 	for groupName, groupData in pairs(stackSizeCommon.stackSizeGroups) do
-		for _, itemId in pairs(groupData.items) do
+		for _, itemSpecifier in pairs(groupData.items) do
+			local itemId
+			if type(itemSpecifier) == "string" then
+				itemId = itemSpecifier
+			else
+				itemId = itemSpecifier[2]
+			end
 			if itemId == itemName then
 				table.insert(groupsOfThisItem, groupName)
 			end
@@ -377,10 +390,10 @@ local function checkStackSizeGroupsOfItem(itemName)
 		end
 	end
 	if #groupsOfThisItem > 1 then
-		log("ERROR: Item "..itemName.." has stack sizes set in more than one group: "..serpent.block(groupsOfThisItem))
+		log("ERROR: Item "..itemName.." with type "..typeName.." has stack sizes set in more than one group: "..serpent.block(groupsOfThisItem))
 		return false
 	elseif #groupsOfThisItem == 0 then
-		log("ERROR: Item "..itemName.." is not in any stack size group.")
+		log("ERROR: Item "..itemName.." with type "..typeName.." is not in any stack size group.")
 		return false
 	end
 	return true
@@ -389,12 +402,12 @@ end
 local function checkStackSizesSet()
 	-- Checks that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
 	local success = true
-	local typesToCheck = {"item", "item-with-entity-data", "ammo", "capsule", "gun", "item-with-entity-data", "item-with-label", "item-with-inventory", "item-with-tags", "module", "rail-planner", "tool", "armor", "mining-tool", "repair-tool"}
+	local typesToCheck = {"item", "item-with-entity-data", "ammo", "capsule", "item-with-entity-data", "item-with-label", "item-with-inventory", "item-with-tags", "module", "rail-planner", "tool", "armor", "mining-tool", "repair-tool"}
 		-- We check all entries in data.raw.TYPE for all TYPE that is a subclass of ItemPrototype.
-		-- Except for selection-tool (and subclasses), blueprint, blueprint-book, spidertron-remote
+		-- Except for selection-tool (and subclasses), blueprint, blueprint-book, spidertron-remote, gun, armor
 	for _, typeName in pairs(typesToCheck) do
 		for itemName, _ in pairs(data.raw[typeName]) do
-			if not checkStackSizeGroupsOfItem(itemName) then success = false end
+			if not checkStackSizeGroupsOfItem(typeName, itemName) then success = false end
 				-- Avoiding short-circuit evaluation, bc I want to check all items.
 		end
 	end

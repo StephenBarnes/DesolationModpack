@@ -13,6 +13,7 @@ local rawMaterials = {
 	"copper-ore", "tin-ore", "gold-ore", "uranium-ore", "iron-ore", "coal", "stone",
 	"wood", "rubber-wood",
 	"ice", "comet-ice-ore",
+	"spagyric-crystal",
 }
 local crushedMaterials = {
 	"copper-crushed", "tin-crushed", "gold-crushed", "iron-crushed",
@@ -62,6 +63,8 @@ local smallItems = {
 	"copper-gate", -- thermionic tube
 	"gold-gate", -- semiconducting triode
 	"electrum-gate", -- miniaturized gate array
+
+	"battery", "charged-battery", "advanced-battery", "charged-advanced-battery",
 }
 local bulkyItems = {
 	"copper-piston", "iron-piston", "steel-piston", "chromium-piston",
@@ -94,6 +97,10 @@ local bulkyItems = {
 	"uranium-fuel-cell", "used-up-uranium-fuel-cell",
 
 	"solar-panel-equipment", "fusion-reactor-equipment", "battery-equipment", "battery-mk2-equipment", "belt-immunity-equipment", "exoskeleton-equipment", "personal-roboport-equipment", "personal-roboport-mk2-equipment", "night-vision-equipment", "energy-shield-equipment", "energy-shield-mk2-equipment", "personal-laser-defense-equipment", "discharge-defense-equipment",
+	"battery-discharge-equipment", "iron-burner-generator-equipment", "copper-roboport-equipment", "arc-turret-equipment",
+
+	"space-mirror",
+	"glass-bottle",
 }
 local veryBulkyItems = {
 	"copper-frame-large", "iron-frame-large", "steel-frame-large", "chromium-frame-large",
@@ -104,6 +111,7 @@ local extraBigBuildings = {
 	"quantum-lab",
 	"oil-refinery", "chemical-plant",
 	"nuclear-reactor",
+	"quantum-satellite",
 }
 local bigBuildings = {
 	"ic-containerization-machine-1", "ic-containerization-machine-2", "ic-containerization-machine-3",
@@ -156,6 +164,7 @@ local mediumBuildings = {
 	"copper-boiler", "steel-boiler",
 	"heat-exchanger",
 	"radar", "bronze-telescope",
+	"seismic-scanner",
 	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret",
 }
 local smallBuildings = {
@@ -167,7 +176,7 @@ local smallBuildings = {
 	"ir3-loader-steam", "ir3-loader", "ir3-fast-loader", "ir3-express-loader",
 	"ir3-beltbox-steam", "ir3-beltbox", "ir3-fast-beltbox", "ir3-express-beltbox",
 	"burner-inserter", "steam-inserter", "inserter", "slow-filter-inserter", "fast-inserter", "filter-inserter", "stack-inserter", "stack-filter-inserter",
-	"long-handed-inserter",
+	"long-handed-inserter", "long-handed-steam-inserter",
 	"small-electric-pole", "small-bronze-pole", "small-iron-pole", "medium-electric-pole", "big-wooden-pole", "big-electric-pole", "floating-electric-pole",
 	"small-tank-steam", "small-tank",
 	"copper-pump", "offshore-pump", "pump",
@@ -185,6 +194,7 @@ local smallBuildings = {
 	"iron-gas-vent", "air-compressor",
 	"steel-vaporiser",
 	"waterfill-explosive",
+	"stone-wall", "gate", "steel-plate-wall", "concrete-wall",
 
 	-- Planning to remove most of these tree types, maybe replace with Alien Biomes trees.
 	"tree-planter-tree-01", "tree-planter-tree-02", "tree-planter-tree-03", "tree-planter-tree-04", "tree-planter-tree-05", "tree-planter-tree-07", "tree-planter-tree-09",
@@ -192,6 +202,7 @@ local smallBuildings = {
 }
 local tinyPlaced = {
 	"transport-belt", "fast-transport-belt", "express-transport-belt",
+	"heat-pipe",
 	"copper-pipe", "copper-valve", "copper-pipe-to-ground", "copper-pipe-to-ground-short",
 	"steam-pipe", "steam-valve", "steam-pipe-to-ground", "steam-pipe-to-ground-short",
 	"pipe", "valve", "pipe-to-ground", "pipe-to-ground-short",
@@ -221,6 +232,7 @@ local tiles = {
 }
 local canisters = {
 	"empty-canister", "empty-iron-canister", "hydrogen-canister", "oxygen-canister", "nitrogen-canister", "helium-canister", "carbon-canister", "natural-canister", "steam-iron-canister", "petroleum-gas-iron-canister", 
+	"steam-cell", "empty-cell",
 }
 local barrels = {
 	"empty-barrel", "water-barrel", "sulfuric-acid-barrel", "crude-oil-barrel", "heavy-oil-barrel", "light-oil-barrel", "petroleum-gas-barrel", "lubricant-barrel", "dirty-water-barrel", "concrete-fluid-barrel", "ethanol-barrel", "liquid-fertiliser-barrel", "bitumen-fluid-barrel", "chromium-plating-solution-barrel", "gold-plating-solution-barrel"
@@ -230,12 +242,55 @@ local shotgunAmmo = {
 	{"ammo", "bronze-cartridge"},
 	{"ammo", "iron-cartridge"},
 	{"ammo", "piercing-shotgun-shell"}, -- This is the steel cartridge.
+
+	-- Variants boosted by Searchlight Assault mod.
+	{"ammo", "shotgun-shell-sla_boosted"},
+	{"ammo", "bronze-cartridge-sla_boosted"},
+	{"ammo", "iron-cartridge-sla_boosted"},
+	{"ammo", "piercing-shotgun-shell-sla_boosted"},
 }
 local submachineGunAmmo = {
 	{"ammo", "firearm-magazine"}, -- This is the normal iron magazine.
 	{"ammo", "piercing-rounds-magazine"}, -- This is the steel magazine.
 	{"ammo", "chromium-magazine"},
 	{"ammo", "uranium-rounds-magazine"},
+
+	-- Variants boosted by Searchlight Assault mod.
+	{"ammo", "firearm-magazine-sla_boosted"},
+	{"ammo", "piercing-rounds-magazine-sla_boosted"},
+	{"ammo", "chromium-magazine-sla_boosted"},
+	{"ammo", "uranium-rounds-magazine-sla_boosted"},
+}
+local bigAmmo = {
+	{"ammo", "flamethrower-ammo"},
+	{"ammo", "rocket"},
+	{"ammo", "explosive-rocket"},
+	{"ammo", "atomic-bomb"},
+	{"ammo", "cannon-shell"},
+	{"ammo", "explosive-cannon-shell"},
+	{"ammo", "explosive-uranium-cannon-shell"},
+	{"ammo", "uranium-cannon-shell"},
+	{"ammo", "artillery-shell"},
+	{"ammo", "mortar-bomb"},
+	{"ammo", "mortar-cluster-bomb"},
+
+	-- Variants boosted by Searchlight Assault mod.
+	-- For some reason these don't exist for some ammo (rockets, atomic bombs, artillery shells). TODO check why.
+	--{"ammo", "rocket-sla_boosted"},
+	--{"ammo", "explosive-rocket-sla_boosted"},
+	--{"ammo", "atomic-bomb-sla_boosted"},
+	{"ammo", "cannon-shell-sla_boosted"},
+	{"ammo", "explosive-cannon-shell-sla_boosted"},
+	{"ammo", "explosive-uranium-cannon-shell-sla_boosted"},
+	{"ammo", "uranium-cannon-shell-sla_boosted"},
+	--{"ammo", "artillery-shell-sla_boosted"},
+}
+local capsules = {
+	{"capsule", "grenade"},
+	{"capsule", "cluster-grenade"},
+	{"capsule", "poison-capsule"},
+	{"capsule", "slowdown-capsule"},
+	{"capsule", "ln-flare-capsule"},
 }
 -- TODO rockets, grenades, etc.
 -- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
@@ -321,6 +376,14 @@ local stackSizeGroups = {
 	submachineGunAmmo = {
 		defaultStackSize = 10,
 		items = submachineGunAmmo,
+	},
+	bigAmmo = {
+		defaultStackSize = 10,
+		items = bigAmmo,
+	},
+	capsules = {
+		defaultStackSize = 10,
+		items = capsules,
 	},
 }
 

@@ -5,7 +5,8 @@ local nonShallowWaterLayer = collisionMaskUtil.get_first_unused_layer()
 
 local nonShallowWaterTiles = {
 	"deepwater",
-	"water",
+	--"water", -- Rather allow landfill on light-blue water.
+	-- There's also water-mud and water-shallow, which are excluded from this list.
 }
 
 -- Add the layer to all non-shallow water tiles.
@@ -16,6 +17,6 @@ end
 -- Add the layer to landfill.
 table.insert(data.raw.item["landfill"].place_as_tile.condition, nonShallowWaterLayer)
 
-for tileName, tile in pairs(data.raw.tile) do
-	log("Tile name: "..tileName)
-end
+--for tileName, tile in pairs(data.raw.tile) do
+--	log("Tile name: "..tileName)
+--end
