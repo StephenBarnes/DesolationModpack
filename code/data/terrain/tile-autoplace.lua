@@ -99,24 +99,42 @@ for i = 1, 9 do
 end
 
 -- Muddy water should generate around buildable regions that touch the coast, ie where elevation is just barely underwater and temperature is high.
-setTileConditionVarMinMax("water-mud", {
-	elevation = {-1, 0},
-}, {warmEnoughToBuild})
--- Multiply by 1000 to make it overpower the other water.
-data.raw.tile["water-mud"].autoplace.probability_expression = 1000 * data.raw.tile["water-mud"].autoplace.probability_expression
-data.raw.tile["water-mud"].autoplace.richness_expression = 1000 * data.raw.tile["water-mud"].autoplace.richness_expression
--- The above works; could use this to get different cutoffs for starting island vs other islands. But rather just change elevation for that.
---setTileCondition("water-shallow", noise.delimit_procedure(noise.if_else_chain(
---	tooColdToBuild, 0,
---	var("apply-start-island-resources"), noise.if_else_chain(
---		lt(var("elevation"), -4.5), 0,
---		lt(0, var("elevation")), 0,
---		1),
---	noise.if_else_chain(
---		lt(var("elevation"), -1), 0,
---		lt(0, var("elevation")), 0,
---		1)
---) * 1000)) -- Multiply by 1000 to make it overpower the other water.
+-- Actually, I changed my mind. Rather allowing landfill on all shallow water, even around snow, to guarantee that all islands are reachable even if they have no warm patches touching the coast.
+-- This opens up the possibility of shenanigans like using belts to transport goods all around an island instead of trains, but rather overcome that by making shallow water thinner and increasing the cost of landfill.
+if false then
+	setTileConditionVarMinMax("water-mud", {
+		elevation = {-1, 0},
+	}, {warmEnoughToBuild})
+	-- Multiply by 1000 to make it overpower the other water.
+	data.raw.tile["water-mud"].autoplace.probability_expression = 1000 * data.raw.tile["water-mud"].autoplace.probability_expression
+	data.raw.tile["water-mud"].autoplace.richness_expression = 1000 * data.raw.tile["water-mud"].autoplace.richness_expression
+	-- The above works; could use this to get different cutoffs for starting island vs other islands. But rather just change elevation for that.
+	--setTileCondition("water-shallow", noise.delimit_procedure(noise.if_else_chain(
+	--	tooColdToBuild, 0,
+	--	var("apply-start-island-resources"), noise.if_else_chain(
+	--		lt(var("elevation"), -4.5), 0,
+	--		lt(0, var("elevation")), 0,
+	--		1),
+	--	noise.if_else_chain(
+	--		lt(var("elevation"), -1), 0,
+	--		lt(0, var("elevation")), 0,
+	--		1)
+	--) * 1000)) -- Multiply by 1000 to make it overpower the other water.
+end
+data.raw.tile["water-mud"].autoplace = nil
 
--- There's a separate tile for "shallow water", which looks worse than the mud-water, so disable it.
+setTileConditionVarMinMax("water", -- This is shallow water. The deeper water is called "deepwater".
+	{ elevation = { -1, 0.1 } }
+)
+-- Multiply by 1000 to make it overpower the deep water.
+data.raw.tile["water"].autoplace.probability_expression = 1000 * data.raw.tile["water"].autoplace.probability_expression
+data.raw.tile["water"].autoplace.richness_expression = 1000 * data.raw.tile["water"].autoplace.richness_expression
+
+setTileConditionVarMinMax("deepwater",
+	{ elevation = { nil, -1 } }
+)
+data.raw.tile["deepwater"].autoplace.probability_expression = 1000 * data.raw.tile["deepwater"].autoplace.probability_expression
+data.raw.tile["deepwater"].autoplace.richness_expression = 1000 * data.raw.tile["deepwater"].autoplace.richness_expression
+
 data.raw.tile["water-shallow"].autoplace = nil
+data.raw.tile["water-mud"].autoplace = nil

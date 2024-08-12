@@ -19,4 +19,12 @@ X.filterExistingItems = function(possibleItems)
 	return existingItems
 end
 
+X.ifThenElse = function(condition, thenValue, elseValue)
+	if condition then
+		return thenValue
+	else
+		return elseValue
+	end
+end
+
 return X

@@ -123,11 +123,11 @@ local function getStartIslandAndOffshootsMinElevation(scale, x, y, tile, map)
 
 	-- Make underwater areas a bit shallower, so there's more shallow water, so it looks more like the rest of the islands.
 	elevation = noise.if_else_chain(
-		noise.less_than(elevation, -20),
+		noise.less_than(elevation, -10),
 		elevation,
 		noise.less_than(0, elevation),
 		elevation,
-		elevation / 10)
+		-0.5) -- Set elevation to -0.5 where it would have been between -10 and 0, so that we place shallow water.
 
 	elevation = addMarkerLake(elevation, scale, startIslandCenterXY[1], startIslandCenterXY[2], x, y, 9)
 	elevation = addMarkerLake(elevation, scale, 0, 0, x, y, 5)
