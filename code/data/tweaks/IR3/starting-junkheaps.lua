@@ -4,30 +4,30 @@
 
 -- Note that these items can trigger inspirations like copper/tin-working 2, even before their prereqs are researched. I tried and failed to change the costs of these in Inspiration, so instead I'll just make sure we don't get many of those inspiration-triggering items here.
 
-local metals = {"copper", "tin"}
 local itemsAmounts = {
-	["scrap"] = {80, 120},
-	["plate"] = {1, 1},
-	["rod"] = {4, 6},
-	["gear-wheel"] = {1, 1},
-	["rivet"] = {4, 6},
+	["copper-scrap"] = {80, 120},
+	["tin-scrap"] = {80, 120},
+	["copper-plate"] = {1, 1},
+	["tin-plate"] = {1, 1},
+	["copper-rod"] = {3, 7},
+	["tin-rod"] = {3, 7},
+	["copper-gear-wheel"] = {1, 1},
+	["tin-gear-wheel"] = {1, 1},
+	["copper-rivet"] = {4, 6},
 }
 
 local junkpileName = "copper-tin-junkpile-scrap"
 -- If Inspiration is enabled, this should be "copper-tin-junkpile-scrap", else "copper-tin-junkpile".
 
 data.raw["simple-entity"][junkpileName].minable.results = {}
-for _, metal in pairs(metals) do
-	for item, amounts in pairs(itemsAmounts) do
-		local itemName = metal .. "-" .. item
-		if data.raw.item[itemName] ~= nil then
-			local itemData = {
-				name = itemName,
-				type = "item",
-				amount_min = amounts[1],
-				amount_max = amounts[2],
-			}
-			table.insert(data.raw["simple-entity"][junkpileName].minable.results, itemData)
-		end
+for itemName, amounts in pairs(itemsAmounts) do
+	if data.raw.item[itemName] ~= nil then
+		local itemData = {
+			name = itemName,
+			type = "item",
+			amount_min = amounts[1],
+			amount_max = amounts[2],
+		}
+		table.insert(data.raw["simple-entity"][junkpileName].minable.results, itemData)
 	end
 end

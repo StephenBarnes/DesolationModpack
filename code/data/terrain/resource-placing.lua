@@ -510,6 +510,15 @@ setResourceAutoplace {
 
 -- TODO
 
+-- For now, just set the snowy tree to also spawn on volcanic terrain, so player doesn't have to run out of starting warm patch to find first wood.
+-- TODO this is a quick fix, rather solve this by adding extra trees near spawn or something, or altering some other tree type to spawn in these volcanic regions.
+table.insert(data.raw.tree["tree-snow-a"].autoplace.tile_restriction, "volcanic-orange-heat-1")
+table.insert(data.raw.tree["tree-snow-a"].autoplace.tile_restriction, "volcanic-orange-heat-2")
+for _, peak in pairs(data.raw.tree["tree-snow-a"].autoplace.peaks) do
+	if peak.temperature_max_range ~= nil then peak.temperature_max_range = 500 end
+		-- Changing 7.5 to 500, so it can spawn in warm regions.
+end
+
 ------------------------------------------------------------------------
 -- Gem-bearing rocks
 -- (Called gem-rock-diamond, gem-rock-ruby.)
@@ -517,4 +526,3 @@ setResourceAutoplace {
 -- TODO Maybe spawn them only close to enemy bases!
 
 -- TODO
-
