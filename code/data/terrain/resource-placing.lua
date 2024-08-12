@@ -453,7 +453,7 @@ data.raw.resource["natural-gas-fissure"].autoplace = nil
 
 setResourceAutoplace {
 	id = "dirty-steam-fissure",
-	outsideRad = 24,
+	outsideRad = 12,
 	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
 	desiredAmount = 1e9,
 	dots = true,
@@ -464,9 +464,10 @@ setResourceAutoplace {
 -- Clean steam
 -- IR3 places one near player spawn point automatically.
 
+-- TODO does IR3 place these anywhere except at spawn? If not, maybe remove this.
 setResourceAutoplace {
 	id = "steam-fissure",
-	outsideRad = 24,
+	outsideRad = 12,
 	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
 	desiredAmount = 5e8,
 	dots = true,
@@ -510,16 +511,10 @@ setResourceAutoplace {
 -- TODO
 
 ------------------------------------------------------------------------
+-- Gem-bearing rocks
+-- (Called gem-rock-diamond, gem-rock-ruby.)
+-- Maybe place them on certain ores, like IR3 does. Or maybe just place them randomly on frigid terrain.
+-- TODO Maybe spawn them only close to enemy bases!
 
--- TODO handle gas fissures.
--- TODO handle starting-area steam fissures; maybe multiple.
--- TODO handle crude oil.
--- TODO handle uranium and gold.
--- TODO place the gem-bearing rocks from IR3. They should be placed on certain ores. (Called gem-rock-diamond, gem-rock-ruby.)
+-- TODO
 
-
--- TODO all of these should be refactored a lot, so that we instead just have tables with the "specification" of a given resource.
--- Specification should include a list of patch centers and radii, and then the min distance for patch generation, and some details of patch shape/size.
--- Then we just use the same code to generate all resources.
-
--- TODO idea: spawn gem rocks among enemy bases.

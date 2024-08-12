@@ -18,3 +18,4 @@ require("code.data.additions.endgame-resources") -- Must be in data-updates, not
 
 require("code.data.tweaks.stack-sizes") -- Seems some other mod is adjusting stack sizes, eg setting ingot stack sizes to 50. So this can't be in data.lua.
 -- Note this needs to be before the containerization mod creates its recipes, I think.
+-- Note if this is in data-final-fixes, then we must also adjust the boosted ammo items created by Searchlight Assault. But if we put it in data-updates, then SA hasn't created its boosted ammo items yet, so when it does create them, they'll use the new stack sizes.

@@ -66,7 +66,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
 			},
             ["enemy-base"] = {
 				frequency = 1/6,
-                size = 1,
+                size = 1/4,
             },
 
             -- Desolation scale; using smaller value for debug, increase when releasing.
@@ -90,6 +90,7 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             --["ir-rubber-trees"] = {
             --    frequency = 1/6,
             --},
+
         },
         cliff_settings = {
             -- I want to disable cliffs, bc (1) the snowy terrain has lakes, and I don't want to make them depend on the divergence of the elevation or whatever (bc it'll be slow), and (2) they interfere with creating ports etc.
@@ -98,15 +99,20 @@ data.raw["map-gen-presets"]["default"]["Desolation"] = {
             cliff_elevation_0 = 100000,
         },
 
-        --default_enable_all_autoplace_controls = false,
-        -- Wanted to use this to disable rubber trees, but, it seems to cause issues with showing terrain, so rather not using.
+        starting_area = 6, -- 600% size of starting area, so no enemy bases close to player spawn.
 
-        terrain_segmentation = globalParams.waterScaleInverse,
+        terrain_segmentation = globalParams.inverseWaterScale,
         water = globalParams.waterCoverage,
     },
     advanced_settings = {
         enemy_evolution = {
             time_factor = 0.0
+        },
+        enemy_expansion = {
+            enabled = false,
+        },
+        difficulty_settings = {
+            technology_price_multiplier = 20, -- Techs cost 20x as many science packs.
         },
     }
 }
