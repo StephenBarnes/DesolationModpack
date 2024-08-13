@@ -30,6 +30,7 @@ local purifiedMaterials = {
 	"uranium-235", "uranium-238",
 	"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged", "elixir-stone",
 	"silicon", "graphite", "silicon-block",
+	"low-density-structure", -- IR3 uses this ID for steel foam. It's next to silicon and graphite and silicon-block (silicon carbide block), so putting it here.
 	"rubber",
 	"charcoal",
 	"graphitic-coke",
@@ -66,6 +67,8 @@ local smallItems = {
 	"electrum-gate", -- miniaturized gate array
 
 	"battery", "charged-battery", "advanced-battery", "charged-advanced-battery",
+	"hydrogen-battery", "charged-hydrogen-battery", -- Physically it might make more sense to categorize these as canisters? But that throws off per-stack fuel values.
+	-- TODO fully analyze all forms of power storage and transport (all batteries, canisters, barrels, etc.) to ensure the tradeoffs are reasonable.
 }
 local bulkyItems = {
 	"copper-piston", "iron-piston", "steel-piston", "chromium-piston",
@@ -74,10 +77,15 @@ local bulkyItems = {
 	"wood-beam", "copper-beam", "bronze-beam", "iron-beam", "steel-beam", "chromium-beam",
 
 	"lead-plate-special", -- Radiation shielding
+	"steel-hull", -- Hull section, used for rocket parts and satellites.
+	"rocket-part", -- I don't think this is obtainable on its own, but including here anyway.
+	"field-effector",
 
 	"copper-motor", "iron-motor", "copper-rotor", "iron-rotor",
+	"flying-robot-frame", -- IR3 uses this ID for the advanced (steel) rotor unit.
 
 	"engine-unit", "copper-engine-unit", "chromium-engine-unit", "electric-engine-unit",
+	"gyroscope",
 
 	{"module", "speed-module"}, {"module", "speed-module-2"}, {"module", "speed-module-3"},
 	{"module", "effectivity-module"}, {"module", "effectivity-module-2"}, {"module", "effectivity-module-3"},
@@ -100,20 +108,41 @@ local bulkyItems = {
 
 	"space-mirror",
 	"glass-bottle",
+	"rocket-control-unit",
+	"explosives",
+
+	"land-mine",
 
 	"copper-heatsink", "graphite-electrode",
 	"ruby-rod", "ruby-laser", "helium-laser",
+
+	{"capsule", "ln-flare-capsule"},
+	{"capsule", "ocean-scanner"},
+
+	{"tool", "automation-science-pack"},
+	{"tool", "logistic-science-pack"},
+	{"tool", "chemical-science-pack"},
+	{"tool", "military-science-pack"},
+	{"tool", "production-science-pack"},
+	{"tool", "utility-science-pack"},
+	{"tool", "space-science-pack"},
 }
 local veryBulkyItems = {
 	"copper-frame-large", "iron-frame-large", "steel-frame-large", "chromium-frame-large",
 	"steel-frame-turret", "chromium-frame-turret",
+	"solar-assembly", -- Used to make satellites.
+	"quantum-ring",
 }
 local extraBigBuildings = {
 	"chrome-drill",
 	"quantum-lab",
 	"oil-refinery", "chemical-plant",
 	"nuclear-reactor",
+	"bridge_base", -- Lifting train bridge from Cargo Ships mod. I've disabled this.
+
+	-- Not actually buildings, but probably roughly the same size.
 	"quantum-satellite",
+	"satellite", -- Called "cosmic analysis sattelite" in IR3.
 }
 local bigBuildings = {
 	"ic-containerization-machine-1", "ic-containerization-machine-2", "ic-containerization-machine-3",
@@ -168,7 +197,7 @@ local mediumBuildings = {
 	"heat-exchanger",
 	"radar", "bronze-telescope",
 	"seismic-scanner",
-	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret", "arc-turret",
+	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret", "arc-turret", "gun-turret",
 }
 local smallBuildings = {
 	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "bronze-chest", "iron-chest", "steel-chest",
@@ -225,7 +254,6 @@ local vehicles = {
 local robots = {
 	"steambot", "construction-robot", "logistic-robot",
 	{"capsule", "lampbot-capsule"},
-	-- TODO add combat robot capsules.
 }
 local tiles = {
 	"landfill",
@@ -237,6 +265,7 @@ local canisters = {
 	"empty-canister", "empty-iron-canister", "hydrogen-canister", "oxygen-canister", "nitrogen-canister", "helium-canister", "carbon-canister", "natural-canister", "steam-iron-canister", "petroleum-gas-iron-canister", 
 	"steam-cell", "empty-cell",
 	"rocket-fuel", -- IR3 uses this for high-octane fuel.
+	"nuclear-fuel", -- Not obtainable in IR3, but including here anyway.
 }
 local barrels = {
 	"empty-barrel", "water-barrel", "sulfuric-acid-barrel", "crude-oil-barrel", "heavy-oil-barrel", "light-oil-barrel", "petroleum-gas-barrel", "lubricant-barrel", "dirty-water-barrel", "concrete-fluid-barrel", "ethanol-barrel", "liquid-fertiliser-barrel", "bitumen-fluid-barrel", "chromium-plating-solution-barrel", "gold-plating-solution-barrel"
@@ -267,16 +296,22 @@ local bigAmmo = {
 	{"ammo", "mortar-bomb"},
 	{"ammo", "mortar-cluster-bomb"},
 }
-local capsules = {
+local grenades = {
 	{"capsule", "grenade"},
 	{"capsule", "cluster-grenade"},
 	{"capsule", "poison-capsule"},
 	{"capsule", "slowdown-capsule"},
-	{"capsule", "ln-flare-capsule"},
-	{"capsule", "ocean-scanner"},
 }
--- TODO rockets, grenades, etc.
--- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
+local robotCapsules = {
+	{"capsule", "defender-capsule"},
+	{"capsule", "distractor-capsule"},
+	{"capsule", "destroyer-capsule"},
+	{"capsule", "scatterbot-capsule"},
+}
+local healingItems = {
+	{"capsule", "raw-fish"},
+	{"capsule", "medical-pack"},
+}
 
 -- Define stackSizeGroups, table mapping group name to: {
 --    defaultStackSize = d,
@@ -366,9 +401,17 @@ local stackSizeGroups = {
 		defaultStackSize = 10,
 		items = bigAmmo,
 	},
-	capsules = {
+	grenades = {
 		defaultStackSize = 10,
-		items = capsules,
+		items = grenades,
+	},
+	robotCapsules = {
+		defaultStackSize = 10,
+		items = robotCapsules,
+	},
+	healingItems = {
+		defaultStackSize = 10,
+		items = healingItems,
 	},
 }
 

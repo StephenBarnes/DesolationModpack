@@ -4,8 +4,9 @@
 -- * Move various techs around to different places, to fit with the new progression introduced by the modpack, eg geothermal energy should come early.
 -- * Compat between the various mods. Eg we want to insert steam locomotives and cargo ships in the right places.
 -- * Add more complexity in early game, by introducing multiple science packs early on.
--- * We want to avoid "dead ends" in the tech tree, because evolution depends on techs.
--- * Consolidate techs somewhat, since techs are so expensive. Eg I don't want to have a separate tech for each tier of IR3 stacking beltbox, or containerization machine, or AAI loader.
+-- * Consolidate/simplify techs that seem too inconsequential. Eg I don't want to have a separate tech for each tier of IR3 stacking beltbox, or containerization machine. And I don't want to have 10 techs that give +2 to robot follower count or whatever.
+-- * Previously, now obsolete: We want to avoid "dead ends" in the tech tree, because evolution depends on techs.
+--     This is now obsolete, because I decided to instead add evolution to specific milestone techs, not uniformly to all techs.
 
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")

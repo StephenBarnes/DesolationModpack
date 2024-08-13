@@ -356,15 +356,34 @@ local itemNamesToIgnore = Table.listToSet{
 	"discharge-defense-remote", "artillery-targeting-remote",
 	"cliff-explosives", -- No cliffs.
 	"searchlight-assault-signal-interface",
+	"player-port", -- Base-game item, not sure what it's for, placeholder sprites.
+	"pump_marker",
+	"splitter-blocker", -- Unobtainable item, used for filters.
+	"parking-alert", -- From IR3 Airships, used as marker I think.
+
+	-- IR3 massive pipes used for menu simulations.
+	"pipe-to-ground-massive", "copper-pipe-to-ground-massive", "air-pipe-to-ground-massive", "steam-pipe-to-ground-massive",
+
+	-- Linked chests and belts that are used for debugging, tests, workarounds in mods, etc.
+	"linked-chest", "linked-belt", "ir3-linked-filter-chest",
+	"ir3-linked-belt-yellow", "ir3-linked-belt-red", "ir3-linked-belt-blue",
+
+	-- Base-game building that looks like steam engine, but takes only burnable fuel as input.
+	"burner-generator",
+}
+local itemNamePatternsToIgnore = {
+	"spill%-data", -- From IR3, used to store fluid spill pollution data.
+	"^creative", -- From Creative Mod.
+	"^schematic%-", -- From IR3 Inspiration mod.
+	"^ic%-container%-", -- Items in containers, handled by Intermodal Containers mod.
+	"sla_boosted", -- Ammo items boosted by the Searchlight Assault mod.
 }
 local function itemNeedsStackSize(itemName)
 	-- Return whether we actually care about a stack size for this item, since some items are just markers etc.
 	if itemNamesToIgnore[itemName] then return false end
-	if itemName:match("spill%-data") then return false end -- From IR3, used to store fluid spill pollution data.
-	if itemName:match("^creative") then return false end -- From Creative Mod.
-	if itemName:match("^schematic%-") then return false end -- From IR3 Inspiration mod.
-	if itemName:match("^ic%-container%-") then return false end -- Items in containers, handled by Intermodal Containers mod.
-	if itemName:match("sla_boosted") then return false end -- Ammo items boosted by the Searchlight Assault mod.
+	for _, pattern in pairs(itemNamePatternsToIgnore) do
+		if itemName:match(pattern) then return false end
+	end
 	return true
 end
 
