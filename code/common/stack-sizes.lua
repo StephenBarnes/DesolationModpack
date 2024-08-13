@@ -43,7 +43,8 @@ local standardizedIngotsBricks = {
 	"bitumen",
 }
 local smallItems = {
-	"copper-plate", "tin-plate", "iron-plate", "steel-plate", "bronze-plate", "lead-plate", "gold-plate", "chromium-plate", "brass-plate", "electrum-plate",
+	"copper-plate", "tin-plate", "iron-plate", "steel-plate", "bronze-plate", "lead-plate", "gold-plate", "chromium-plate", "brass-plate",
+	"electrum-plate", "electrum-plate-special",
 	"bronze-plate-heavy", "iron-plate-heavy", "steel-plate-heavy", "chromium-plate-heavy",
 	"copper-rivet", "bronze-rivet", "iron-rivet", "steel-rivet", "chromium-rivet",
 	"copper-pellet", "bronze-pellet", "iron-pellet", "steel-pellet", "nickel-pellet", "platinum-pellet",
@@ -101,6 +102,9 @@ local bulkyItems = {
 
 	"space-mirror",
 	"glass-bottle",
+
+	"copper-heatsink", "graphite-electrode",
+	"ruby-rod", "ruby-laser", "helium-laser",
 }
 local veryBulkyItems = {
 	"copper-frame-large", "iron-frame-large", "steel-frame-large", "chromium-frame-large",
@@ -146,6 +150,7 @@ local bigBuildings = {
 	"steel-cryo-tower",
 	"steam-turbine",
 	"centrifuge",
+	"artillery-turret", "flamethrower-turret",
 }
 local mediumBuildings = {
 	"substation",
@@ -166,6 +171,7 @@ local mediumBuildings = {
 	"radar", "bronze-telescope",
 	"seismic-scanner",
 	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret",
+	"searchlight-assault",
 }
 local smallBuildings = {
 	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "bronze-chest", "iron-chest", "steel-chest",
@@ -233,6 +239,7 @@ local tiles = {
 local canisters = {
 	"empty-canister", "empty-iron-canister", "hydrogen-canister", "oxygen-canister", "nitrogen-canister", "helium-canister", "carbon-canister", "natural-canister", "steam-iron-canister", "petroleum-gas-iron-canister", 
 	"steam-cell", "empty-cell",
+	"rocket-fuel", -- IR3 uses this for high-octane fuel.
 }
 local barrels = {
 	"empty-barrel", "water-barrel", "sulfuric-acid-barrel", "crude-oil-barrel", "heavy-oil-barrel", "light-oil-barrel", "petroleum-gas-barrel", "lubricant-barrel", "dirty-water-barrel", "concrete-fluid-barrel", "ethanol-barrel", "liquid-fertiliser-barrel", "bitumen-fluid-barrel", "chromium-plating-solution-barrel", "gold-plating-solution-barrel"
