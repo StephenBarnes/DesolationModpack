@@ -5,6 +5,9 @@ local isDebug = true -- Whether currently debugging; this changes multiple setti
 return {
 	runIntroCutscene = not isDebug, -- Whether to run the IR3 intro cutscene.
 
+	forceSettings = true, -- Whether to force-set and hide settings for other mods. If false, Desolation will only set the default values of those settings.
+		-- I wanted to add a checkbox setting for whether Desolation should do this. But I don't think that's possible, bc the settings' values are only available in the data stage, but we need to adjust the other mods' settings in the settings stage.
+
 	printEveryIslandScanChunk = false, -- Whether to print a message for every chunk scanned by the starting island scan or seismic scanners.
 	scanStartIslandMaxDist = 500, -- How many chunks away from (0,0) we'll scan chunks in the starting island scan. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 	seismicScanMaxDist = 300, -- How many chunks away from a seismic scanner it will scan chunks. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
