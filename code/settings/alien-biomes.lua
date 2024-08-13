@@ -52,11 +52,11 @@ local U = require("code/util/settings")
 
 -- We need to force enable/disable tiles, bc we want to define the tile autoplaces.
 for _, v in pairs(toDisable) do
-	U.forceSetting("alien-biomes-include-"..v, "string", "Disabled")
+	U.setDefaultOrForce("alien-biomes-include-"..v, "string", "Disabled")
 end
 for _, v in pairs(toEnable) do
-	U.forceSetting("alien-biomes-include-"..v, "string", "Enabled")
+	U.setDefaultOrForce("alien-biomes-include-"..v, "string", "Enabled")
 end
 
 -- Also enable removing obsolete tiles.
-data.raw["string-setting"]["alien-biomes-remove-obsolete-tiles"].default_value = "Enabled"
+U.setDefaultOrForce("alien-biomes-remove-obsolete-tiles", "string", "Enabled")

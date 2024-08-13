@@ -1,6 +1,6 @@
 {
 	"name": "Desolation",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"title": "Desolation Modpack",
 	"author": "StephenB",
 	"factorio_version": "1.1",
@@ -12,6 +12,7 @@
 	, "IndustrialRevolution3SpaceMining >= 1.0.2"
 	, "IndustrialRevolution3ForestryCombinators >= 1.0.0"
 	, "IndustrialRevolution3Inspiration >= 1.0.7"
+	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 
 	, "IR3_steam_locomotive >= 0.1.2"
 	, "cargo-ships >= 0.2.7"
@@ -25,12 +26,12 @@
 	, "BREAM >= 1.3.0"
 	, "DeadlockLargerLamp >= 1.5.1"
 	, "? gore-updated >= 0.19.0"
+	, "SearchlightAssault >= 2.2.17"
 
 	, "? ProductionScrapForIR3"
-	, "SearchlightAssault >= 2.2.17"
+
 	, "SimpleRadioTowers >= 1.0.0"
 
-	, "IndustrialRevolution3LoadersStacking >= 1.0.12"
 	, "IntermodalContainers >= 2.0.8"
 	],
 	"description": "PRE-ALPHA, NOT PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."

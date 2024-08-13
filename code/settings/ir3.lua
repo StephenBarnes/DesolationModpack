@@ -1,6 +1,8 @@
-data.raw["string-setting"]["ir-ghost-tint"].default_value = "blue" -- Tint ghosts blue, not white, bc the terrain is mostly white snow.
+local Settings = require("code.util.settings")
 
---data.raw["string-setting"]["ir-starting-age"].default_value = "none" -- Don't start with ammo, miner, blunderbuss.
--- This isn't needed if Inspiration is enabled.
+Settings.setDefaultOrForce("ir-ghost-tint", "string", "blue") -- Tint ghosts blue, not white, bc the terrain is mostly white snow.
 
-data.raw["string-setting"]["ir-bottomless-pit"].default_value = "notavailable"
+Settings.setDefaultOrForce("ir-bottomless-pit", "string", "notavailable")
+
+--Settings.setDefaultOrForce("ir-starting-age", "string", "none") -- Don't start with ammo, miner, blunderbuss.
+-- This crashes if Inspiration is enabled, bc it changes the allowed values or something.

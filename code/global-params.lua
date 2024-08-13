@@ -1,6 +1,6 @@
 local G = require("code.util.general")
 
-local isDebug = false -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
+local isDebug = true -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
 
 return {
 	runIntroCutscene = not isDebug, -- Whether to run the IR3 intro cutscene.
@@ -24,7 +24,7 @@ return {
 
 	colorBuildableTiles = false, -- Whether to color the buildable tiles in bright colors, for debugging.
 
-	debugProgression = isDebug, -- Whether to enable debug code in debug-progression.lua.
+	runAutoDebug = isDebug, -- Whether to enable debug code in auto-debug.lua.
 
 	notifyIncorrectMapgenPreset = not isDebug, -- Whether to notify the player when they try to play a scenario with the wrong mapgen preset.
 

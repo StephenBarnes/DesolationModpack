@@ -1,7 +1,16 @@
 local Export = {}
 
 Export.startupSetting = function(name)
+	-- Can only be called in data stage, not settings stage (bc in settings stage we have to use data.raw["string-setting"] instead of settings.startup).
 	return settings.startup["Desolation-"..name].value
+end
+
+Export.setDefaultOrForce = function(name, settingType, value)
+	if data.raw["bool-setting"]["Desolation-force-settings"].value then
+		Export.forceSetting(name, settingType, value)
+	else
+		Export.setDefault(name, settingType, value)
+	end
 end
 
 Export.setDefault = function(name, settingType, value)

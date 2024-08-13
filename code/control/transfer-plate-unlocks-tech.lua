@@ -4,11 +4,6 @@
 
 -- TODO also change the description and the manifesto page to more of a step-by-step explanation.
 
--- Couldn't find an easy hook / whatever in IR3 to do this.
--- There's a script event ir-transfer-plate, but it gets called when walking onto the plate, not when items are actually transferred.
--- So, a bit of a kludge: check whether inventory changes in the same tick.
--- When player steps onto a plate, we record the tick. Then when inventory changes, check if it's still the same tick.
-
 local function onTransferPlateOrHotkey(event)
 	if event.identity ~= "transfer-plate" then return end
 	local player = game.players[event.player_index]
@@ -19,8 +14,6 @@ local function onTransferPlateOrHotkey(event)
 		end
 	end
 end
-
-------------------------------------------------------------------------
 
 local function onInitOrLoad()
 	local transferPlateEventId = remote.call("ir-events", "get-event-id", "on_transfer_plate_or_hotkey")

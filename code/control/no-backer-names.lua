@@ -2,7 +2,11 @@
 -- I'm changing it to not apply to ghosts or train stops, bc otherwise train stops in blueprints aren't pasted correctly.
 -- Unfortunately this means that eg blueprinting labs will still give them names.
 -- Could remove the exclusion for train stops, but then in some cases (eg blueprint-pasting a train stop, then building it manually) the train stop will get its name removed.
--- Basically, I'm erring on the side of never causing unexpected behavior, just eliminating some obviously stupid behavior like naming labs.
+-- Basically, I'm erring on the side of never causing possibly-disruptive behavior, just eliminating backer names in some cases where it's known to be non-disruptive.
+
+-- To fix this permanently, the user could just change the file Factorio/data/core/backers.json to only have the one entry "".
+
+-- I could make a separate mod that has the entire list of ~3000 backer names included with Factorio, and then checks all named entities against this list, setting names to "" if they're in that list. But that should be in a separate QOL mod, and also seems unnecessary since users could just edit backers.json themselves.
 
 local function onBuiltEntity(event)
 	local entity = event.created_entity or event.entity
@@ -16,7 +20,3 @@ return {
 	onBuiltEntity = onBuiltEntity,
 	onRobotBuiltEntity = onBuiltEntity,
 }
-
--- TODO rather check the list of backer names in Factorio/data/core/backers.json, and put those in a table, and then remove any entity name that's in that set.
-
--- TODO check how this mod does it: https://mods.factorio.com/mod/Namelists?from=search

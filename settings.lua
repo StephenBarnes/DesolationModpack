@@ -16,6 +16,8 @@ function addSetting(name, default_value, type, stage)
     })
 end
 
+addSetting("force-settings", true, "bool", "startup")
+
 addSetting("complex-sliders", false, "bool", "startup")
 
 addSetting("remove-mapgen-presets", true, "bool", "startup")
