@@ -333,7 +333,8 @@ local stackSizeGroups = {
 		items = purifiedMaterials,
 	},
 	standardizedIngotsBricks = {
-		defaultStackSize = 100,
+		defaultStackSize = 120,
+			-- Should be divisible by 4, and then again by 2, so that bundling and packing recipes have nice round numbers.
 		items = standardizedIngotsBricks,
 	},
 	smallItems = {
@@ -390,11 +391,11 @@ local stackSizeGroups = {
 		items = barrels,
 	},
 	shotgunAmmo = {
-		defaultStackSize = 10,
+		defaultStackSize = 20,
 		items = shotgunAmmo,
 	},
 	submachineGunAmmo = {
-		defaultStackSize = 10,
+		defaultStackSize = 20,
 		items = submachineGunAmmo,
 	},
 	bigAmmo = {
@@ -415,21 +416,6 @@ local stackSizeGroups = {
 	},
 }
 
--- Seems that IR3's bundle items are setting their stack size in data stage? Bc even with this in data.lua, the bundles still have stack size 13, from base ingots having stack size 50, it seems. But I think their stack size was higher than 50. Probably being caused by my mod, somehow.
--- Note that player can manually unbundle - feature added by IR3.
--- So we can't set the stack sizes of the bundles too high, or it'll break, bc unbundle product will be capped at 1 stack.
--- This list here excludes the stacked- prefix.
-local bundleItems = {
-	"stone-brick",
-	"concrete-block",
-	"plastic-bar",
-	"copper-ingot", "tin-ingot", "bronze-ingot", "iron-ingot", "gold-ingot",
-	"lead-ingot", "steel-ingot", "brass-ingot", "nickel-ingot", "chromium-ingot",
-	"platinum-ingot",
-	"glass", "nanoglass",
-}
-
 return {
 	stackSizeGroups = stackSizeGroups,
-	bundleItems = bundleItems,
 }

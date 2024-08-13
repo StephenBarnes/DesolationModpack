@@ -8,11 +8,17 @@ local T = require("code.util.table")
 -- * The Searchlight Assault mod creates boosted ammo items in final-fixes stage. We change ammo stack sizes in data-updates stage, and the boosted ammo items copy our altered stack sizes.
 
 local stackSizeCommon = require("code.common.stack-sizes")
+local bundleItems = require("code.common.bundle-items")
 
 local function adjustBundles()
 	-- Tweak stack sizes for bundles.
+
+	-- Note that player can manually unbundle - feature added by IR3.
+	-- So we can't set the stack sizes of the bundles higher than 1/4 of the ingot's stack size, or it'll break, bc unbundle product will be capped at 1 stack.
+	-- Could override this by disabling IR3's manual unbundling.
+
 	local bundleFactor = 4 -- number of items in a bundle, defined by IR3.
-	for _, itemId in pairs(stackSizeCommon.bundleItems) do
+	for _, itemId in pairs(bundleItems) do
 		local baseItem = data.raw.item[itemId]
 		if baseItem == nil then
 			log("Warning: base item "..itemId.." not found, could not adjust stack size.")

@@ -18,6 +18,7 @@ local Recipe = require("code.util.recipe")
 local Tech = require("code.util.tech")
 
 local stackSizeCommon = require("code.common.stack-sizes")
+local bundleItems = require("code.common.bundle-items")
 
 -- Local var to hold a list of all techs' names, sorted so that all dependencies only go forwards.
 local toposortedTechs = nil
@@ -471,7 +472,7 @@ local function checkStackSizeGroupsOfItem(typeName, itemName)
 			end
 		end
 	end
-	for _, itemId in pairs(stackSizeCommon.bundleItems) do
+	for _, itemId in pairs(bundleItems) do
 		local bundleItemName = "stacked-"..itemId
 		if itemName == bundleItemName then
 			table.insert(groupsOfThisItem, "bundles")
