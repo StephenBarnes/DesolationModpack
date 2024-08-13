@@ -1,8 +1,6 @@
-local Tech = require("code.util.tech")
-local Recipe = require("code.util.recipe")
+-- Make a new wall type using the game's original wall sprites, and call it "concrete wall". Make it require concrete and iron rods, and make it stronger than the brick wall.
+-- Then rename the vanilla wall item to "Brick wall", and make it use IR3's alternative wall sprites.
 
--- Make a new wall type using the game's original wall sprites, and call it sth like "concrete wall". Make it require concrete and iron rods, and make it stronger than the brick wall.
--- TODO
 local concWallEnt = table.deepcopy(data.raw.wall["stone-wall"])
 concWallEnt.name = "concrete-wall"
 concWallEnt.localised_name = {"item-name.concrete-wall"}
@@ -53,7 +51,6 @@ for k, v in pairs(data.raw.wall["ancient-wall"]) do
 		data.raw.wall["stone-wall"][k] = v
 	end
 end
--- I don't think IR3 actually uses these icons, but it does include them.
 data.raw.recipe["stone-wall"].icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/stone-wall.png"
 data.raw.recipe["stone-wall"].icon_size = 64
 data.raw.recipe["stone-wall"].icon_mipmaps = 4

@@ -371,15 +371,17 @@ local function checkStackSizeGroupsOfItem(typeName, itemName)
 	if not itemNeedsStackSize(itemName) then return true end
 	local groupsOfThisItem = {}
 	for groupName, groupData in pairs(stackSizeCommon.stackSizeGroups) do
-		for _, itemSpecifier in pairs(groupData.items) do
-			local itemId
-			if type(itemSpecifier) == "string" then
-				itemId = itemSpecifier
-			else
-				itemId = itemSpecifier[2]
-			end
-			if itemId == itemName then
-				table.insert(groupsOfThisItem, groupName)
+		for _, itemList in pairs({groupData.items, groupData.dataFinalFixesItems}) do
+			for _, itemSpecifier in pairs(itemList) do
+				local itemId
+				if type(itemSpecifier) == "string" then
+					itemId = itemSpecifier
+				else
+					itemId = itemSpecifier[2]
+				end
+				if itemId == itemName then
+					table.insert(groupsOfThisItem, groupName)
+				end
 			end
 		end
 	end

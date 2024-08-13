@@ -1,5 +1,5 @@
 -- Data-stage changes for the start island scan.
--- The code for the actual scanning is in control/start-island-scan.lua.
+-- The code for the actual scanning is in control/map-scanning/start-island-scan.lua.
 
 table.insert(data.raw.technology["ir-bronze-telescope"].effects, {
 	type = "nothing",

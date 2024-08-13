@@ -171,7 +171,6 @@ local mediumBuildings = {
 	"radar", "bronze-telescope",
 	"seismic-scanner",
 	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret",
-	"searchlight-assault",
 }
 local smallBuildings = {
 	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "bronze-chest", "iron-chest", "steel-chest",
@@ -303,8 +302,9 @@ local capsules = {
 -- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
 
 -- Define stackSizeGroups, table mapping group name to: {
---    items = {a, b, c},
 --    defaultStackSize = d,
+--    items = {a, b, c}, -- Items whose stack sizes should be changed in data-updates stage.
+--    dataFinalFixesItems = {a, b, c}, -- Items whose stack sizes should be changed in data-final-fixes stage.
 -- }
 -- Note these are also used in the names of settings.
 local stackSizeGroups = {
@@ -347,6 +347,7 @@ local stackSizeGroups = {
 	mediumBuildings = {
 		defaultStackSize = 20,
 		items = mediumBuildings,
+		dataFinalFixesItems = {"searchlight-assault"},
 	},
 	bigBuildings = {
 		defaultStackSize = 10,

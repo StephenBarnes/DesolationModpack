@@ -45,6 +45,9 @@ require("code.data.tweaks.searchlight-assault")
 
 require("code.data.tweaks.no-long-inserters")
 
+local adjustForStage = require("code.data.tweaks.stack-sizes")
+adjustForStage("data-final-fixes")
+
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
 -- Temporary: printing out tile prototype info
