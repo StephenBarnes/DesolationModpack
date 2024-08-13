@@ -151,10 +151,9 @@ local function checkTechUnlockOrder()
 		"coal",
 		"stone",
 		"gold-ore",
-
+		"ice",
 		"ruby-gem",
 		"diamond-gem",
-
 		"copper-scrap",
 		"tin-scrap",
 
@@ -174,46 +173,94 @@ local function checkTechUnlockOrder()
 	local unlockedImplicitlyByTech = {
 		-- TODO add water
 		-- TODO add steam from the first steam mechanism thing
+		-- TODO check why these aren't generating errors yet
 	}
 
-	-- Table from item unlocked by tech to stuff that's also unlocked by that item.
-	local unlockedImplicitlyByItem = {
-		["transfer-plate-2x2"] = {"Desolation-transfer-plate-unlocks-tech"},
-		["transfer-plate"] = {"Desolation-transfer-plate-unlocks-tech"},
+	-- Table of info about stuff that unlocks other stuff, rather than being explicitly unlocked by techs.
+	-- Each entry is either {unlocking items, unlocked items} where each entry is a list - unlocking items are all needed together.
+	local implicitUnlocks = {
+		{{"transfer-plate-2x2"}, {"Desolation-transfer-plate-unlocks-tech"}},
+		{{"transfer-plate"}, {"Desolation-transfer-plate-unlocks-tech"}},
 
-		["pumpjack"] = {"schematic-ir-crude-oil-processing", "crude-oil"},
+		{{"pumpjack", "boat"}, {"schematic-ir-crude-oil-processing", "fluid:crude-oil"}},
 
-		["satellite"] = {"space-science-pack"},
+		{{"steel-derrick"}, {"fluid:dirty-steam"}},
+		{{"steel-derrick", "boat"}, {"fluid:fossil-gas", "fluid:immateria"}},
 
-		["gold-ingot"] = {"schematic-ir-gold-milestone", "gold-scrap"},
-		["steel-ingot"] = {"schematic-ir-steel-milestone", "steel-scrap"},
-		["iron-ingot"] = {"schematic-ir-iron-milestone", "iron-scrap"},
-		["glass"] = {"schematic-ir-glass-milestone", "glass-scrap"},
-		["bronze-ingot"] = {"schematic-ir-bronze-milestone", "bronze-scrap"},
-		["copper-ingot"] = {"schematic-ir-copper-working-1"},
-		["tin-ingot"] = {"schematic-ir-tin-working-1"},
-		["copper-plate"] = {"schematic-ir-copper-working-2"},
-		["tin-gear-wheel"] = {"schematic-ir-tin-working-2"},
-		["brass-ingot"] = {"schematic-ir-brass-milestone", "brass-scrap"},
-		["electrum-gem"] = {"schematic-ir-electrum-milestone"},
-		["uranium-235"] = {"schematic-kovarex-enrichment-process"},
+		{{"tree-planter-ir-rubber-tree"}, {"rubber-wood"}},
+		{{"quantum-satellite"}, {"comet-ice-ore"}}, -- For deep space mining.
 
-		["lead-ingot"] = {"schematic-ir-lead-smelting", "lead-scrap"},
-		["chromium-ingot"] = {"schematic-ir-chromium-smelting", "chromium-scrap"},
-		["nickel-ingot"] = {"schematic-ir-nickel-smelting", "nickel-scrap"},
-		["platinum-ingot"] = {"schematic-ir-platinum-smelting", "platinum-scrap"},
+		{{"fluid:sulfuric-acid", "boat"}, {"uranium-ore"}},
+		{{"uranium-fuel-cell"}, {"used-up-uranium-fuel-cell"}},
 
-		["steel-derrick"] = {"dirty-steam", "fossil-gas"},
+		{{"satellite", "rocket-silo", "rocket-part"}, {"space-science-pack"}},
 
-		["sulfuric-acid"] = {"uranium-ore"},
+		-- Schematics for IR3 Inspiration mod
+		{{"gold-ingot"}, {"schematic-ir-gold-milestone"}},
+		{{"steel-ingot"}, {"schematic-ir-steel-milestone"}},
+		{{"iron-ingot"}, {"schematic-ir-iron-milestone"}},
+		{{"glass"}, {"schematic-ir-glass-milestone"}},
+		{{"bronze-ingot"}, {"schematic-ir-bronze-milestone"}},
+		{{"copper-ingot"}, {"schematic-ir-copper-working-1"}},
+		{{"tin-ingot"}, {"schematic-ir-tin-working-1"}},
+		{{"copper-plate"}, {"schematic-ir-copper-working-2"}},
+		{{"tin-gear-wheel"}, {"schematic-ir-tin-working-2"}},
+		{{"brass-ingot"}, {"schematic-ir-brass-milestone"}},
+		{{"electrum-gem"}, {"schematic-ir-electrum-milestone"}},
+		{{"uranium-235"}, {"schematic-kovarex-enrichment-process"}},
+		{{"lead-ingot"}, {"schematic-ir-lead-smelting"}},
+		{{"chromium-ingot"}, {"schematic-ir-chromium-smelting"}},
+		{{"nickel-ingot"}, {"schematic-ir-nickel-smelting"}},
+		{{"platinum-ingot"}, {"schematic-ir-platinum-smelting"}},
 
-		["uranium-fuel-cell"] = {"used-up-uranium-fuel-cell"},
-
-		["quantum-satellite"] = {"comet-ice-ore"}, -- For deep space mining.
+		-- Scrapping
+		{{"gold-ingot", "iron-scrapper"}, {"gold-scrap"}},
+		{{"iron-ingot", "iron-scrapper"}, {"iron-scrap"}},
+		{{"steel-ingot", "iron-scrapper"}, {"steel-scrap"}},
+		{{"glass", "iron-scrapper"}, {"glass-scrap"}},
+		{{"concrete", "iron-scrapper"}, {"concrete-scrap"}},
+		{{"brass-ingot", "iron-scrapper"}, {"brass-scrap"}},
+		{{"chromium-ingot", "iron-scrapper"}, {"chromium-scrap"}},
+		{{"nickel-ingot", "iron-scrapper"}, {"nickel-scrap"}},
+		{{"platinum-ingot", "iron-scrapper"}, {"platinum-scrap"}},
+		{{"lead-ingot", "iron-scrapper"}, {"lead-scrap"}},
+		{{"bronze-ingot", "iron-scrapper"}, {"bronze-scrap"}},
 	}
 
-	-- TODO special tables for stuff like the barrelling recipes.
-	-- TODO figure out why the barrelling tech isn't currently reporting any errors.
+	-- Build a table of the unlocks above indexed by each prereq, for faster lookup.
+	local implicitUnlocksByItem = {}
+	for _, unlock in pairs(implicitUnlocks) do
+		for _, prereqItem in pairs(unlock[1]) do
+			if implicitUnlocksByItem[prereqItem] == nil then
+				implicitUnlocksByItem[prereqItem] = {}
+			end
+			table.insert(implicitUnlocksByItem[prereqItem], unlock)
+		end
+	end
+
+	-- Sometimes it's expected that recipes will be unlocked before the ingredients are available.
+	-- For example, the barrelling tech unlocks all barrelling recipes, even if the fluid isn't available yet.
+	-- Similarly, the cryogenics tech unlocks all gas-to-liquid recipes even if the gas isn't available yet.
+	-- For these recipes, we don't report missing ingredients, but if ingredients are missing, we also don't add the products to list of stuff we have.
+	-- In these cases, we need to manually add the implicit unlocks above.
+	local recipeUnlockedInAdvance = Table.listToSet{
+		-- Fossil gas separation recipes (from cryogenics tech) can technically be unlocked before steel-derrick which supplies fossil-gas.
+		"fossil-gas-separation", "fossil-gas-separation-reversed", "fossil-gas-separation-natural",
+
+		-- Scrap smelting recipes unlocked before the scrapping machine is available.
+		"glass-from-scrap",
+		"bronze-ingot-from-scrap",
+		"iron-ingot-from-scrap",
+		"gold-ingot-from-scrap",
+	}
+	-- Add the barrelling/unbarrelling and cooling/warming recipes.
+	local recipeCategoriesUnlockedInAdvance = Table.listToSet{"barrelling", "unbarrelling", "cooling", "warming"}
+	for _, recipe in pairs(data.raw.recipe) do
+		if recipeCategoriesUnlockedInAdvance[recipe.category] then
+			recipeUnlockedInAdvance[recipe.name] = true
+		end
+	end
+	--log("Recipes that are unlocked in advance: "..serpent.block(recipeUnlockedInAdvance))
 
 	-- Tables from tech to stuff that's available before/after that tech is researched.
 	-- Later, we require that the stuff available before the tech contains all science packs required by the tech.
@@ -222,15 +269,15 @@ local function checkTechUnlockOrder()
 	local availableBeforeTech = {}
 	for _, techName in pairs(toposortedTechs) do
 		local tech = data.raw.technology[techName]
-		local prereqs = Tech.getPrereqList(tech)
+		local techPrereqs = Tech.getPrereqList(tech)
 		local availableBeforeThisTech = {}
 		local availableAfterThisTech = {}
-		if prereqs == nil or #prereqs == 0 then
+		if techPrereqs == nil or #techPrereqs == 0 then
 			-- If no prereqs, it's only things unlocked at start.
 			Table.overwriteInto(unlockedAtStart, availableBeforeThisTech)
 		else
 			-- If it has prereqs, copy in stuff from prereqs.
-			for _, prereqName in pairs(prereqs) do
+			for _, prereqName in pairs(techPrereqs) do
 				local availableAfterPrereq = availableAfterTech[prereqName]
 				if availableAfterPrereq == nil then
 					log("ERROR: Tech "..techName.." has prereq "..prereqName.." which has not been processed; this should never happen.")
@@ -255,17 +302,33 @@ local function checkTechUnlockOrder()
 					log("ERROR: Tech "..techName.." has recipe "..effect.recipe.." which is nil; this should never happen.")
 					return false
 				end
-				local results = Recipe.getResults(recipe)
-				for _, result in pairs(results) do
-					local resultName = Recipe.resultToName(result)
-					if resultName == nil then
-						log("ERROR: Recipe "..effect.recipe.." has result "..serpent.block(result).." which has no name; this should never happen.")
-						successfulSoFar = false
-					else
-						availableAfterThisTech[resultName] = true
-						if unlockedImplicitlyByItem[resultName] ~= nil then
-							for _, unlockedImplicitlyByItemName in pairs(unlockedImplicitlyByItem[resultName]) do
-								availableAfterThisTech[unlockedImplicitlyByItemName] = true
+
+				-- For advance-unlocked recipes, we only add the products if we already had all the ingredients before the tech.
+				-- For example, the barrelling tech unlocks the sulfuric-acid-unbarrelling recipe, which has sulfuric acid as product; but it shouldn't count as making sulfuric acid available yet, because to get the barrel we'd need to already have sulfuric acid.
+				local shouldAddRecipeProducts = true
+				if recipeUnlockedInAdvance[effect.recipe] then
+					shouldAddRecipeProducts = Table.allInSet(Recipe.getIngredientNames(recipe), availableBeforeThisTech)
+				end
+
+				if shouldAddRecipeProducts then
+					local results = Recipe.getResults(recipe)
+					for _, result in pairs(results) do
+						local resultName = Recipe.resultToName(result)
+						if resultName == nil then
+							log("ERROR: Recipe "..effect.recipe.." has result "..serpent.block(result).." which has no name; this should never happen.")
+							successfulSoFar = false
+						else
+							availableAfterThisTech[resultName] = true
+
+							for _, implicitUnlock in pairs(implicitUnlocksByItem[resultName] or {}) do
+								local unlockPrereqs = implicitUnlock[1]
+								local unlockedItems = implicitUnlock[2]
+								local allPrereqsSatisfied = (#unlockPrereqs == 1) or Table.allInSet(unlockPrereqs, availableAfterThisTech)
+								if allPrereqsSatisfied then
+									for _, unlockedItem in pairs(unlockedItems) do
+										availableAfterThisTech[unlockedItem] = true
+									end
+								end
 							end
 						end
 					end
@@ -317,21 +380,23 @@ local function checkTechUnlockOrder()
 					log("ERROR: Tech "..techName.." has recipe "..effect.recipe.." which is nil; this should never happen.")
 					return false
 				end
-				local ingredients = recipe.ingredients or Table.maybeGet(recipe.normal, "ingredients")
-				if ingredients == nil then
-					log("ERROR: Recipe "..effect.recipe.." has no ingredients; this should never happen. Recipe: "..serpent.block(recipe))
-					log("recipe.normal.ingredients == "..serpent.block(recipe.normal.ingredients))
-					return false
-				end
-				for _, ingredient in pairs(ingredients) do
-					local ingredientName = Recipe.resultToName(ingredient)
-					if ingredientName == nil then
-						log("ERROR: Recipe "..effect.recipe.." has ingredient "..serpent.block(ingredient).." which has no name; this should never happen.")
+				if not recipeUnlockedInAdvance[effect.recipe] then
+					local ingredients = recipe.ingredients or Table.maybeGet(recipe.normal, "ingredients")
+					if ingredients == nil then
+						log("ERROR: Recipe "..effect.recipe.." has no ingredients; this should never happen. Recipe: "..serpent.block(recipe))
+						log("recipe.normal.ingredients == "..serpent.block(recipe.normal.ingredients))
 						return false
 					end
-					if not availableAfterTech[techName][ingredientName] then
-						log("ERROR: Tech "..techName.." unlocks recipe "..effect.recipe.." which requires ingredient "..ingredientName.." but that ingredient has not been unlocked yet.")
-						successfulSoFar = false
+					for _, ingredient in pairs(ingredients) do
+						local ingredientName = Recipe.resultToName(ingredient)
+						if ingredientName == nil then
+							log("ERROR: Recipe "..effect.recipe.." has ingredient "..serpent.block(ingredient).." which has no name; this should never happen.")
+							return false
+						end
+						if not availableAfterTech[techName][ingredientName] then
+							log("ERROR: Tech "..techName.." unlocks recipe "..effect.recipe.." which requires ingredient "..ingredientName.." but that ingredient has not been unlocked yet.")
+							successfulSoFar = false
+						end
 					end
 				end
 			end

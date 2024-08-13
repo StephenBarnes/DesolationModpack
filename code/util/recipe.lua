@@ -100,6 +100,8 @@ Recipe.setResults = function(recipeName, results)
 end
 
 Recipe.getResults = function(recipe)
+	-- Returns a list of results, each of format {name, amount} or {type=type, name=name, amount=amount}, etc.
+	-- Basically this abstracts over the base game's mess with normal/expensive and results/result.
 	local r = recipe.results or Table.maybeGet(recipe.normal, "results")
 	if r ~= nil then return r end
 
@@ -110,6 +112,20 @@ Recipe.getResults = function(recipe)
 		local singleResultAmount = recipe.result_count or Table.maybeGet(recipe.normal, "result_count")
 		return {{singleResult, singleResultAmount}}
 	end
+end
+
+Recipe.getIngredientNames = function(recipe)
+	-- Returns a list of ingredient names.
+	-- Also prefixes "fluid:" to fluid names.
+	-- Basically this abstracts over the base game's mess with normal/expensive and different list/table formats for ingredients.
+	local ingredients = recipe.ingredients or Table.maybeGet(recipe.normal, "ingredients")
+	if ingredients == nil then return {} end
+
+	local ingredientNames = {}
+	for _, ingredient in pairs(ingredients) do
+		table.insert(ingredientNames, Recipe.resultToName(ingredient))
+	end
+	return ingredientNames
 end
 
 Recipe.resultToName = function(result)

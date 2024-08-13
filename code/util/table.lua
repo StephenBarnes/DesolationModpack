@@ -65,4 +65,14 @@ Table.listToSet = function(l)
 	return s
 end
 
+Table.allInSet = function(list, set)
+	-- Returns true iff all items in list are in set.
+	for _, item in pairs(list) do
+		if not set[item] then
+			return false
+		end
+	end
+	return true
+end
+
 return Table
