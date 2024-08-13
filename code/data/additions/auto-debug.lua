@@ -355,14 +355,16 @@ local itemNamesToIgnore = Table.listToSet{
 	"waterway",
 	"discharge-defense-remote", "artillery-targeting-remote",
 	"cliff-explosives", -- No cliffs.
+	"searchlight-assault-signal-interface",
 }
 local function itemNeedsStackSize(itemName)
 	-- Return whether we actually care about a stack size for this item, since some items are just markers etc.
 	if itemNamesToIgnore[itemName] then return false end
-	if itemName:match("spill%-data") then return false end
-	if itemName:match("^creative") then return false end
-	if itemName:match("^schematic%-") then return false end
-	if itemName:match("^ic%-container%-") then return false end
+	if itemName:match("spill%-data") then return false end -- From IR3, used to store fluid spill pollution data.
+	if itemName:match("^creative") then return false end -- From Creative Mod.
+	if itemName:match("^schematic%-") then return false end -- From IR3 Inspiration mod.
+	if itemName:match("^ic%-container%-") then return false end -- Items in containers, handled by Intermodal Containers mod.
+	if itemName:match("sla_boosted") then return false end -- Ammo items boosted by the Searchlight Assault mod.
 	return true
 end
 
@@ -404,9 +406,9 @@ end
 local function checkStackSizesSet()
 	-- Checks that all items have their stack sizes set in common/stack-sizes.lua, exactly once.
 	local success = true
-	local typesToCheck = {"item", "item-with-entity-data", "ammo", "capsule", "item-with-entity-data", "item-with-label", "item-with-inventory", "item-with-tags", "module", "rail-planner", "tool", "armor", "mining-tool", "repair-tool"}
+	local typesToCheck = {"item", "item-with-entity-data", "ammo", "capsule", "item-with-entity-data", "item-with-label", "item-with-inventory", "item-with-tags", "module", "rail-planner", "tool", "repair-tool"}
 		-- We check all entries in data.raw.TYPE for all TYPE that is a subclass of ItemPrototype.
-		-- Except for selection-tool (and subclasses), blueprint, blueprint-book, spidertron-remote, gun, armor
+		-- Except for selection-tool (and subclasses), blueprint, blueprint-book, spidertron-remote, gun, armor, mining-tool
 	for _, typeName in pairs(typesToCheck) do
 		for itemName, _ in pairs(data.raw[typeName]) do
 			if not checkStackSizeGroupsOfItem(typeName, itemName) then success = false end

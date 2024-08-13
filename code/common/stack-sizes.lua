@@ -79,8 +79,6 @@ local bulkyItems = {
 
 	"engine-unit", "copper-engine-unit", "chromium-engine-unit", "electric-engine-unit",
 
-	"ruby-laser", "helium-laser",
-
 	{"module", "speed-module"}, {"module", "speed-module-2"}, {"module", "speed-module-3"},
 	{"module", "effectivity-module"}, {"module", "effectivity-module-2"}, {"module", "effectivity-module-3"},
 	{"module", "productivity-module"}, {"module", "productivity-module-2"}, {"module", "productivity-module-3"},
@@ -170,7 +168,7 @@ local mediumBuildings = {
 	"heat-exchanger",
 	"radar", "bronze-telescope",
 	"seismic-scanner",
-	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret",
+	"photon-turret", "rocket-turret", "laser-turret", "scattergun-turret", "arc-turret",
 }
 local smallBuildings = {
 	"wood-pallet", "tin-pallet", "wooden-chest", "tin-chest", "bronze-chest", "iron-chest", "steel-chest",
@@ -248,24 +246,12 @@ local shotgunAmmo = {
 	{"ammo", "bronze-cartridge"},
 	{"ammo", "iron-cartridge"},
 	{"ammo", "piercing-shotgun-shell"}, -- This is the steel cartridge.
-
-	-- Variants boosted by Searchlight Assault mod.
-	{"ammo", "shotgun-shell-sla_boosted"},
-	{"ammo", "bronze-cartridge-sla_boosted"},
-	{"ammo", "iron-cartridge-sla_boosted"},
-	{"ammo", "piercing-shotgun-shell-sla_boosted"},
 }
 local submachineGunAmmo = {
 	{"ammo", "firearm-magazine"}, -- This is the normal iron magazine.
 	{"ammo", "piercing-rounds-magazine"}, -- This is the steel magazine.
 	{"ammo", "chromium-magazine"},
 	{"ammo", "uranium-rounds-magazine"},
-
-	-- Variants boosted by Searchlight Assault mod.
-	{"ammo", "firearm-magazine-sla_boosted"},
-	{"ammo", "piercing-rounds-magazine-sla_boosted"},
-	{"ammo", "chromium-magazine-sla_boosted"},
-	{"ammo", "uranium-rounds-magazine-sla_boosted"},
 }
 local bigAmmo = {
 	{"ammo", "flamethrower-ammo"},
@@ -277,19 +263,9 @@ local bigAmmo = {
 	{"ammo", "explosive-uranium-cannon-shell"},
 	{"ammo", "uranium-cannon-shell"},
 	{"ammo", "artillery-shell"},
+	{"ammo", "atomic-artillery-shell"},
 	{"ammo", "mortar-bomb"},
 	{"ammo", "mortar-cluster-bomb"},
-
-	-- Variants boosted by Searchlight Assault mod.
-	-- For some reason these don't exist for some ammo (rockets, atomic bombs, artillery shells). TODO check why.
-	--{"ammo", "rocket-sla_boosted"},
-	--{"ammo", "explosive-rocket-sla_boosted"},
-	--{"ammo", "atomic-bomb-sla_boosted"},
-	{"ammo", "cannon-shell-sla_boosted"},
-	{"ammo", "explosive-cannon-shell-sla_boosted"},
-	{"ammo", "explosive-uranium-cannon-shell-sla_boosted"},
-	{"ammo", "uranium-cannon-shell-sla_boosted"},
-	--{"ammo", "artillery-shell-sla_boosted"},
 }
 local capsules = {
 	{"capsule", "grenade"},
@@ -297,6 +273,7 @@ local capsules = {
 	{"capsule", "poison-capsule"},
 	{"capsule", "slowdown-capsule"},
 	{"capsule", "ln-flare-capsule"},
+	{"capsule", "ocean-scanner"},
 }
 -- TODO rockets, grenades, etc.
 -- TODO still need to go through all tabs of items. Already went through the first one, still need to go through the rest.
