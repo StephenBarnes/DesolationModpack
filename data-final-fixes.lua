@@ -45,6 +45,8 @@ require("code.data.tweaks.searchlight-assault")
 
 require("code.data.tweaks.no-long-inserters")
 
+require("code.data.tweaks.inventory-sizes")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")
 
