@@ -9,13 +9,23 @@ local forbidPacking = {
 	"solar-assembly",
 	"quantum-satellite",
 	"empty-barrel",
-	"cliff-explosives", -- No cliffs.
 
 	-- With tools like science packs or ammo, there's a bit of an exploit where we could partially use up one, then pack and unpack to get that durability back.
 	-- We could make that impossible by forbidding packing for those. But I don't think it's enough of a concern to justify that.
 	-- A weaker (non-cyclic) version of this exploit exists in the base game, by converting partially-consumed yellow mags to red mags and then uranium mags or military science packs.
 }
 local allowPacking = {
+	"transport-belt", "fast-transport-belt", "express-transport-belt",
+	"underground-belt",	"fast-underground-belt", "express-underground-belt",
+	"small-electric-pole", "small-bronze-pole", "small-iron-pole",
+	"copper-pipe", "steam-pipe", "pipe", "air-pipe",
+	"copper-pipe-to-ground", "steam-pipe-to-ground", "pipe-to-ground", "air-pipe-to-ground",
+	"copper-pipe-to-ground-short", "steam-pipe-to-ground-short", "pipe-to-ground-short", "air-pipe-to-ground-short",
+	"burner-inserter", "steam-inserter", "inserter", "slow-filter-inserter", "fast-inserter", "filter-inserter", "stack-inserter", "stack-filter-inserter",
+	"deadlock-copper-lamp", "copper-aetheric-lamp-straight", "small-lamp", "deadlock-large-lamp", "deadlock-floor-lamp",
+	"rail-signal", "rail-chain-signal",
+	"land-mine",
+	"stone-wall", "concrete-wall", "steel-plate-wall", "gate",
 }
 
 local function forcePackability(itemSpecifier, val)

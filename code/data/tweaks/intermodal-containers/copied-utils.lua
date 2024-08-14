@@ -1,5 +1,5 @@
 -- This file is copied from __IntermodalContainers__/prototypes/utils.lua.
--- See notes in copied-utils.lua.
+-- See notes in copied-shared.lua.
 
 local function is_value_in_table(t, value)
   if not t or not value then return false end
