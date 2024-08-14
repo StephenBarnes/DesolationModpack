@@ -1,7 +1,5 @@
 -- This file adjusts how the packing recipes from the Intermodal Containers mod work.
-
-------------------------------------------------------------------------
--- This section sets certain items to be packable or non-packable for the Intermodal Containers mod.
+-- It sets certain items to be packable or non-packable for the Intermodal Containers mod.
 -- That mod already forbids packing if an item is placable, equipment-placable, in "barrel" subgroup, and some other conditions.
 --   So this file is just to override those conditions in some cases.
 
@@ -11,9 +9,11 @@ local forbidPacking = {
 	"solar-assembly",
 	"quantum-satellite",
 	"empty-barrel",
+	"cliff-explosives", -- No cliffs.
 
 	-- With tools like science packs or ammo, there's a bit of an exploit where we could partially use up one, then pack and unpack to get that durability back.
 	-- We could make that impossible by forbidding packing for those. But I don't think it's enough of a concern to justify that.
+	-- A weaker (non-cyclic) version of this exploit exists in the base game, by converting partially-consumed yellow mags to red mags and then uranium mags or military science packs.
 }
 local allowPacking = {
 }
@@ -29,7 +29,12 @@ local function forcePackability(itemSpecifier, val)
 		itemName = itemSpecifier[2]
 	end
 
-	data.raw[itemType][itemName].ic_create_container = val
+	local item = data.raw[itemType][itemName]
+	if item == nil then
+		log("ERROR: Could not force packability of item "..itemName.." because it doesn't exist.")
+	else
+		item.ic_create_container = val
+	end
 end
 
 for _, itemSpecifier in pairs(forbidPacking) do
@@ -38,14 +43,3 @@ end
 for _, itemSpecifier in pairs(allowPacking) do
 	forcePackability(itemSpecifier, true)
 end
-
-------------------------------------------------------------------------
--- This section adds packing recipes for items that can't be handled by the method above.
--- The Intermodal Containers mod only creates containers for things in types "item", "ammo", "tool".
--- So, doesn't create packing recipes for several item subclasses, namely: capsule, module, repair-tool, gun, rail-planner, and some others I don't care about.
--- It doesn't create containers for those even if you set ic_create_container to true.
--- So, we have to separately do that as well, e.g. for grenades.
-
--- TODO
--- At least for grenades, medical packs, etc.
--- Probably use the IC.generate_crates function, or something similar.

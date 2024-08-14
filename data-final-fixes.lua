@@ -47,6 +47,8 @@ require("code.data.tweaks.no-long-inserters")
 
 require("code.data.tweaks.inventory-sizes")
 
+require("code.data.tweaks.intermodal-containers.packability-data-final-fixes")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")
 

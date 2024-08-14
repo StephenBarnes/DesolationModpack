@@ -16,7 +16,7 @@ require("code.data.additions.science-packs") -- Must run before data-final-fixes
 
 require("code.data.additions.endgame-resources") -- Must be in data-updates, not data, bc IR3 space mining mod only creates the techs in data-updates.
 
-require("code.data.tweaks.intermodal-containers")
+require("code.data.tweaks.intermodal-containers.packability-data-updates")
 
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-updates")
