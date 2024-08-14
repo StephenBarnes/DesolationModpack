@@ -33,4 +33,6 @@ setFuel("locomotive", "locomotive", 8, {"chemical", "coke", "steam-cell", "canis
 setFuel("locomotive", "meat:steam-locomotive", 6, {"chemical", "coke", "steam-cell", "canister", "barrel"})
 setFuel("locomotive", "meat:steam-locomotive-placement-entity", 6, {"chemical", "coke", "steam-cell", "canister", "barrel"})
 
--- Airships - TODO
+-- Airships
+setFuel("spider-vehicle", "hydrogen-airship", 8, {"canister", "barrel"})
+setFuel("spider-vehicle", "helium-airship", 8, {"canister", "barrel", "battery"})

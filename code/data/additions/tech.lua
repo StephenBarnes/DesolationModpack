@@ -104,6 +104,10 @@ Tech.setPrereqs("automobilism", {"ir-crude-oil-processing", "engine", "military"
 
 Tech.setPrereqs("ir-radar", {"telemetry"})
 
+-- Since the main intended use of the airships is automated transport, I'm going to remove the airship station tech and just put the airship station recipe in the hydrogen airship tech.
+Tech.disable("ir-airship-station")
+Tech.addRecipeToTech("airship-station", "ir-hydrogen-airship")
+
 -- Geothermal and electric derrick
 data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
 data.raw.technology["ir-geothermal-exchange"].prerequisites = {"ir-steel-derrick"}

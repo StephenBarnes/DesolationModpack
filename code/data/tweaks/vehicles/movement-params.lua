@@ -25,5 +25,35 @@ data.raw.car["monowheel"].friction = 0.0013 -- originally 0.00175
 data.raw.car["ironclad"].consumption = "2.2MW" -- Default is 1.1MW
 data.raw.car["indep-boat"].consumption = "600kW" -- Default is 300kW
 data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
+-- adjust speed of boat, ironclad, and cargo ships. I think cargo ships should be very slow, like airships.
 
--- TODO other vehicles
+-- Airships
+-- I want to make both of these slower, especially the hydrogen airship, so that there's more benefit to upgrading to helium.
+-- Note looks like IR3-Airships is setting vehicle speed using "stickers", which were originally intended for eg when a worm-turret spits at you.
+-- Seems the stickers' vehicle_speed_modifier is very non-linear. I think it's because of how the invisible legs work.
+data.raw["sticker"]["hydrogen-airship-flight-speed"].vehicle_speed_modifier = 0.2 -- originally 0.5
+data.raw["sticker"]["helium-airship-flight-speed"].vehicle_speed_modifier = 0.4 -- originally 0.55
+-- Changing the leg length, initial_movement_speed, or movement_acceleration doesn't seem to have any effect.
+-- To make the legs visible:
+--data.raw["spider-leg"]["helium-airship-leg"].graphics_set = data.raw["spider-leg"]["spidertron-leg-1"].graphics_set
+--data.raw["spider-leg"]["hydrogen-airship-leg"].graphics_set = data.raw["spider-leg"]["spidertron-leg-1"].graphics_set
+-- With the vehicle_speed_modifiers above set to small values, the airships sometimes get stuck. Seems to happen because there's only 1 leg, and it gets stuck. So add more legs.
+local function makeLeg(name, pos)
+	return {
+		leg = name .. "-leg",
+		mount_position = {0, 0},
+		ground_position = pos,
+		blocking_legs = {},
+	}
+end
+local legDist = 3
+for _, name in pairs({"helium-airship", "hydrogen-airship"}) do
+	data.raw["spider-vehicle"][name].spider_engine.legs = {
+		makeLeg(name, {-legDist, 0}),
+		makeLeg(name, {legDist, 0}),
+		makeLeg(name, {0, -legDist}),
+		makeLeg(name, {0, legDist}),
+	}
+end
+
+-- TODO other vehicles?
