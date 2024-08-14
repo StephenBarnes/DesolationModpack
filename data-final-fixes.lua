@@ -37,15 +37,18 @@ require("code.data.additions.no-building-on-snow")
 require("code.data.additions.landfill-only-on-shallow-water")
 
 require("code.data.tweaks.vehicles.trains")
-require("code.data.tweaks.vehicles.land-vehicles")
 require("code.data.tweaks.vehicles.ships")
-require("code.data.tweaks.vehicles.airships")
 require("code.data.tweaks.vehicles.unminable-vehicles")
 require("code.data.tweaks.vehicles.inventory-sizes")
+require("code.data.tweaks.vehicles.movement-params")
+require("code.data.tweaks.vehicles.health-and-resistance")
+require("code.data.tweaks.vehicles.fuel-slots")
 
 require("code.data.additions.tech")
 
 require("code.data.tweaks.searchlight-assault")
+
+require("code.data.tweaks.IR3.order-tweaks")
 
 require("code.data.tweaks.no-long-inserters")
 

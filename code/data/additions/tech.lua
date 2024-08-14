@@ -94,11 +94,13 @@ Tech.addRecipeToTech("rail-chain-signal", "meat:steam-locomotion-technology")
 Tech.addRecipeToTech("cargo-wagon", "meat:steam-locomotion-technology")
 Tech.removeRecipeFromTech("cargo-wagon", "railway")
 Tech.removeRecipeFromTech("rail", "railway")
-Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
---Tech.addTechDependency("meat:steam-locomotion-technology", "railway")
-data.raw.technology["railway"].prerequisites = {"meat:steam-locomotion-technology", "engine", "ir-steel-milestone"}
-data.raw.recipe["locomotive"].ingredients = {{"computer-mk1", 1}, {"engine-unit", 1}, {"steel-rod", 4}, {"steel-plate-heavy", 8}, {"steel-gear-wheel", 8}}
+--Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
+Tech.setPrereqs("meat:steam-locomotion-technology", {"engine"}) -- Makes sense that trains require (external) combustion engines.
+Tech.setPrereqs("railway", {"meat:steam-locomotion-technology", "ir-steel-milestone"})
 -- TODO check ingredients
+
+-- Car only takes barrels/canisters of fuel, so it needs to be after oil processing.
+Tech.setPrereqs("automobilism", {"ir-crude-oil-processing", "engine", "military"})
 
 Tech.setPrereqs("ir-radar", {"telemetry"})
 
@@ -231,7 +233,7 @@ Tech.addRecipeToTech("charcoal-from-scrap", "ir-charcoal")
 
 Tech.addTechDependency("ir-blunderbuss", "ir-scattergun-turret")
 
--- Copper foil and thermionic tube (copper-gate) should be with electricity, not electronics, bc it's needed for things like lihts.
+-- Copper foil and thermionic tube (copper-gate) should be with electricity, not electronics, bc it's needed for things like lights.
 Tech.removeRecipeFromTech("copper-foil", "ir-electronics-1")
 Tech.removeRecipeFromTech("copper-gate", "ir-electronics-1")
 Tech.addRecipeToTech("copper-foil", "ir-steam-power")
@@ -244,6 +246,10 @@ Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
 Tech.addTechDependency("telemetry", "ir-hydrogen-airship")
 Tech.addTechDependency("telemetry", "personal-roboport-equipment")
+
+-- We could put combustion engine after oil processing. Note this puts the steel locomotive and car and modular armor only after oil.
+-- However, historically combustion engines have been used with solid fuels like coal and wood. The picture for the tech looks like a liquid-powered engine like from a car.
+-- So, not going to put the combustion engine after oil processing.
 
 -- Add enemy evolution effects to milestone techs.
 -- TODO these are temporary untested assignments, fix.

@@ -1,9 +1,4 @@
--- This file tweaks the ships from Cargo Ships, and the ironclad, and associated buildings (buoys and ports).
-
-local Vehicle = require("code.data.tweaks.vehicles.util")
-
-------------------------------------------------------------------------
--- Recipes
+-- This file tweaks the recipes for the ships from Cargo Ships, and the ironclad, and associated buildings (buoys and ports).
 
 -- Recipe for the ironclad should be in the same row as cargo ships.
 data.raw["item-with-entity-data"]["ironclad"].subgroup = data.raw["item-with-entity-data"]["cargo_ship"].subgroup
@@ -60,17 +55,3 @@ data.raw.recipe["mortar-bomb"].ingredients = {
 ------------------------------------------------------------------------
 -- Movement params
 
--- Make the boat and the ironclad faster
-data.raw.car["ironclad"].consumption = "2.2MW" -- Default is 1.1MW
-data.raw.car["indep-boat"].consumption = "600kW" -- Default is 300kW
-data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
-
--- TODO more
-
-------------------------------------------------------------------------
--- Fuel types and fuel slots
-
-Vehicle.setFuel("locomotive", "cargo_ship_engine", 10, {"chemical", "coke", "canister", "barrel"})
-Vehicle.setFuel("locomotive", "boat_engine", 6, {"chemical", "coke", "canister", "barrel"})
-Vehicle.setFuel("car", "indep-boat", 6, {"chemical", "coke", "canister", "barrel"})
-Vehicle.setFuel("car", "ironclad", 6, {"chemical", "coke", "canister", "barrel"})

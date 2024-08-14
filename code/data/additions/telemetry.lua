@@ -22,8 +22,8 @@ local telemetryItem = {
 	icon = "__Desolation__/graphics/telemetry-unit-4mipmaps.png",
 	icon_size = 64,
 	icon_mipmaps = 4,
-	subgroup = "intermediate-product",
-	order = "a", -- TODO
+	subgroup = "ir-electronics",
+	order = "z",
 	stack_size = 20,
 }
 
@@ -38,7 +38,7 @@ local telemetryUnitRecipe = {
 		{"electronic-circuit", 2},
 		{"copper-cable", 1},
 	},
-	order = "a", -- TODO
+	order = "z",
 	result = "telemetry-unit",
 }
 
