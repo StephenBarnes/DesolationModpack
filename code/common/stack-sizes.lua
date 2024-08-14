@@ -5,10 +5,6 @@
 -- Note this file doesn't filter for existing items, bc we need to use it in settings stage.
 -- For example, we could have stuff like "lead-rod" here, even though they don't exist in IR3.
 
-local T = require("code.util.table")
-
---local metals = {"copper", "tin", "iron", "steel", "bronze", "lead", "nickel", "chromium", "gold", "platinum"}
-
 local rawMaterials = {
 	"copper-ore", "tin-ore", "gold-ore", "uranium-ore", "iron-ore", "coal", "stone",
 	"wood", "rubber-wood",
@@ -338,7 +334,7 @@ local stackSizeGroups = {
 		items = standardizedIngotsBricks,
 	},
 	smallItems = {
-		defaultStackSize = 60,
+		defaultStackSize = 80,
 		items = smallItems,
 	},
 	bulkyItems = {
@@ -403,15 +399,15 @@ local stackSizeGroups = {
 		items = bigAmmo,
 	},
 	grenades = {
-		defaultStackSize = 10,
+		defaultStackSize = 20,
 		items = grenades,
 	},
 	robotCapsules = {
-		defaultStackSize = 10,
+		defaultStackSize = 20,
 		items = robotCapsules,
 	},
 	healingItems = {
-		defaultStackSize = 10,
+		defaultStackSize = 20,
 		items = healingItems,
 	},
 }

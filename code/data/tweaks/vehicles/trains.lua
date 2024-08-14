@@ -20,6 +20,7 @@ steamLocomotive2.max_health = 800
 
 -- Make all locomotives unminable.
 -- For cargo wagons, I'm leaving them minable.
+-- TODO we have those settings, rather make this depend on that.
 steamLocomotive.minable = nil
 steamLocomotive2.minable = nil
 steelLocomotive.minable = nil

@@ -34,7 +34,7 @@ end
 -- We could do this in data-updates, by setting item.ic_create_container = true, but that would use IC's version of IC.generate_crates, which has an issue when dealing with items with multiple icons. I've fixed that in the version here, so rather use that, instead of using IC's version and then fixing the icons.
 local entitiesToAllowPacking = {
 	"transport-belt", "fast-transport-belt", "express-transport-belt",
-	"underground-belt",	"fast-underground-belt", "express-underground-belt",
+	"underground-belt", "fast-underground-belt", "express-underground-belt",
 	"small-electric-pole", "small-bronze-pole", "small-iron-pole",
 	"copper-pipe", "steam-pipe", "pipe", "air-pipe",
 	"copper-pipe-to-ground", "steam-pipe-to-ground", "pipe-to-ground", "air-pipe-to-ground",

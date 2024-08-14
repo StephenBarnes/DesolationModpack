@@ -19,18 +19,25 @@ end
 addSetting("complex-sliders", false, "bool", "startup")
 
 addSetting("remove-mapgen-presets", true, "bool", "startup")
-addSetting("unminable-vehicles", true, "bool", "startup")
+
+addSetting("unminable-vehicles", false, "bool", "startup")
+addSetting("unminable-trains", false, "bool", "startup")
 
 addSetting("modify-vehicle-inventories", true, "bool", "startup")
+
+addSetting("inventory-size-cargo-wagon", 10, "int", "startup")
+addSetting("inventory-size-cargo-ship", 80, "int", "startup")
+
 addSetting("inventory-size-monowheel", 2, "int", "startup")
-addSetting("inventory-size-heavy-roller", 300, "int", "startup")
-addSetting("inventory-size-heavy-picket", 400, "int", "startup")
-addSetting("inventory-size-car", 40, "int", "startup")
-addSetting("inventory-size-tank", 60, "int", "startup")
-addSetting("inventory-size-hydrogen-airship", 20, "int", "startup")
-addSetting("inventory-size-helium-airship", 40, "int", "startup")
-addSetting("inventory-size-spidertron", 80, "int", "startup")
--- TODO instead of having each of these repeated here and then also in data.tweaks.vehicles, rather make a table in constants.vehicles or something, then require that here.
+addSetting("inventory-size-heavy-roller", 200, "int", "startup")
+addSetting("inventory-size-heavy-picket", 200, "int", "startup")
+addSetting("inventory-size-car", 10, "int", "startup")
+addSetting("inventory-size-tank", 10, "int", "startup")
+addSetting("inventory-size-hydrogen-airship", 5, "int", "startup")
+addSetting("inventory-size-helium-airship", 10, "int", "startup")
+addSetting("inventory-size-spidertron", 10, "int", "startup")
+addSetting("inventory-size-boat", 10, "int", "startup")
+addSetting("inventory-size-ironclad", 10, "int", "startup")
 
 addSetting("modify-stack-sizes", true, "bool", "startup")
 local stackSizeGroups = require("code.common.stack-sizes").stackSizeGroups

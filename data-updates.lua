@@ -7,8 +7,6 @@ require("code.data.additions.walls")
 require("code.data.additions.telemetry")
 
 require("code.data.tweaks.lamps")
-require("code.data.tweaks.land-vehicles")
-require("code.data.tweaks.cargo-ships")
 require("code.data.tweaks.turret-recipes")
 require("code.data.tweaks.ammo")
 

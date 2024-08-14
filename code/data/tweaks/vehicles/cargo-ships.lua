@@ -8,7 +8,7 @@ data.raw.car["ironclad"].consumption = "2.2MW" -- Default is 1.1MW
 data.raw.car["indep-boat"].consumption = "600kW" -- Default is 300kW
 data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
 
--- TODO make the boat and ironclad accept more fuel types
+-- TODO make all the ships accept more fuel types. Currently it's only burnable stuff, should also allow canisters etc.
 
 -- Adjust recipe for cargo ship, boat, ironclad
 data.raw.recipe["cargo_ship"].ingredients = {
