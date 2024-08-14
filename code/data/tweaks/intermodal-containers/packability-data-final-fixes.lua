@@ -30,8 +30,9 @@ for _, type in pairs(typesForPacking) do
 	end
 end
 
--- Fix localised names of the packable placeable items, bc IC expects them to be item-name.transport-belt instead of entity-name.transport-belt, etc.
-local entityNameReplacements = {
+-- Create packing recipes for some placeable items.
+-- We could do this in data-updates, by setting item.ic_create_container = true, but that would use IC's version of IC.generate_crates, which has an issue when dealing with items with multiple icons. I've fixed that in the version here, so rather use that, instead of using IC's version and then fixing the icons.
+local entitiesToAllowPacking = {
 	"transport-belt", "fast-transport-belt", "express-transport-belt",
 	"underground-belt",	"fast-underground-belt", "express-underground-belt",
 	"small-electric-pole", "small-bronze-pole", "small-iron-pole",
@@ -44,20 +45,20 @@ local entityNameReplacements = {
 	"land-mine",
 	"stone-wall", "concrete-wall", "steel-plate-wall", "gate",
 }
+for _, entityName in pairs(entitiesToAllowPacking) do
+	IC.generate_crates(entityName)
+end
+
+-- Fix localised names of the packable placeable items, bc IC expects them to be item-name.transport-belt instead of entity-name.transport-belt, etc.
 local specialReplacements = {
-	["aetheric-lamp-straight"] = {"entity-name.copper-aetheric-lamp"},
+	["copper-aetheric-lamp-straight"] = "entity-name.copper-aetheric-lamp",
 }
 local function replaceName(itemName, replacement)
 	data.raw.item["ic-container-"..itemName].localised_name[3] = replacement
 	data.raw.recipe["ic-load-"..itemName].localised_name[2] = replacement
 	data.raw.recipe["ic-unload-"..itemName].localised_name[2] = replacement
 end
-for _, entityName in pairs(entityNameReplacements) do
-	local replacement = {"entity-name."..entityName}
-	replaceName(entityName, replacement)
+for _, entityName in pairs(entitiesToAllowPacking) do
+	local replacement = specialReplacements[entityName] or ("entity-name."..entityName)
+	replaceName(entityName, {replacement})
 end
-for itemName, replacement in pairs(specialReplacements) do
-	replaceName(itemName, replacement)
-end
-
--- TODO fix icons for the transport belts

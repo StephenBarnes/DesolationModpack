@@ -168,20 +168,19 @@ function IC.generate_crates(this_item, typeOrNil)
     log("ERROR: IC asked to crate an item with no icon or icons properties ("..this_item..")")
     return
   end
+  -- StephenB: modifying stuff below so that it works if the item in question has multiple icons, e.g. the transport belts in Industrial Revolution 3.
   -- assemble sets of icons for recipes & crate
-  local containeritemicons = {
-    table.deepcopy(IC.ICONS.CONTAINER),
-    table.deepcopy(icons[1]),
-    table.deepcopy(icons[1]),
-    table.deepcopy(icons[1]),
-    table.deepcopy(IC.ICONS.TOP_COVER),
-  }
-  utils.scale_icon(containeritemicons[2], 0.3)
-  utils.scale_icon(containeritemicons[3], 0.3)
-  utils.scale_icon(containeritemicons[4], 0.3)
-  utils.shift_icon(containeritemicons[2], 0, -10)
-  utils.shift_icon(containeritemicons[3], 0, -4.5)
-  utils.shift_icon(containeritemicons[4], 0, 1)
+  local containeritemicons = { table.deepcopy(IC.ICONS.CONTAINER) }
+  local shiftVal = {-10, -4.5, 1}
+  for i = 1, 3 do
+    for j = 1, #icons do
+      local thisIcon = table.deepcopy(icons[j])
+      utils.scale_icon(thisIcon, 0.3)
+      utils.shift_icon(thisIcon, 0, shiftVal[i])
+      table.insert(containeritemicons, thisIcon)
+    end
+  end
+  table.insert(containeritemicons, table.deepcopy(IC.ICONS.TOP_COVER))
   local containeritemlayers = table.deepcopy(containeritemicons)
   for _, layer in pairs(containeritemlayers) do
     layer.filename = layer.icon
@@ -197,19 +196,25 @@ function IC.generate_crates(this_item, typeOrNil)
   local loadrecipeicons = {
     table.deepcopy(IC.ICONS.LOAD_BG),
     table.deepcopy(IC.ICONS.CORNER_R),
-    table.deepcopy(icons[1]),
-    table.deepcopy(IC.ICONS.ARROW_DOWN),
   }
-  utils.scale_icon(loadrecipeicons[3], 0.36)
-  utils.shift_icon(loadrecipeicons[3], -4.5, -4.5)
+  for j = 1, #icons do
+    local thisIcon = table.deepcopy(icons[j])
+    utils.scale_icon(thisIcon, 0.36)
+    utils.shift_icon(thisIcon, -4.5, -4.5)
+    table.insert(loadrecipeicons, thisIcon)
+  end
+  table.insert(loadrecipeicons, table.deepcopy(IC.ICONS.ARROW_DOWN))
   local unloadrecipeicons = {
     table.deepcopy(IC.ICONS.UNLOAD_BG),
     table.deepcopy(IC.ICONS.CORNER_L),
-    table.deepcopy(icons[1]),
-    table.deepcopy(IC.ICONS.ARROW_UP),
   }
-  utils.scale_icon(unloadrecipeicons[3], 0.36)
-  utils.shift_icon(unloadrecipeicons[3], 4.5, -4.5)
+  for j = 1, #icons do
+    local thisIcon = table.deepcopy(icons[j])
+    utils.scale_icon(thisIcon, 0.36)
+    utils.shift_icon(thisIcon, 4.5, -4.5)
+    table.insert(unloadrecipeicons, thisIcon)
+  end
+  table.insert(unloadrecipeicons, table.deepcopy(IC.ICONS.ARROW_UP))
 
   data:extend({
     -- the item
