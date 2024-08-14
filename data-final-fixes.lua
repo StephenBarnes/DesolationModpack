@@ -38,7 +38,7 @@ require("code.data.additions.landfill-only-on-shallow-water")
 
 require("code.data.tweaks.vehicles.trains")
 require("code.data.tweaks.vehicles.land-vehicles")
-require("code.data.tweaks.vehicles.cargo-ships")
+require("code.data.tweaks.vehicles.ships")
 require("code.data.tweaks.vehicles.airships")
 require("code.data.tweaks.vehicles.unminable-vehicles")
 require("code.data.tweaks.vehicles.inventory-sizes")

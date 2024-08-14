@@ -1,14 +1,12 @@
+-- This file tweaks the ships from Cargo Ships, and the ironclad, and associated buildings (buoys and ports).
 
+local Vehicle = require("code.data.tweaks.vehicles.util")
+
+------------------------------------------------------------------------
+-- Recipes
 
 -- Recipe for the ironclad should be in the same row as cargo ships.
 data.raw["item-with-entity-data"]["ironclad"].subgroup = data.raw["item-with-entity-data"]["cargo_ship"].subgroup
-
--- Make the boat and the ironclad faster
-data.raw.car["ironclad"].consumption = "2.2MW" -- Default is 1.1MW
-data.raw.car["indep-boat"].consumption = "600kW" -- Default is 300kW
-data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
-
--- TODO make all the ships accept more fuel types. Currently it's only burnable stuff, should also allow canisters etc.
 
 -- Adjust recipe for cargo ship, boat, ironclad
 data.raw.recipe["cargo_ship"].ingredients = {
@@ -58,3 +56,21 @@ data.raw.recipe["mortar-bomb"].ingredients = {
 	{"explosives", 2},
 	{"steel-plate", 4},
 }
+
+------------------------------------------------------------------------
+-- Movement params
+
+-- Make the boat and the ironclad faster
+data.raw.car["ironclad"].consumption = "2.2MW" -- Default is 1.1MW
+data.raw.car["indep-boat"].consumption = "600kW" -- Default is 300kW
+data.raw.locomotive["boat_engine"].max_power = "600kW" -- Default is 300kW
+
+-- TODO more
+
+------------------------------------------------------------------------
+-- Fuel types and fuel slots
+
+Vehicle.setFuel("locomotive", "cargo_ship_engine", 10, {"chemical", "coke", "canister", "barrel"})
+Vehicle.setFuel("locomotive", "boat_engine", 6, {"chemical", "coke", "canister", "barrel"})
+Vehicle.setFuel("car", "indep-boat", 6, {"chemical", "coke", "canister", "barrel"})
+Vehicle.setFuel("car", "ironclad", 6, {"chemical", "coke", "canister", "barrel"})
