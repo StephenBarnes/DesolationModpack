@@ -1,0 +1,1 @@
+-- TODO make the gas cooling recipes slightly lossy, so you have to have a constant input supply. Otherwise it's just a sort of "harness" around every advanced assembler to re-cool the gas, which is less interesting than ongoing consumption of a new resource.

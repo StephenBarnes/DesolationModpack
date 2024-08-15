@@ -31,7 +31,7 @@ Recipe.setIngredients("helium-airship", {
 	--{"telemetry-unit", 1}, -- new
 	{"computer-mk3", 1}, -- unchanged
 	{"chromium-engine-unit", 8}, -- unchanged
-	{"chromium-plate", 120}, -- originally 120, unchanged
+	{"chromium-plate", 120}, -- unchanged
 	{"chromium-beam", 40}, -- unchanged
 	{type="fluid", name="helium-gas", amount=2000}, -- unchanged
 })

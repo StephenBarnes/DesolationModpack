@@ -1,0 +1,2 @@
+-- TODO I want the gem-creating loops to require maybe like 10x as many gems to start with, so you have to venture out more to get them.
+-- Also check if the boulders currently give more than 1 gem, if so reduce that.
