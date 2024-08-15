@@ -26,7 +26,7 @@ addSetting("unminable-trains", false, "bool", "startup")
 addSetting("modify-vehicle-inventories", true, "bool", "startup")
 
 addSetting("inventory-size-cargo-wagon", 10, "int", "startup")
-addSetting("inventory-size-cargo-ship", 80, "int", "startup")
+addSetting("inventory-size-cargo-ship", 60, "int", "startup")
 
 addSetting("inventory-size-monowheel", 2, "int", "startup")
 addSetting("inventory-size-heavy-roller", 200, "int", "startup")

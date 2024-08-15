@@ -30,8 +30,8 @@ setFuel("car", "ironclad", 6, {"canister", "barrel"})
 
 -- Locomotives
 setFuel("locomotive", "locomotive", 8, {"chemical", "coke", "steam-cell", "canister", "barrel", "battery"})
-setFuel("locomotive", "meat:steam-locomotive", 6, {"chemical", "coke", "steam-cell", "canister", "barrel"})
-setFuel("locomotive", "meat:steam-locomotive-placement-entity", 6, {"chemical", "coke", "steam-cell", "canister", "barrel"})
+setFuel("locomotive", "meat:steam-locomotive", 6, {"chemical", "coke", "steam-cell",})
+setFuel("locomotive", "meat:steam-locomotive-placement-entity", 6, {"chemical", "coke", "steam-cell"})
 
 -- Airships
 setFuel("spider-vehicle", "hydrogen-airship", 8, {"canister", "barrel"})

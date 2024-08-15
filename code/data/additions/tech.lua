@@ -116,7 +116,7 @@ data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small",
 
 data.raw.technology["optics"].prerequisites = {"ir-steam-power"} -- Depend only on electricity, not surveying.
 
--- Remove all the series of techs, bc they don't fit well into the system of evolution being dependent on tech level.
+-- Remove all the series of techs.
 local techSeriesToDisable = {
 	["physical-projectile-damage"] = {1, 2, 3, 4, 5, 6, 7},
 	["stronger-explosives"] = {1, 2, 3, 4, 5, 6, 7},
@@ -128,6 +128,7 @@ local techSeriesToDisable = {
 	["mining-productivity"] = {1, 2, 3, 4},
 	["energy-weapons-damage"] = {1, 2, 3, 4, 5, 6, 7},
 	["worker-robots-speed"] = {1, 2, 3, 4, 5, 6},
+	["worker-robots-storage"] = {1, 2, 3},
 	["weapon-shooting-speed"] = {1, 2, 3, 4, 5, 6},
 	["laser-shooting-speed"] = {1, 2, 3, 4, 5, 6, 7},
 	["braking-force"] = {1, 2, 3},
@@ -141,6 +142,7 @@ for techName, techNums in pairs(techSeriesToDisable) do
 		Tech.disable(techName.."-"..techNum)
 	end
 end
+-- TODO maybe add these benefit techs back, but only 1 or 2 techs each, eg only one tech for braking force, and only one tech for worker robot cargo size, etc.
 -- TODO maybe put some of these bonuses back, but into regular techs, not these weird incremental bonus techs.
 
 -- Previously ir-research-2 (Improved laboratories 2) depended on research-speed-6, but we removed that tech.
@@ -243,13 +245,13 @@ Tech.removeRecipeFromTech("copper-gate", "ir-electronics-1")
 Tech.addRecipeToTech("copper-foil", "ir-steam-power")
 Tech.addRecipeToTech("copper-gate", "ir-steam-power")
 
-Tech.addTechDependency("ir-heavy-roller", "ir-heavy-picket")
-
 --Tech.addTechDependency("ir-scattergun-turret", "gun-turret")
 Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
 Tech.addTechDependency("telemetry", "ir-hydrogen-airship")
 Tech.addTechDependency("telemetry", "personal-roboport-equipment")
+
+Tech.setPrereqs("ir-heavy-picket", {"ir-force-fields", "ir-heavy-roller"}) -- Removing dependency on hydrogen cell, since it can also use batteries.
 
 -- We could put combustion engine after oil processing. Note this puts the steel locomotive and car and modular armor only after oil.
 -- However, historically combustion engines have been used with solid fuels like coal and wood. The picture for the tech looks like a liquid-powered engine like from a car.

@@ -4,14 +4,14 @@
 
 data.raw.car["heavy-roller"].weight = 30000 -- originally 12,500
 data.raw.car["heavy-roller"].consumption = "400kW" -- originally 300kW
-data.raw.car["heavy-roller"].braking_power = "3000kW" -- originally 600kW
+data.raw.car["heavy-roller"].braking_power = "600kW" -- originally 600kW. Can't be adjusted too much, or the vehicle can't reverse - seems pressing S both brakes and accelerates backwards at the same time, or something.
 data.raw.car["heavy-roller"].rotation_speed = 0.003 -- originally 0.0035
 data.raw.car["heavy-roller"].friction = 0.003 -- originally 0.002
 -- TODO make heavy roller ignore terrain speed, so it's good on the frigid terrain.
 
-data.raw.car["heavy-picket"].weight = 15000 -- originally 12,500
-data.raw.car["heavy-picket"].consumption = "4000kW" -- originally 500kW
-data.raw.car["heavy-picket"].braking_power = "15000kW" -- originally 1500kW
+data.raw.car["heavy-picket"].weight = 10000 -- originally 12,500
+data.raw.car["heavy-picket"].consumption = "3000kW" -- originally 500kW
+data.raw.car["heavy-picket"].braking_power = "10000kW" -- originally 1500kW
 data.raw.car["heavy-picket"].rotation_speed = 0.005 -- originally 0.005
 data.raw.car["heavy-picket"].friction = 0.0003 -- originally 0.00125
 
