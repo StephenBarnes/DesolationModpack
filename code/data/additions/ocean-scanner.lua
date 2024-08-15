@@ -33,9 +33,10 @@ data:extend({
 		order = "zz1",
 		enabled = false,
 		ingredients = {
-			{"steel-plate-heavy", 4},
+			{"steel-frame-small", 1},
+			{"steel-plate-heavy", 2},
 			{"programmable-speaker", 1},
-			{"telemetry-unit", 1},
+			{"computer-mk1", 1},
 		},
 		result = "ocean-scanner",
 	},
@@ -45,7 +46,7 @@ data:extend({
 		icon = "__Desolation__/graphics/ocean-scanner.png",
 		icon_size = 256,
 		icon_mipmaps = 2,
-		prerequisites = {"water_transport", "telemetry"},
+		prerequisites = {"water_transport", "telemetry", "circuit-network"},
 		unit = {
 			count = 100,
 			ingredients = {

@@ -55,6 +55,8 @@ require("code.data.tweaks.no-long-inserters")
 
 require("code.data.tweaks.intermodal-containers.packability-data-final-fixes")
 
+require("code.data.tweaks.recipe-times")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")
 

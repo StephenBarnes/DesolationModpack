@@ -22,8 +22,9 @@ data:extend({
 		enabled = false,
 		ingredients = {
 			{"iron-frame-large", 1},
-			{"copper-cable-heavy", 1},
-			{"telemetry-unit", 1}
+			{"iron-plate-heavy", 8},
+			{"computer-mk1", 1},
+			{"copper-cable-heavy", 2},
 		},
 		result = "seismic-scanner",
 		subgroup = data.raw.recipe["radar"].subgroup,

@@ -193,7 +193,7 @@ data.raw.technology["searchlight-assault"].icons = {
 		shift = {0, -60},
 	}
 }
-data.raw.technology["searchlight-assault"].prerequisites = {"telemetry", "optics", "circuit-network"}
+data.raw.technology["searchlight-assault"].prerequisites = {"optics", "circuit-network"}
 
 -- Create concrete wall tech.
 data:extend({
@@ -249,7 +249,7 @@ Tech.addRecipeToTech("copper-gate", "ir-steam-power")
 Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
 Tech.addTechDependency("telemetry", "ir-hydrogen-airship")
-Tech.addTechDependency("telemetry", "personal-roboport-equipment")
+Tech.addTechDependency("telemetry", "rocket-silo")
 
 Tech.setPrereqs("ir-heavy-picket", {"ir-force-fields", "ir-heavy-roller"}) -- Removing dependency on hydrogen cell, since it can also use batteries.
 

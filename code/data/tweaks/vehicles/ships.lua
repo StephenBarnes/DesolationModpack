@@ -5,10 +5,9 @@ data.raw["item-with-entity-data"]["ironclad"].subgroup = data.raw["item-with-ent
 
 -- Adjust recipe for cargo ship, boat, ironclad
 data.raw.recipe["cargo_ship"].ingredients = {
-	{"telemetry-unit", 1},
+	{"computer-mk1", 1},
 	{"engine-unit", 8},
-	{"steel-plate", 40},
-	{"steel-plate-heavy", 20},
+	{"steel-plate-heavy", 40},
 	{"steel-beam", 20},
 }
 data.raw.recipe["boat"].ingredients = {

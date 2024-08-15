@@ -1,11 +1,6 @@
 local function setFuel(type, name, slots, categories)
 	local ent = data.raw[type][name]
 	local toChange = ent.energy_source or ent.burner
-	if ent.energy_source then
-		log("For entity "..name..", using energy_source")
-	else
-		log("For entity "..name..", using burner")
-	end
 	toChange.fuel_inventory_size = slots
 	toChange.burnt_inventory_size = slots
 	toChange.fuel_categories = categories
