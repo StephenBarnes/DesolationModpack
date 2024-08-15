@@ -226,6 +226,22 @@ local function checkTechUnlockOrder()
 		{{"platinum-ingot", "iron-scrapper"}, {"platinum-scrap"}},
 		{{"lead-ingot", "iron-scrapper"}, {"lead-scrap"}},
 		{{"bronze-ingot", "iron-scrapper"}, {"bronze-scrap"}},
+
+		-- Canister-filling
+		{{"empty-canister", "fluid:oxygen-fluid"}, {"oxygen-canister"}},
+		{{"empty-canister", "fluid:hydrogen-fluid"}, {"hydrogen-canister"}},
+		{{"empty-canister", "fluid:nitrogen-fluid"}, {"nitrogen-canister"}},
+		{{"empty-canister", "fluid:helium-fluid"}, {"helium-canister"}},
+		{{"empty-canister", "fluid:carbon-fluid"}, {"carbon-canister"}},
+		{{"empty-canister", "fluid:natural-fluid"}, {"natural-canister"}},
+
+		-- Cooling
+		{{"steel-cryo-tower", "fluid:oxygen-gas"}, {"fluid:oxygen-fluid"}},
+		{{"steel-cryo-tower", "fluid:hydrogen-gas"}, {"fluid:hydrogen-fluid"}},
+		{{"steel-cryo-tower", "fluid:nitrogen-gas"}, {"fluid:nitrogen-fluid"}},
+		{{"steel-cryo-tower", "fluid:helium-gas"}, {"fluid:helium-fluid"}},
+		{{"steel-cryo-tower", "fluid:carbon-gas"}, {"fluid:carbon-fluid"}},
+		{{"steel-cryo-tower", "fluid:natural-gas"}, {"fluid:natural-fluid"}},
 	}
 
 	-- Build a table of the unlocks above indexed by each prereq, for faster lookup.
@@ -320,17 +336,21 @@ local function checkTechUnlockOrder()
 							successfulSoFar = false
 						else
 							availableAfterThisTech[resultName] = true
+						end
+					end
+				end
+			end
+		end
 
-							for _, implicitUnlock in pairs(implicitUnlocksByItem[resultName] or {}) do
-								local unlockPrereqs = implicitUnlock[1]
-								local unlockedItems = implicitUnlock[2]
-								local allPrereqsSatisfied = (#unlockPrereqs == 1) or Table.allInSet(unlockPrereqs, availableAfterThisTech)
-								if allPrereqsSatisfied then
-									for _, unlockedItem in pairs(unlockedItems) do
-										availableAfterThisTech[unlockedItem] = true
-									end
-								end
-							end
+		for _, group in pairs({availableBeforeThisTech, availableAfterThisTech}) do
+			for availableItem, _ in pairs(group) do
+				for _, implicitUnlock in pairs(implicitUnlocksByItem[availableItem] or {}) do
+					local unlockPrereqs = implicitUnlock[1]
+					local unlockedItems = implicitUnlock[2]
+					local allPrereqsSatisfied = (#unlockPrereqs == 1) or Table.allInSet(unlockPrereqs, group)
+					if allPrereqsSatisfied then
+						for _, unlockedItem in pairs(unlockedItems) do
+							group[unlockedItem] = true
 						end
 					end
 				end

@@ -73,7 +73,7 @@ Tech.disable("deep_sea_oil_extraction") -- shouldn't be necessary; only shows up
 Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
 Tech.addRecipeToTech("buoy", "automated_water_transport")
 Tech.addRecipeToTech("chain_buoy", "automated_water_transport")
-data.raw.technology["water_transport"].prerequisites = {"ir-steel-milestone"}
+data.raw.technology["water_transport"].prerequisites = {"ir-steel-milestone", "engine"}
 data.raw.technology["automated_water_transport"].prerequisites = {"water_transport", "telemetry"}
 -- TODO check ingredients
 
@@ -112,7 +112,9 @@ Tech.addRecipeToTech("airship-station", "ir-hydrogen-airship")
 
 -- Geothermal and electric derrick
 data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
+data.raw.technology["ir-steel-derrick"].unit = data.raw.technology["fluid-handling"].unit
 data.raw.technology["ir-geothermal-exchange"].prerequisites = {"ir-steel-derrick"}
+data.raw.technology["ir-geothermal-exchange"].unit = data.raw.technology["fluid-handling"].unit
 data.raw.recipe["steel-derrick"].ingredients = {{"pipe", 8}, {"iron-plate-heavy", 4}, {"iron-beam", 8}, {"iron-piston", 4}} -- Changed steel->iron, and reduced amounts.
 data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small", 1}, {"pump", 1}, {"steam-pipe", 6}, {"pipe", 4}} -- Changed to include pump
 
@@ -154,9 +156,7 @@ data.raw.technology["ir-research-2"].prerequisites = {"ir-force-fields", "ir-res
 data.raw.technology["ironclad"].prerequisites = {"military-2", "automobilism"}
 
 -- Add boats=>pumpjacks dependency, bc it makes sense with this progression, and it ensures Ironclad is indirectly dependent on boats.
---Tech.addTechDependency("water_transport", "ir-pumpjacks")
--- Actually, rather don't.
-Tech.addTechDependency("water_transport", "ironclad")
+Tech.setPrereqs("ir-pumpjacks", {"water_transport", "fluid-handling"})
 
 --Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
 --Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
@@ -285,6 +285,12 @@ end
 -- Scattergun turret shouldn't be affected by multiplier, should be attainable before your BREAM peace time runs out.
 data.raw.technology["ir-scattergun-turret"].unit.count = 50
 data.raw.technology["ir-scattergun-turret"].ignore_tech_cost_multiplier = true
+
+-- Rubber-wood is now only obtainable once you have forestry tech, so move the recipe for rubber to forestry tech.
+Tech.removeRecipeFromTech("rubber", "ir-grinding-1")
+Tech.addRecipeToTech("rubber", "ir-bronze-forestry")
+-- Iron-milestone has 1 recipe requiring rubber (repair pack), so could depend on forestry. Or remove that one ingredient, and put the dependency on electricity instead.
+Tech.addTechDependency("ir-bronze-forestry", "ir-iron-milestone")
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
