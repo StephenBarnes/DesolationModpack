@@ -7,7 +7,6 @@
 -- * Add a new item called "elixir stone"
 -- * Add a new recipe for the supermagnet, which combines spagyric crystals with immateria to produce an elixir stone
 -- * Add a new recipe for the supermagnet, which uses elixir stone + stone to produce elixir stone + gold.
--- * Add a new technology that unlocks this recipe to produce the elixir stone, and to transmute gold
 
 local immateriaFluid = {
 	type = "fluid",
@@ -23,21 +22,6 @@ local immateriaFluid = {
 	order = "zzzz-s",
 	auto_barrel = false, -- don't create barrelling recipes.
 	localised_description = {"fluid-description.immateria"},
-}
-
-local elixirStoneTech = {
-	type = "technology",
-	name = "magnum-opus",
-	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png",
-	icon_size = 256,
-	icon_mipmaps = 2,
-	order = "099",
-	prerequisites = {"ir-arc-furnace-2", "ir-quantum-mining"},
-	effects = {
-		{type = "unlock-recipe", recipe = "elixir-stone"},
-		{type = "unlock-recipe", recipe = "gold-from-stone"},
-	},
-	unit = data.raw.technology["ir-quantum-mining"].unit,
 }
 
 local spagyricCrystalItem = {
@@ -100,34 +84,6 @@ elixirRecipe.crafting_machine_tint[1] = {1, 1, 1} -- It doesn't look like this i
 
 -- Add this new category to the list of crafting categories for the arc furnace.
 table.insert(data.raw["assembling-machine"]["arc-furnace"].crafting_categories, "elixir-stone-category")
-
-local goldRecipe = {
-	type = "recipe",
-	name = "gold-from-stone",
-	localised_name = {"recipe-name.gold-from-stone"},
-	--category = data.raw.recipe["electrum-gem-charged"].category,
-	category = "crafting", -- so it's hand-craftable
-	subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
-	order = "zzz-z-z2",
-	energy_required = 1,
-	ingredients = {
-		{type = "item", name = "elixir-stone", amount = 1},
-		{type = "item", name = "stone", amount = 1}
-	},
-	results = {
-		{type = "item", name = "gold-pure", amount = 1},
-		{type = "item", name = "elixir-stone", amount = 1},
-	},
-	enabled = false,
-	--always_show_made_in = true,
-	main_product = "gold-pure",
-	icons = {
-		{ icon = "__Desolation__/graphics/empty_icon.png", icon_size = 64, icon_mipmaps = 4, scale = 0.5 },
-		{ icon = data.raw.item["gold-pure"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {7, 7} },
-		{ icon = "__Desolation__/graphics/elixir-stone.png", icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {0, -7} },
-		{ icon = data.raw.item["stone"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {-7, 7} },
-	},
-}
 
 --log(serpent.block(data.raw.resource["fossil-gas-fissure"]))
 local immateriaFissure = table.deepcopy(data.raw.resource["fossil-gas-fissure"])
@@ -210,4 +166,4 @@ data.raw.recipe["comet-ice-processing"].icons = {
 	},
 }
 
-data:extend({immateriaFluid, elixirStoneTech, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, goldRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke, immateriaSpillData})
+data:extend({immateriaFluid, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke, immateriaSpillData})
