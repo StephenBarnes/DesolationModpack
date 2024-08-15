@@ -38,3 +38,20 @@ Recipe.setIngredients("locomotive", {
 	{"steel-beam", 4},
 	{"steel-piston", 8},
 })
+
+-- Since we want automated rail transportation to be available pre-electricity, we need to make the recipes not require circuits or lights.
+Recipe.setIngredients("train-stop", {
+	{"iron-frame-small", 1},
+	{"rail-signal", 1},
+	{"iron-beam", 4},
+})
+Recipe.setIngredients("rail-signal", {
+	{"glass", 2},
+	{"iron-plate", 1},
+	{"copper-cable", 1},
+})
+Recipe.setIngredients("rail-chain-signal", {
+	{"glass", 1},
+	{"iron-plate", 1},
+	{"copper-cable", 2},
+})

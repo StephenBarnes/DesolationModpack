@@ -85,19 +85,21 @@ Tech.addRecipeToTech("waterfill-explosive", "landfill")
 data.raw.recipe["waterfill-explosive"].ingredients = {{"copper-gate", 1}, {"wooden-chest", 1}, {"solid-fuel", 4}}
 
 Tech.disable("fluid-wagon")
-Tech.disable("automated-rail-transportation")
 Tech.removeRecipeFromTech("meat:sheet-metal-cargo-wagon", "meat:steam-locomotion-technology")
-Tech.addRecipeToTech("train-stop", "meat:steam-locomotion-technology")
-Tech.addRecipeToTech("rail-signal", "meat:steam-locomotion-technology")
-Tech.addRecipeToTech("rail-chain-signal", "meat:steam-locomotion-technology")
---Tech.addRecipeToTech("rail", "meat:steam-locomotion-technology")
-Tech.addRecipeToTech("cargo-wagon", "meat:steam-locomotion-technology")
+Tech.addRecipeToTech("cargo-wagon", "meat:steam-locomotion-technology", 2)
 Tech.removeRecipeFromTech("cargo-wagon", "railway")
 Tech.removeRecipeFromTech("rail", "railway")
 --Tech.addTechDependency("ir-iron-milestone", "meat:steam-locomotion-technology")
 Tech.setPrereqs("meat:steam-locomotion-technology", {"engine"}) -- Makes sense that trains require (external) combustion engines.
 Tech.setPrereqs("railway", {"meat:steam-locomotion-technology", "ir-steel-milestone"})
 -- TODO check ingredients
+
+Tech.setPrereqs("automated-rail-transportation", {"meat:steam-locomotion-technology"})
+
+-- Move the gate recipe to automated rail tech, and adjust recipes so it's available pre-electricity.
+data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 2}, {"iron-plate-heavy", 2}}
+Tech.disable("gate")
+Tech.addRecipeToTech("gate", "automated-rail-transportation")
 
 -- Car only takes barrels/canisters of fuel, so it needs to be after oil processing.
 Tech.setPrereqs("automobilism", {"ir-crude-oil-processing", "engine", "military"})
@@ -172,11 +174,6 @@ data.raw.technology["ir-inserters-1"].localised_description = {"technology-descr
 -- Remove dependency from basic defense to steam mechanisms, since it's redundant anyway.
 data.raw.technology["ir-basic-research"].prerequisites = {"ir-tin-working-2", "ir-copper-working-2"}
 
--- Move the gate recipe to rail tech, and adjust recipes.
-data.raw.recipe.gate.ingredients = {{"iron-piston", 1}, {"iron-gear-wheel", 2}, {"iron-plate-heavy", 2}}
-Tech.disable("gate")
-Tech.addRecipeToTech("gate", "meat:steam-locomotion-technology")
-
 -- Change searchlight assault tech to use the icon of the searchlight inside walls
 -- Well, the tech for concrete walls could be unlocked only after the searchlight tech, but I think it's still better to use this icon, so it's not visibly lower-res than the other techs.
 data.raw.technology["searchlight-assault"].icons = {
@@ -249,7 +246,7 @@ Tech.addRecipeToTech("copper-gate", "ir-steam-power")
 Tech.setPrereqs("gun-turret", {"ir-scattergun-turret", "military"})
 
 Tech.addTechDependency("telemetry", "ir-hydrogen-airship")
-Tech.addTechDependency("telemetry", "rocket-silo")
+--Tech.addTechDependency("telemetry", "rocket-silo")
 
 Tech.setPrereqs("ir-heavy-picket", {"ir-force-fields", "ir-heavy-roller"}) -- Removing dependency on hydrogen cell, since it can also use batteries.
 
