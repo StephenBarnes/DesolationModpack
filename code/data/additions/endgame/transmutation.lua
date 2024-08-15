@@ -43,6 +43,8 @@ local function makeTransmutation(a, b)
 		enabled = false,
 		--always_show_made_in = true,
 		main_product = b.."-crushed",
+		allow_as_intermediate = false,
+		allow_decomposition = false,
 		icons = {
 			{ icon = "__Desolation__/graphics/empty_icon.png", icon_size = 64, icon_mipmaps = 4, scale = 0.5 },
 			{ icon = data.raw.item[b.."-crushed"].icon, icon_size = 64, icon_mipmaps = 4, scale = 0.25, shift = {7, 7} },

@@ -263,12 +263,10 @@ local milestoneTechs = {
 	"ir-iron-smelting",
 	"ir-steam-power", -- Electricity
 	"ir-steel-smelting",
-	"water_transport",
 	"ir-gold-milestone",
 	"ir-crude-oil-processing",
 	"ir-electronics-2",
 	"ir-washing-1",
-	"ir-washing-2",
 	"ir-brass-milestone",
 	"ir-electroplating",
 	"ir-electrum-milestone",
@@ -277,6 +275,8 @@ local milestoneTechs = {
 	"rocket-silo",
 	"ir-transmat",
 	"ir-quantum-mining",
+	"battery",
+	"automation-4",
 }
 for _, techName in pairs(milestoneTechs) do
 	Tech.addEvolutionEffect(techName, 5)

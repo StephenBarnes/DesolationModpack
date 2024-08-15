@@ -7,7 +7,7 @@
 local elixirStoneTech = {
 	type = "technology",
 	name = "magnum-opus",
-	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png", -- TODO change this to the elixir stone image.
+	icon = "__Desolation__/graphics/elixir-tech.png",
 	icon_size = 256,
 	icon_mipmaps = 2,
 	order = "099",
