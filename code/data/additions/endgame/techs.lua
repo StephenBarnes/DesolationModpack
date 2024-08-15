@@ -50,9 +50,9 @@ local longRangeTransmaterialisationTech = {
 			type = "nothing",
 			--recipe = "start-island-scan",
 			effect_description = {"effect-description.win-game"},
-			icon = "__core__/graphics/gps-map-placeholder.png", -- TODO find an icon for this.
-			icon_size = 32,
-			icon_mipmaps = 1,
+			icon = "__Desolation__/graphics/earth-effect.png",
+			icon_size = 64,
+			icon_mipmaps = 2,
 		}
 	},
 	unit = finalTechUnit,
