@@ -36,7 +36,7 @@ local spagyricCrystalItem = {
 }
 
 local elixirItem = {
-	type = "item",
+	type = "tool",
 	name = "elixir-stone",
 	icon = "__Desolation__/graphics/elixir-stone.png",
 	icon_size = 64,
@@ -44,6 +44,7 @@ local elixirItem = {
 	stack_size = 100,
 	subgroup = data.raw.item["diamond-gem"].subgroup,
 	order = "zzz-z-z",
+	durability = data.raw.tool["space-science-pack"].durability,
 }
 
 local elixirRecipeCategory = {

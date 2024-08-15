@@ -100,7 +100,7 @@ end
 
 local function checkEndTechEvo()
 	-- Checks that getting to the final tech involves a total of +100% evolution.
-	local finalTechId = "magnum-opus" -- TODO change this to the victory tech.
+	local finalTechId = "long-range-transmaterialisation"
 	local finalTechPrereqs = Tech.getRecursivePrereqs(finalTechId)
 	if finalTechPrereqs == nil then
 		log("ERROR: Couldn't find prereqs of "..finalTechId..".")

@@ -7,11 +7,11 @@
 local elixirStoneTech = {
 	type = "technology",
 	name = "magnum-opus",
-	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png",
+	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png", -- TODO change this to the elixir stone image.
 	icon_size = 256,
 	icon_mipmaps = 2,
 	order = "099",
-	prerequisites = {"ir-arc-furnace-2", "ir-quantum-mining"},
+	prerequisites = {"ir-arc-furnace", "ir-quantum-mining"},
 	effects = {
 		{type = "unlock-recipe", recipe = "elixir-stone"},
 		{type = "unlock-recipe", recipe = "gold-from-lead"},
@@ -19,9 +19,43 @@ local elixirStoneTech = {
 		{type = "unlock-recipe", recipe = "iron-from-nickel"},
 		{type = "unlock-recipe", recipe = "tin-from-chromium"},
 	},
-	unit = data.raw.technology["ir-quantum-mining"].unit,
+	unit = data.raw.technology["ir-quantum-mining"].unit, -- TODO
 }
 
--- TODO add the other two techs
+local cosmicReckoningTech = {
+	type = "technology",
+	name = "cosmic-reckoning",
+	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png", -- TODO find an image for this.
+	icon_size = 256,
+	icon_mipmaps = 2,
+	order = "100",
+	prerequisites = {"space-science-pack"},
+	effects = {},
+	unit = data.raw.technology["ir-quantum-mining"].unit, -- TODO
+}
 
-data:extend({elixirStoneTech})
+local finalTechUnit = table.deepcopy(data.raw.technology["ir-quantum-mining"].unit)
+---@diagnostic disable-next-line: need-check-nil
+table.insert(finalTechUnit.ingredients, {"elixir-stone", 1})
+local longRangeTransmaterialisationTech = {
+	type = "technology",
+	name = "long-range-transmaterialisation",
+	icon = "__Desolation__/graphics/immateria-with-outline-256-128.png", -- TODO find an image for this.
+	icon_size = 256,
+	icon_mipmaps = 2,
+	order = "100",
+	prerequisites = {"cosmic-reckoning", "magnum-opus"},
+	effects = {
+		{
+			type = "nothing",
+			--recipe = "start-island-scan",
+			effect_description = {"effect-description.win-game"},
+			icon = "__core__/graphics/gps-map-placeholder.png", -- TODO find an icon for this.
+			icon_size = 32,
+			icon_mipmaps = 1,
+		}
+	},
+	unit = finalTechUnit,
+}
+
+data:extend({elixirStoneTech, cosmicReckoningTech, longRangeTransmaterialisationTech})
