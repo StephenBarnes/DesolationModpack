@@ -10,7 +10,8 @@
 -- For the melters, we want the total fluid produced to be in line with the boilers, so like 10/sec to 60/sec.
 -- And for the melters, steam output should be lower than boilers with the same amount of fuel; they should mostly output water.
 
--- TODO make these globals.
+local Table = require("code.util.table")
+
 local iconSize = 64
 local numIconMipmaps = 4
 
@@ -270,7 +271,11 @@ data:extend({
 		source_inventory_size = 1,
 		result_inventory_size = 0, -- No item results. Game automatically adds 2 slots for the fluids.
 		energy_usage = "1MW", -- For comparison, electric boiler is 1.25MW, copper boiler is 300kW.
-		energy_source = data.raw.boiler.boiler.energy_source,
+		energy_source = Table.copyAndEdit(data.raw.boiler.boiler.energy_source, {
+			fuel_inventory_size = 2,
+			burnt_inventory_size = 2,
+			fuel_categories = {"chemical", "coke", "canister", "barrel"},
+		}),
 		crafting_speed = 4,
 		crafting_categories = {"ice-melting"},
 		icons = ironMelterIcons,

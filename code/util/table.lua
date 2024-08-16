@@ -75,4 +75,13 @@ Table.allInSet = function(list, set)
 	return true
 end
 
+Table.copyAndEdit = function(t, edits)
+	-- Returns a copy of t, with edits applied.
+	local new = table.deepcopy(t)
+	for k, v in pairs(edits) do
+		new[k] = v
+	end
+	return new
+end
+
 return Table
