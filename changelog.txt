@@ -1,0 +1,40 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 16. 08. 2024
+  Features:
+    - Added Long-Range Delivery Drones mod and tweaks.
+    - Added Beacon Rebalance mod and tweaks. Basic beacon available in the early game.
+    - Fine-tuned terrain generation and resource placement. Starting island resources are more predictable.
+  Bugfixes:
+    - Quantum labs now accept elixir stone.
+---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 16. 08. 2024
+  Features:
+    - Added endgame technologies: magnum opus, cosmic reckoning, long-range transmaterialisation.
+    - Victory when final tech is researched.
+    - Added transmutation recipes for ore amplification using elixir stones.
+    - Vehicle inventory sizes changed for better integration with Intermodal Containers.
+    - Added container-packing for many more items.
+  Changes:
+    - Removed telemetry unit item.
+    - Tweaked vehicle movement parameters and fuel types.
+    - Force-set and hide other mod settings, instead of only changing defaults.
+  Bugfixes:
+    - Improved auto-debugger, and fixed progression bugs found by auto-debugger.
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 12. 08. 2024
+  Features:
+    - Custom terrain generation and resource placement.
+    - Building restricted to warm patches.
+    - Seismic scanner, ocean scanner, and starting island scan.
+    - Evolution depends on milestone techs researched.
+    - Auto-debugger script.
+    - Stone and ice byproducts from mining. Ice melter machines (using IR3 sprites).
+    - Integration with other mods: Industrial Revolution 3 and addons, Alien Biomes, BREAM, Clockwork, Intermodal Containers, Cargo Ships, Searchlight Assault, Production Scrap, and others.
+  Minor Features:
+    - Stack size groups.
+    - Brick and concrete walls (using IR3 sprites).
+    - Offshore pumps require power.
+    - Disabled long inserters.
