@@ -146,10 +146,10 @@ local ironPatchMinRadSlider = tne(1) / slider("Desolation-iron-patch", "frequenc
 local ironPatchMinMaxSlider = slider("Desolation-iron-patch", "size")
 local ironCenterWeightSlider = tne(1) / slider("Desolation-iron-prob-center-weight", "frequency")
 
-X.startIronPatchMinRad = ironPatchMinRadSlider * 10 -- Approximate radius of the starting iron patch.
-X.startIronPatchMidRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 13
-X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 20
-X.startIronPatchCenterWeight = ironCenterWeightSlider * 6
+X.startIronPatchMinRad = ironPatchMinRadSlider * 7 -- Approximate radius of the starting iron patch.
+X.startIronPatchMidRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 7
+X.startIronPatchMaxRad = X.startIronPatchMinRad + ironPatchMinMaxSlider * 45
+X.startIronPatchCenterWeight = ironCenterWeightSlider * 15
 X.ironPatchDesiredAmount = 3000000
 
 -- The "second coal" is the patch close to the starting iron patch.
@@ -157,29 +157,29 @@ local secondCoalPatchMinRadSlider = tne(1) / slider("Desolation-second-coal-patc
 local secondCoalPatchMinMaxSlider = slider("Desolation-second-coal-patch", "size")
 local secondCoalCenterWeightSlider = tne(1) / slider("Desolation-second-coal-prob-center-weight", "frequency")
 
-X.secondCoalPatchMinRad = secondCoalPatchMinRadSlider * 8 -- Approximate radius of the starting coal patch.
-X.secondCoalPatchMidRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 9
-X.secondCoalPatchMaxRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 16
-X.secondCoalPatchCenterWeight = secondCoalCenterWeightSlider * 6
+X.secondCoalPatchMinRad = secondCoalPatchMinRadSlider * 6 -- Approximate radius of the starting coal patch.
+X.secondCoalPatchMidRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 6
+X.secondCoalPatchMaxRad = X.secondCoalPatchMinRad + secondCoalPatchMinMaxSlider * 40
+X.secondCoalPatchCenterWeight = secondCoalCenterWeightSlider * 15
 
-X.distIronToSecondCoal = (X.startIronPatchMaxRad + X.secondCoalPatchMaxRad) * 0.7
+X.distIronToSecondCoal = (X.startIronPatchMidRad + X.secondCoalPatchMidRad) * 0.7
 
 ------------------------------------------------------------------------
 -- Starting island copper/tin blob at the end of the circular arc
 
-X.secondCopperPatchMinRad = 10
+X.secondCopperPatchMinRad = 6
 X.secondCopperPatchMidRad = X.secondCopperPatchMinRad + 6
-X.secondCopperPatchMaxRad = X.secondCopperPatchMinRad + 20
-X.secondCopperPatchCenterWeight = 6
+X.secondCopperPatchMaxRad = X.secondCopperPatchMinRad + 6 + 30
+X.secondCopperPatchCenterWeight = 15
 X.secondCopperPatchDesiredAmount = 1000000
 
-X.secondTinPatchMinRad = 8
-X.secondTinPatchMidRad = X.secondTinPatchMinRad + 5
-X.secondTinPatchMaxRad = X.secondTinPatchMinRad + 15
-X.secondTinPatchCenterWeight = 6
+X.secondTinPatchMinRad = 6
+X.secondTinPatchMidRad = X.secondTinPatchMinRad + 6
+X.secondTinPatchMaxRad = X.secondTinPatchMinRad + 6 + 30
+X.secondTinPatchCenterWeight = 15
 X.secondTinPatchDesiredAmount = 1000000
 
-X.distSecondCopperToTin = (X.secondCopperPatchMaxRad + X.secondTinPatchMaxRad) * 0.7
+X.distSecondCopperToTin = (X.secondCopperPatchMidRad + X.secondTinPatchMidRad) * 0.7
 
 ------------------------------------------------------------------------
 -- For the temp, aux, and moisture noise layers (which determine where to place what tiles)
@@ -220,13 +220,13 @@ X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 200
 local copperTinOasisMinRadSlider = tne(1) / slider("Desolation-coppertin-oasis-rad", "frequency")
 local copperTinOasisMinMaxSlider = slider("Desolation-coppertin-oasis-rad", "size")
 
-X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 1.8
-X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 2.5
-X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 7
+X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 1.3
+X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 2.0
+X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 5
 
-X.ironCoalOasisMinRad = X.distIronToSecondCoal * 1.8
-X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 2.5
-X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 7
+X.ironCoalOasisMinRad = X.distIronToSecondCoal * 1.3
+X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 2.0
+X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 5
 
 ------------------------------------------------------------------------
 -- Starting patches
@@ -236,17 +236,17 @@ X.distSpawnToStartPatches = (X.spawnOasisMinRad / 2) * 0.5
 X.startCoalPatchMinRad = 6.5 * slider("coal", "size")
 X.startCoalPatchMidRad = 10 * slider("coal", "size")
 X.startCoalPatchMaxRad = 40 * slider("coal", "size")
-X.startCoalPatchCenterWeight = 15
+X.startCoalPatchCenterWeight = 25
 
 X.startCopperPatchMinRad = 5 * slider("copper-ore", "size")
 X.startCopperPatchMidRad = 8 * slider("copper-ore", "size")
 X.startCopperPatchMaxRad = 32 * slider("copper-ore", "size")
-X.startCopperPatchCenterWeight = 15
+X.startCopperPatchCenterWeight = 25
 
 X.startTinPatchMinRad = 5 * slider("tin-ore", "size")
 X.startTinPatchMidRad = 7 * slider("tin-ore", "size")
 X.startTinPatchMaxRad = 30 * slider("tin-ore", "size")
-X.startTinPatchCenterWeight = 15
+X.startTinPatchCenterWeight = 25
 
 ------------------------------------------------------------------------
 
