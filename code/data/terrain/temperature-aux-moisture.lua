@@ -26,7 +26,7 @@ local function clamp_temperature(raw_temperature)
 end
 
 -- Start with a base layer of noise.
-local tempNoise = U.multiBasisNoise(7, 2, 2,
+local tempNoise = U.multiBasisNoise(8, 2, 2,
 	C.temperatureScale / var("scale"),
 	C.temperatureAmplitude)
 local temperature = tempNoise
@@ -60,8 +60,6 @@ local minTempForIronCoal = U.rampDouble(var("dist-to-iron-coal-center") / var("s
 	50, 10, -150)
 temperature = noise.max(temperature, minTempForIronCoal + tempOasisNoise)
 
--- TODO add warm patches near sides, so you can load ships.
-
 U.nameNoiseExpr("Desolation-temperature",
 	temperature)
 
@@ -69,7 +67,7 @@ U.nameNoiseExpr("Desolation-temperature",
 -- Aux -- this determines snow vs ice.
 
 U.nameNoiseExpr("Desolation-aux",
-	U.multiBasisNoise(4, 2, 2,
+	U.multiBasisNoise(5, 2, 2,
 		C.auxScale / var("scale"),
 		C.auxAmplitude)
 	+ C.auxBias
@@ -78,7 +76,7 @@ U.nameNoiseExpr("Desolation-aux",
 ------------------------------------------------------------------------
 -- Moisture -- this determines grass vs volcanic rock.
 
-local moistureNoise = U.multiBasisNoise(4, 2, 2,
+local moistureNoise = U.multiBasisNoise(7, 2, 2,
 	C.moistureScale / var("scale"),
 	C.moistureAmplitude)
 

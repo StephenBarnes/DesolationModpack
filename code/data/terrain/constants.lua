@@ -62,6 +62,11 @@ X.otherIslandsFadeInEndFromStartIsland = 400
 
 X.surroundingIslandsToggle = noise.less_or_equal(1/6, slider("Desolation-surrounding-islands-toggle", "size"))
 
+X.otherIslandNoiseScaleSlider = tne(1) / slider("Desolation-otherisland-elevation-noise", "frequency")
+X.otherIslandNoiseAmplitudeSlider = slider("Desolation-otherisland-elevation-noise", "size")
+X.otherIslandNoiseAmplitude = X.otherIslandNoiseAmplitudeSlider * 18
+X.otherIslandNoiseScale = X.otherIslandNoiseScaleSlider * 1500
+
 ------------------------------------------------------------------------
 -- Noise for the starting island's offshoots, consisting of a circular arc and a blob with some ores on it.
 
@@ -131,8 +136,8 @@ local resourceNoiseScaleSlider = tne(1) / slider("Desolation-resource-noise", "f
 local resourceNoiseAmplitudeSlider = slider("Desolation-resource-noise", "size")
 
 -- Noise amplitude and input scale for starting island's resource patches. Shared between resource probability and richness.
-X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 5
-X.resourceNoiseInputScale = resourceNoiseScaleSlider * (1/30)
+X.resourceNoiseInputScale = resourceNoiseScaleSlider * (1/20)
+X.resourceNoiseAmplitude = resourceNoiseAmplitudeSlider * 10
 
 ------------------------------------------------------------------------
 -- Starting island iron/coal patches at the end of the circular arc
@@ -250,7 +255,7 @@ X.oilPatchDesiredAmount = 100000
 X.copperPatchDesiredAmount = 1000000
 X.tinPatchDesiredAmount = 1000000
 X.coalPatchDesiredAmount = 1000000
-X.stonePatchDesiredAmount = 1000000
+X.stonePatchDesiredAmount = 5000000
 -- TODO these should be put into a table indexed by resource name, same as resourceMinDist below.
 
 ------------------------------------------------------------------------
@@ -265,7 +270,7 @@ X.resourceMinDist = {
 	["gold-ore"] = {800, 1400, 2300},
 
 	["uranium-ore"] = {1800, 2400, 3000},
-	["immateria-fissure"] = {1800, 2400, 3000},
+	["immateria-fissure"] = {2800, 3400, 4000},
 
 	-- No min distances for polluted steam or steam.
 }

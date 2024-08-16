@@ -55,6 +55,9 @@ U.nameNoiseExpr("Desolation-resource-C-ramp01",
 -- Common functions for resources.
 
 local function slider(ore, dim)
+	if data.raw["autoplace-control"][ore] == nil then
+		log("ERROR: autoplace-control "..ore.." not found. This shouldn't happen.")
+	end
 	return var("control-setting:"..ore..":"..dim..":multiplier")
 end
 
@@ -101,6 +104,13 @@ local function makeSpotNoiseFactor(params)
 		minSpacing = nil
 	end
 
+	local basementMult
+	if params.basementMult ~= nil then
+		basementMult = tne(params.basementMult)
+	else
+		basementMult = 1
+	end
+
 	local spotNoise = tne {
 		type = "function-application",
 		function_name = "spot-noise",
@@ -115,7 +125,7 @@ local function makeSpotNoiseFactor(params)
 			spot_quantity_expression = litexp(params.patchResourceAmt), -- Amount of resource per patch, from totalling up all the tiles.
 			spot_radius_expression = litexp(params.patchRad), -- Radius of each resource patch, in tiles.
 			spot_favorability_expression = litexp(params.patchFavorability),
-			basement_value = tne(C.resourceNoiseAmplitude) * (-3), -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
+			basement_value = tne(C.resourceNoiseAmplitude) * (-3) * basementMult, -- This value is placed wherever we don't have spots. So it should be negative enough to ensure that even with the noise we're still always below zero, so we don't have any ore other than at the spots.
 			-- TODO rather have separate noise amplitude and scale for every resource, bc we want it to be smaller for resources that spawn in smaller patches.
 			maximum_spot_basement_radius = tne(params.patchRad) * 2, -- This is the radius until we use the basement value. So it should be larger than the patch radius.
 			region_size = tne(params.regionSize), -- Probably want to use large regions, because we're using much higher overall terrain scale than in vanilla.
@@ -177,6 +187,8 @@ local function setResourceAutoplace(params)
 	local extraCondition = params.extraCondition
 	-- params.normalSpawnInStartIsland is a bool for whether the resource should spawn normally in the starting island, using the "outside" settings.
 	local normalSpawnInStartIsland = params.normalSpawnInStartIsland
+	-- params.noiseMult is a multiplier for the resource noise, to make it more or less neatly circular, etc.
+	local noiseMult = params.noiseMult or 1
 
 	-- TODO actually each patch table should specify the amount in that patch, and then have a separate outsidePatchAmount that is the per-patch amount for patches outside starting island.
 
@@ -188,7 +200,7 @@ local function setResourceAutoplace(params)
 	desiredAmount = desiredAmount * richnessSlider
 	outsideDensity = outsideDensity * freqSlider
 
-	local resourceNoise = makeResourceNoise(sizeSlider)
+	local resourceNoise = makeResourceNoise(sizeSlider) * noiseMult
 
 	-- Create a factor for the patches on the starting island.
 	local combinedStartPatchFactor
@@ -249,6 +261,7 @@ local function setResourceAutoplace(params)
 		patchRad = outsideRad, -- TODO take distance from starting island into account -- make patches bigger and richer as we travel further from starting island.
 		patchFavorability = possibleRegions, -- TODO take something else into account, eg temperature
 		regionSize = 2048,
+		basementMult = noiseMult,
 	}
 	outsideFactor = outsideFactor * possibleRegions
 
@@ -268,7 +281,7 @@ local function setResourceAutoplace(params)
 		-- For dot-placed resources, we first place the big spots as above. Then we make a second layer of spot noise, with 1 tile patches. Then multiply them together.
 		resourceFactor = resourceFactor * dotFactor
 		-- Increase radius that gets aggregated together in the tooltip on the map.
-		data.raw.resource[id].resource_patch_search_radius = params.outsideRad * 8 -- must be a number, not a noise-var, so we can't make it depend on map scale.
+		data.raw.resource[id].resource_patch_search_radius = params.outsideRad * 16 -- must be a number, not a noise-var, so we can't make it depend on map scale.
 	end
 
 	data.raw.resource[id].autoplace = {
@@ -291,7 +304,8 @@ setResourceAutoplace {
 			C.startIronPatchCenterWeight
 		},
 	},
-	outsideDensity = 2,
+	outsideDensity = 4,
+	outsideRad = 10,
 	desiredAmount = C.ironPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -313,7 +327,8 @@ setResourceAutoplace {
 			C.secondCoalPatchCenterWeight
 		},
 	},
-	outsideDensity = 2,
+	outsideDensity = 4,
+	outsideRad = 10,
 	desiredAmount = C.coalPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -336,7 +351,8 @@ setResourceAutoplace {
 			C.secondCopperPatchCenterWeight
 		},
 	},
-	outsideDensity = 2,
+	outsideDensity = 4,
+	outsideRad = 10,
 	desiredAmount = C.copperPatchDesiredAmount,
 	resourceType = "A",
 }
@@ -358,7 +374,8 @@ setResourceAutoplace {
 			C.secondTinPatchCenterWeight
 		},
 	},
-	outsideDensity = 2,
+	outsideDensity = 4,
+	outsideRad = 10,
 	desiredAmount = C.tinPatchDesiredAmount,
 	resourceType = "A",
 	resourceTypeInverted = true,
@@ -376,7 +393,7 @@ setResourceAutoplace {
 	id = "stone",
 	order = "zzz", -- Place it last, so other resources can be placed on top of it.
 	outsideDensity = 0.3,
-	outsideRad = 60,
+	outsideRad = 40,
 	desiredAmount = C.stonePatchDesiredAmount,
 	extraCondition = stoneTempBand,
 	normalSpawnInStartIsland = true,
@@ -388,10 +405,11 @@ setResourceAutoplace {
 setResourceAutoplace {
 	id = "uranium-ore",
 	outsideDensity = 1,
-	outsideRad = 16,
+	outsideRad = 8,
 	desiredAmount = 100000,
 	resourceType = "C",
 	outsideFade = C.resourceMinDist["uranium-ore"],
+	noiseMult = 2,
 }
 
 ------------------------------------------------------------------------
@@ -399,11 +417,12 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "gold-ore",
-	outsideDensity = 1,
-	outsideRad = 16,
-	desiredAmount = 100000,
+	outsideDensity = 0.7,
+	outsideRad = 6,
+	desiredAmount = 300000,
 	resourceType = "B",
 	outsideFade = C.resourceMinDist["gold-ore"],
+	noiseMult = 2, -- For some reason the gold patches are extremely circular, more than the other resources. This should reduce that.
 }
 
 ------------------------------------------------------------------------
@@ -417,8 +436,8 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "crude-oil",
-	outsideRad = 24, -- This is the size of the big region that contains the smaller spots.
-	outsideDensity = 0.3,
+	outsideRad = 16, -- This is the size of the big region that contains the smaller spots.
+	outsideDensity = 0.4,
 	desiredAmount = 1e9, -- Must be very high, because it's a percentage yield.
 	dots = true,
 	outsideFade = C.resourceMinDist["crude-oil"],
@@ -431,13 +450,14 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "sulphur-gas-fissure",
-	outsideRad = 24,
+	outsideRad = 14,
 	outsideDensity = 0.25,
 	desiredAmount = 1e9,
 	dots = true,
 	resourceType = "B",
 	resourceTypeInverted = true,
 	outsideFade = C.resourceMinDist["sulphur-gas-fissure"],
+	sliderName = "ir-fissures",
 }
 
 ------------------------------------------------------------------------
@@ -453,11 +473,12 @@ data.raw.resource["natural-gas-fissure"].autoplace = nil
 
 setResourceAutoplace {
 	id = "dirty-steam-fissure",
-	outsideRad = 12,
-	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
+	outsideRad = 14,
+	outsideDensity = 0.3,
 	desiredAmount = 1e9,
 	dots = true,
 	normalSpawnInStartIsland = true, -- So can spawn on starting island.
+	sliderName = "ir-fissures",
 }
 
 ------------------------------------------------------------------------
@@ -467,10 +488,11 @@ setResourceAutoplace {
 -- TODO does IR3 place these anywhere except at spawn? If not, maybe remove this.
 setResourceAutoplace {
 	id = "steam-fissure",
-	outsideRad = 12,
-	outsideDensity = 0.2, -- Lower density than other fissures, because it's not restricted to a resource type / quadrants.
+	outsideRad = 8,
+	outsideDensity = 0.12,
 	desiredAmount = 5e8,
 	dots = true,
+	sliderName = "ir-fissures",
 }
 
 ------------------------------------------------------------------------
@@ -478,12 +500,13 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "fossil-gas-fissure",
-	outsideRad = 24,
-	outsideDensity = 0.4,
+	outsideRad = 18,
+	outsideDensity = 0.25,
 	desiredAmount = 1e9,
 	resourceType = "B",
 	dots = true,
 	outsideFade = C.resourceMinDist["fossil-gas-fissure"],
+	sliderName = "ir-fissures",
 }
 
 ------------------------------------------------------------------------
@@ -491,13 +514,14 @@ setResourceAutoplace {
 
 setResourceAutoplace {
 	id = "immateria-fissure",
-	outsideRad = 24,
-	outsideDensity = 0.4,
-	desiredAmount = 1e9,
+	outsideRad = 8,
+	outsideDensity = 0.2,
+	desiredAmount = 1e6,
 	resourceType = "C",
 	resourceTypeInverted = true,
 	dots = true,
 	outsideFade = C.resourceMinDist["immateria-fissure"],
+	sliderName = "ir-fissures",
 }
 
 ------------------------------------------------------------------------

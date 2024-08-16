@@ -23,3 +23,9 @@ Recipe.setResults("stone-charcoal-kiln", {{"stone-charcoal-kiln", 1}})
 data.raw.recipe["stone-brick"].energy_required = 0.5 -- Reduced 1 -> 0.5.
 
 -- TODO make the laser recipe for red circuits cheaper in materials, or make it produce like 4 red circuits instead of 2. Bc currently it adds a lot of complexity (laser assemblers, nitrogen) for only like a 2x increase in speed, I think. TODO analyze this.
+
+-- Renaming the steam fissure to "clean steam fissure".
+data.raw.resource["steam-fissure"].localised_name = {"entity-name.steam-fissure"}
+
+-- Make coal a bit more visible on the dark terrain
+--data.raw.resource["coal"].map_color = {r=0.3, g=0.3, b=0.3}

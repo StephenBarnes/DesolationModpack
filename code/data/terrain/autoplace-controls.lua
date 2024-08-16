@@ -21,7 +21,8 @@ if Settings.startupSetting("complex-sliders") then
 		"Desolation-aux",
 		"Desolation-moisture",
 
-		-- TODO create autoplaces for the starting island.
+		"Desolation-otherisland-elevation-noise",
+
 		"Desolation-surrounding-islands-toggle",
 
 		"Desolation-start-island-oasis-noise",

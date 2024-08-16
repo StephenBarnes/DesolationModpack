@@ -10,7 +10,7 @@ return {
 
 	printEveryIslandScanChunk = false, -- Whether to print a message for every chunk scanned by the starting island scan or seismic scanners.
 	scanStartIslandMaxDist = 500, -- How many chunks away from (0,0) we'll scan chunks in the starting island scan. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
-	seismicScanMaxDist = 300, -- How many chunks away from a seismic scanner it will scan chunks. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
+	seismicScanMaxDist = 500, -- How many chunks away from a seismic scanner it will scan chunks. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 	oceanScanMaxDist = 150, -- How many chunks away from an ocean scanner it will scan chunks. This is to avoid scanning forever, since the ocean is generally connected.
 	scanEveryNTicks = G.ifThenElse(isDebug, 20, 60), -- How often to update the scan of the starting island, or ocean scanners, in ticks.
 	scanStartIslandChunksPerUpdate = 2, -- How many chunks to scan per update, for starting island scan.

@@ -142,7 +142,7 @@ end
 
 local function getOtherIslandsMinElevation(scale, x, y, tile, map)
 	-- This line creates all of the other islands.
-	local elevation = U.multiBasisNoise(8, 2, 2, (1 / 1000) / scale, tne(13)) - 11.0
+	local elevation = U.multiBasisNoise(8, 2, 2, 1 / (C.otherIslandNoiseScale * scale), C.otherIslandNoiseAmplitude) - 11.0
 		-- -11.8 is a bit too negative; -11.4 still a bit too negative. -11.1 looks about right.
 	local startIslandDist = noise.var("dist-to-start-island-rim")
 

@@ -291,6 +291,9 @@ Tech.addRecipeToTech("rubber", "ir-bronze-forestry")
 -- Iron-milestone has 1 recipe requiring rubber (repair pack), so could depend on forestry. Or remove that one ingredient, and put the dependency on electricity instead.
 Tech.addTechDependency("ir-bronze-forestry", "ir-iron-milestone")
 
+-- No cliffs, so no need for cliff explosives.
+Tech.removeRecipeFromTech("cliff-explosives", "explosives")
+
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
