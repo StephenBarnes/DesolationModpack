@@ -164,7 +164,7 @@ local bigBuildings = {
 	"copper-lab", "lab",
 	"rocket-silo",
 	"steam-engine",
-	"solar-array", -- Well, we're removing this, but leave it here just in case.
+	"solar-array",
 	"petro-generator",
 	"iron-battery-charger", "steel-battery-charger",
 	"iron-battery-discharger", "steel-battery-discharger",
@@ -175,6 +175,7 @@ local bigBuildings = {
 	"steam-turbine",
 	"centrifuge",
 	"artillery-turret", "flamethrower-turret",
+	"long-range-delivery-drone-depot",
 }
 local mediumBuildings = {
 	"substation",
@@ -182,10 +183,11 @@ local mediumBuildings = {
 	"chrome-transmat", "cargo-transmat",
 	"airship-station",
 	"robotower",
-	"burner-mining-drill", "steam-drill", -- These are 7x7, vs the electric and chorme ones which are 9x9 or 11x11 and therefore placed in bigBuildings.
+	"burner-mining-drill", "steam-drill", -- These are 7x7, vs the electric and chrome ones which are 9x9 or 11x11 and therefore placed in bigBuildings.
 	"copper-derrick", "steel-derrick",
-	"beacon",
-	"solar-panel", -- Well, we're removing this, but leave it here just in case.
+	"beacon", "beacon2-item",
+	"long-range-delivery-drone-request-depot",
+	"solar-panel",
 	"accumulator",
 	"deadlock-large-lamp", "deadlock-floor-lamp",
 	"iron-ice-melter", "boiler",
@@ -247,6 +249,7 @@ local vehicles = {
 	"car", "tank",
 	"hydrogen-airship", "helium-airship",
 	"spidertron",
+	"long-range-delivery-drone", -- The Long-Range Delivery Drone mod sets stack size of this to 1, so maybe it needs the stack size to be 1.
 }
 local robots = {
 	"steambot", "construction-robot", "logistic-robot",

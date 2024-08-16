@@ -159,7 +159,6 @@ Tech.setPrereqs("ir-pumpjacks", {"water_transport", "fluid-handling"})
 
 --Tech.addTechDependency("ir-barrelling", "ir-high-pressure-canisters")
 --Tech.addTechDependency("ir-geothermal-exchange", "ir-mining-2")
-Tech.addTechDependency("effect-transmission", "ir-transmat")
 
 --Tech.addTechDependency("belt-immunity-equipment", "power-armor")
 --Tech.addTechDependency("night-vision-equipment", "power-armor")
@@ -293,6 +292,9 @@ Tech.addTechDependency("ir-bronze-forestry", "ir-iron-milestone")
 
 -- No cliffs, so no need for cliff explosives.
 Tech.removeRecipeFromTech("cliff-explosives", "explosives")
+
+-- Base IR3 has gold smelting depend on mining 1. I want to add naval engineering prereq, bc you can only get gold from other islands, and I don't want to distract the player with techs that are useless at their current level.
+Tech.setPrereqs("ir-gold-smelting", {"water_transport", "ir-mining-1"})
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")

@@ -234,6 +234,7 @@ local function checkTechUnlockOrder()
 		{{"empty-canister", "fluid:helium-fluid"}, {"helium-canister"}},
 		{{"empty-canister", "fluid:carbon-fluid"}, {"carbon-canister"}},
 		{{"empty-canister", "fluid:natural-fluid"}, {"natural-canister"}},
+		{{"empty-iron-canister", "fluid:petroleum-gas"}, {"petroleum-gas-iron-canister"}},
 
 		-- Cooling
 		{{"steel-cryo-tower", "fluid:oxygen-gas"}, {"fluid:oxygen-fluid"}},

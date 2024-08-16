@@ -58,6 +58,7 @@ require("code.data.tweaks.intermodal-containers.packability-data-final-fixes")
 require("code.data.tweaks.recipe-times")
 
 require("code.data.tweaks.vehicles.long-range-delivery-drones")
+require("code.data.tweaks.beacon-rebalance")
 
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")

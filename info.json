@@ -35,6 +35,8 @@
 	, "IntermodalContainers >= 2.0.8"
 
 	, "Long_Range_Delivery_Drones >= 1.0.6"
+
+	, "wret-beacon-rebalance-mod >= 1.0.15"
 	],
 	"description": "PRE-ALPHA, NOT QUITE PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
 }
