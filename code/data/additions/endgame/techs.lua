@@ -23,7 +23,11 @@ local elixirStoneTech = {
 		{type = "unlock-recipe", recipe = "iron-from-nickel"},
 		{type = "unlock-recipe", recipe = "tin-from-chromium"},
 	},
-	unit = data.raw.technology["ir-quantum-mining"].unit, -- TODO
+	unit = {
+		ingredients = data.raw.technology["ir-quantum-mining"].unit.ingredients,
+		time = 60,
+		count = 80000 / 20,
+	},
 }
 
 local cosmicReckoningTech = {
@@ -35,12 +39,16 @@ local cosmicReckoningTech = {
 	order = "100",
 	prerequisites = {"space-science-pack"},
 	effects = {},
-	unit = data.raw.technology["ir-quantum-mining"].unit, -- TODO
+	unit = {
+		ingredients = data.raw.technology["ir-quantum-mining"].unit.ingredients,
+		time = 60,
+		count = 30000 / 20,
+	},
 }
 
-local finalTechUnit = table.deepcopy(data.raw.technology["ir-quantum-mining"].unit)
+local finalTechIngredients = table.deepcopy(data.raw.technology["ir-quantum-mining"].unit.ingredients)
 ---@diagnostic disable-next-line: need-check-nil
-table.insert(finalTechUnit.ingredients, {"elixir-stone", 1})
+table.insert(finalTechIngredients, {"elixir-stone", 1})
 local longRangeTransmaterialisationTech = {
 	type = "technology",
 	name = "long-range-transmaterialisation",
@@ -59,7 +67,11 @@ local longRangeTransmaterialisationTech = {
 			icon_mipmaps = 2,
 		}
 	},
-	unit = finalTechUnit,
+	unit = {
+		ingredients = finalTechIngredients,
+		time = 60,
+		count = 1000000 / 20,
+	},
 }
 
 data:extend({elixirStoneTech, cosmicReckoningTech, longRangeTransmaterialisationTech})

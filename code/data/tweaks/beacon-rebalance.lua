@@ -19,13 +19,16 @@ Tech.setPrereqs("effect-transmission-2", {"ir-modules-3", "effect-transmission",
 Recipe.setIngredients("beacon", {
 	{"iron-frame-large", 1},
 	{"copper-coil", 4}, -- Iron core EM coil.
-	{"copper-cable-heavy", 1}, -- Heavy copper cable, rubber-coated.
+	--{"copper-cable-heavy", 1}, -- Heavy copper cable, rubber-coated.
+	{"iron-plate", 8},
+	{"iron-stick", 16},
 })
 Recipe.setIngredients("beacon2-recipe", {
-	{"field-effector", 4},
+	{"field-effector", 1},
 	--{"electrum-plate-special", 4}, -- Null field plate
 	{"chromium-frame-large", 1},
 	{"junction-box", 2}, -- Because 2 modules are shown on the sprite, plugged into things that look like junction boxes.
+	{"chromium-rod", 1},
 })
 
 -- Set image for the beacon 2 tech; beacon 1 tech is already fine.
