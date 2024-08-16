@@ -33,6 +33,8 @@
 	, "SimpleRadioTowers >= 1.0.0"
 
 	, "IntermodalContainers >= 2.0.8"
+
+	, "Long_Range_Delivery_Drones >= 1.0.6"
 	],
-	"description": "PRE-ALPHA, NOT PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
+	"description": "PRE-ALPHA, NOT QUITE PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
 }

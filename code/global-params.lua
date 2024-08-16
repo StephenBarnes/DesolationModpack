@@ -1,6 +1,6 @@
 local G = require("code.util.general")
 
-local isDebug = false -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
+local isDebug = true -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
 
 return {
 	runIntroCutscene = not isDebug, -- Whether to run the IR3 intro cutscene.
@@ -32,8 +32,7 @@ return {
 	notifyIncorrectMapgenPreset = not isDebug, -- Whether to notify the player when they try to play a scenario with the wrong mapgen preset.
 
 	waterCoverage = 1,
-	inverseWaterScale = G.ifThenElse(isDebug, 3, 1/3), -- So water scale is 300% on release, or 33% when debugging.
-		-- When debugging, we set defaults water scale much smaller, so we can see multiple islands.
+	inverseWaterScale = 1/3,
 
 	victoryOnFinalTech = true, -- Whether to enable victory on the final tech.
 	victoryMinTicks = 60 * 60, -- Final tech won't give victory if researched within this many ticks; this is for sandbox games.
