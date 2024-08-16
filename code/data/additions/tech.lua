@@ -75,7 +75,6 @@ Tech.addRecipeToTech("buoy", "automated_water_transport")
 Tech.addRecipeToTech("chain_buoy", "automated_water_transport")
 data.raw.technology["water_transport"].prerequisites = {"ir-steel-milestone", "engine"}
 data.raw.technology["automated_water_transport"].prerequisites = {"water_transport", "telemetry"}
--- TODO check ingredients
 
 -- Rename landfill tech to earthworks, and add waterfill explosive.
 -- Want to place it before automated shipping, but not after explosives. So also change recipe to not require explosives.

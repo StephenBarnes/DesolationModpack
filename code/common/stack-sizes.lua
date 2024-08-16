@@ -24,7 +24,8 @@ local purifiedMaterials = {
 
 	"sulfur",
 	"uranium-235", "uranium-238",
-	"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged", "elixir-stone",
+	"diamond-gem", "ruby-gem", "electrum-gem", "electrum-gem-charged",
+	{"tool", "elixir-stone"},
 	"silicon", "graphite", "silicon-block",
 	"low-density-structure", -- IR3 uses this ID for steel foam. It's next to silicon and graphite and silicon-block (silicon carbide block), so putting it here.
 	"rubber",
@@ -68,7 +69,7 @@ local smallItems = {
 }
 local bulkyItems = {
 	"copper-piston", "iron-piston", "steel-piston", "chromium-piston",
-	"telemetry-unit", "junction-box", "copper-coil", "carbon-coil",
+	"junction-box", "copper-coil", "carbon-coil",
 
 	"wood-beam", "copper-beam", "bronze-beam", "iron-beam", "steel-beam", "chromium-beam",
 

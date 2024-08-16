@@ -168,3 +168,8 @@ data.raw.recipe["comet-ice-processing"].icons = {
 }
 
 data:extend({immateriaFluid, spagyricCrystalItem, elixirItem, elixirRecipeCategory, elixirItemSubgroup, elixirRecipe, immateriaFissure, immateriaParticleSource, immateriaSmoke, immateriaSpillData})
+
+-- Quantum lab should accept elixir stone.
+table.insert(data.raw.lab["quantum-lab"].inputs, "elixir-stone")
+-- Quantum lab description has the icons of analysis packs it accepts. So append elixir stone icon at the end.
+data.raw.lab["quantum-lab"].localised_description = {"", data.raw.lab["quantum-lab"].localised_description, "[img=item/elixir-stone]"}
