@@ -22,15 +22,15 @@
 -- nickel=>iron (green to cyan)
 -- chromium=>tin (red to blue)
 
-local function makeTransmutation(a, b)
+local function makeTransmutation(a, b, order)
 	return {
 		type = "recipe",
 		name = b.."-from-"..a,
 		localised_name = {"recipe-name."..b.."-from-"..a},
 		--category = data.raw.recipe["electrum-gem-charged"].category,
 		category = "crafting", -- so it's hand-craftable
-		subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
-		order = "zzz-z-z2",
+		subgroup = "elixir-stone-subgroup",
+		order = "zzz-"..order,
 		energy_required = 5,
 		ingredients = {
 			{type = "item", name = "elixir-stone", amount = 1},
@@ -55,8 +55,8 @@ local function makeTransmutation(a, b)
 end
 
 data:extend({
-	makeTransmutation("lead", "gold"),
-	makeTransmutation("platinum", "copper"),
-	makeTransmutation("nickel", "iron"),
-	makeTransmutation("chromium", "tin"),
+	makeTransmutation("lead", "gold", "1"),
+	makeTransmutation("platinum", "copper", "2"),
+	makeTransmutation("nickel", "iron", "3"),
+	makeTransmutation("chromium", "tin", "4"),
 })

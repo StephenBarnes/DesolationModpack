@@ -47,23 +47,26 @@ local elixirItem = {
 	durability = data.raw.tool["space-science-pack"].durability,
 }
 
+-- Make a new recipe category for elixir stone, and add it to the arc furnace's crafting categories.
 local elixirRecipeCategory = {
 	type = "recipe-category",
 	name = "elixir-stone-category",
 	order = "z",
 }
+table.insert(data.raw["assembling-machine"]["arc-furnace"].crafting_categories, "elixir-stone-category")
+
+-- Add a new item subgroup for the elixir stone, and place it underneath IR3's gemstones.
 local elixirItemSubgroup = {
 	type = "item-subgroup",
 	name = "elixir-stone-subgroup",
-	group = data.raw["item-subgroup"]["ir-molten-molten"].group,
-	order = "z",
+	group = "ir-processing",
+	order = "ca2",
 }
 local elixirRecipe = {
 	type = "recipe",
 	name = "elixir-stone",
 	category = "elixir-stone-category",
 	subgroup = "elixir-stone-subgroup",
-	--subgroup = data.raw.recipe["electrum-gem-charged"].subgroup,
 	energy_required = 150,
 	ingredients = {
 		{type = "item", name = "spagyric-crystal", amount = 1},
@@ -75,6 +78,7 @@ local elixirRecipe = {
 	enabled = false,
 	always_show_made_in = true,
 	main_product = "elixir-stone",
+	order = "zzz-0",
 	-- TODO set crafting machine tints
 }
 elixirRecipe.crafting_machine_tint = data.raw.recipe["chromium-molten-from-ingot"].crafting_machine_tint
@@ -82,9 +86,6 @@ elixirRecipe.crafting_machine_tint[1] = {1, 1, 1} -- It doesn't look like this i
 -- Un-fix the recipe for the supermagnet, since we're now adding alternative recipes.
 --data.raw["assembling-machine"]["supermagnet"].fixed_recipe = nil
 -- Actually, supermagnet's animation shows it as being for the field-aligned electrum crystal. So rather use the blast furnace.
-
--- Add this new category to the list of crafting categories for the arc furnace.
-table.insert(data.raw["assembling-machine"]["arc-furnace"].crafting_categories, "elixir-stone-category")
 
 --log(serpent.block(data.raw.resource["fossil-gas-fissure"]))
 local immateriaFissure = table.deepcopy(data.raw.resource["fossil-gas-fissure"])
