@@ -75,9 +75,11 @@ Substation:
 	This is unlocked late-game alongside the pylon. However, it doesn't have a unique use-case like the pylon.
 	Well, it allows somewhat more optimal beacon configurations, but that's not very big.
 	So, I'm making it only require steel, not chrome.
-	I'm making it 32x32, so it's ~1000 tiles, compared to the 9x9 poles that are 81 tiles. So it should cost about 10x as much, ie about 20 ingots maybe. But more, for convenience.
-	Maybe a good recipe: small steel frame + junction box + 4 copper cable.
-		This works out to around 35 ingots, and around 35 machines for 1/sec.
+	I'm making it 32x32, so it's ~1000 tiles, compared to the 7x7 poles that are ~50 tiles. So it should cost about 20x as much, ie about 40 ingots maybe. But more, for convenience, or less, so it's preferable.
+	Thing is, small frame (steel or chrome) isn't consistent with other stuff that needs small frames. And large frames are too expensive to make substations worth it.
+	So as a compromise, rather use plates and rods, and make the rods chromed, so substations are much more complex from-scratch, but fairly cheap once you have bulk electroplating set up anyway.
+	Maybe a good recipe: junction box + 4 copper cable + 4 steel plates + 2 chromed rods.
+		This works out to around 35-40 ingots, and for 1/sec it's around 25 machines plus 45 mini-assemblers.
 ]]
 
 local Tech = require("code.util.tech")
@@ -87,19 +89,71 @@ local G = require("code.util.general")
 local function inDataFinalFixes()
 	-- Remove small wooden pole completely.
 	Tech.removeRecipeFromTech("small-electric-pole", "ir-steam-power")
-	-- TODO for optimization: maybe remove sprites for the small electric pole, eg replace with small bronze pole sprites.
 
+	-- The "medium-electric-pole" ID is used for the small steel pole, unlocked with steel.
 	Tech.addRecipeToTech("medium-electric-pole", "ir-steel-milestone")
-
-	-- Hide the 2 existing electric energy distribution techs.
-	-- We could just hide one of them and then modify the other, but, then it'll have a number 1 or 2 on it.
-	Tech.hideTech("electric-energy-distribution-1")
-	Tech.hideTech("electric-energy-distribution-2")
 
 	-- Change wooden pole size to 1x1; should be in dff or else IR3 tries to set it back??
 	G.trimBox(data.raw["electric-pole"]["big-wooden-pole"].collision_box, 0.5)
 	G.trimBox(data.raw["electric-pole"]["big-wooden-pole"].selection_box, 0.5)
 	data.raw["electric-pole"]["big-wooden-pole"].next_upgrade = nil
+
+	-- Mark electric poles as military targets, except big electric pole.
+	for poleName, poleEnt in pairs(data.raw["electric-pole"]) do
+		poleEnt.is_military_target = (poleName ~= "big-electric-pole")
+	end
+end
+
+local function inDataUpdates()
+	-- Rewrite tech prereqs to account for tech changes.
+	Tech.setPrereqs("ir-electronics-3", {"ir-graphene", "ir-electrum-milestone", "low-density-structure", "ir-advanced-batteries"})
+	Tech.setPrereqs("ir-advanced-batteries", {"ir-lead-smelting", "battery", "ir-electroplating"})
+	Tech.setPrereqs("ir-solar-energy-1", {"advanced-electric-distribution"}) -- TODO remove solar panels.
+
+	-- Hide the 2 existing electric energy distribution techs.
+	-- We could just hide one of them and then modify the other, but, then it'll have a number 1 or 2 on it.
+	Tech.hideTech("electric-energy-distribution-1")
+	Tech.hideTech("electric-energy-distribution-2")
+end
+
+local function inData()
+	data.raw["electric-pole"]["small-bronze-pole"].maximum_wire_distance = 8
+	data.raw["electric-pole"]["small-bronze-pole"].supply_area_distance = 3.5
+
+	data.raw["electric-pole"]["small-iron-pole"].maximum_wire_distance = 8
+	data.raw["electric-pole"]["small-iron-pole"].supply_area_distance = 3.5
+
+	data.raw["electric-pole"]["medium-electric-pole"].maximum_wire_distance = 8
+	data.raw["electric-pole"]["medium-electric-pole"].supply_area_distance = 3.5
+
+	data.raw["electric-pole"]["big-wooden-pole"].maximum_wire_distance = 20
+	data.raw["electric-pole"]["big-wooden-pole"].supply_area_distance = 1.5
+
+	data.raw["electric-pole"]["substation"].maximum_wire_distance = 32
+	data.raw["electric-pole"]["substation"].supply_area_distance = 16
+
+	-- Recipes for small bronze pole, small iron pole - leaving as-is.
+	Recipe.setIngredients("big-electric-pole", {
+		{"copper-cable-heavy", 2},
+		{"steel-beam", 4},
+		{"chromium-rod", 8},
+		{"electrum-plate-special", 1},
+	})
+	Recipe.setIngredients("substation", {
+		{"copper-cable", 4},
+		{"junction-box", 1},
+		{"steel-plate", 4},
+		{"chromium-rod", 2},
+	})
+	Recipe.setIngredients("medium-electric-pole", { -- Small steel pole.
+		{"copper-cable", 1},
+		{"steel-rod", 2},
+	})
+	Recipe.setIngredients("big-wooden-pole", {
+		{"copper-cable", 2},
+		{"wood", 2},
+		{"iron-stick", 2},
+	})
 
 	-- Create the new tech.
 	data:extend({
@@ -151,64 +205,10 @@ local function inDataFinalFixes()
 			},
 		},
 	})
-
-	-- Rewrite tech prereqs on these now-disabled techs.
-	Tech.setPrereqs("ir-solar-energy-1", {"ir-electronics-2"}) -- TODO remove solar panels.
-	Tech.setPrereqs("ir-advanced-batteries", {"ir-lead-smelting", "battery"})
-
-	-- Seems IR3 is automatically setting prereqs for some techs, e.g. it removes the null field plate => electronics 3 prereq if I add that to pylon recipe.
-	-- So, this should fix that.
-	Tech.setPrereqs("ir-electronics-3", {"ir-graphene", "ir-electrum-milestone", "low-density-structure", "ir-advanced-batteries"})
-
-	-- Mark electric poles as military targets, except big electric pole.
-	for poleName, poleEnt in pairs(data.raw["electric-pole"]) do
-		poleEnt.is_military_target = (poleName ~= "big-electric-pole")
-	end
-end
-
-local function inData()
-	data.raw["electric-pole"]["small-bronze-pole"].maximum_wire_distance = 9
-	data.raw["electric-pole"]["small-bronze-pole"].supply_area_distance = 4.5
-
-	data.raw["electric-pole"]["small-iron-pole"].maximum_wire_distance = 9
-	data.raw["electric-pole"]["small-iron-pole"].supply_area_distance = 4.5
-
-	data.raw["electric-pole"]["medium-electric-pole"].maximum_wire_distance = 9
-	data.raw["electric-pole"]["medium-electric-pole"].supply_area_distance = 4.5
-
-	data.raw["electric-pole"]["big-wooden-pole"].maximum_wire_distance = 20
-	data.raw["electric-pole"]["big-wooden-pole"].supply_area_distance = 1.5
-
-	data.raw["electric-pole"]["substation"].maximum_wire_distance = 32
-	data.raw["electric-pole"]["substation"].supply_area_distance = 16
-
-	-- Pylon is 32 and 4x4. Seems like IR3 increased it to 32.
-
-	-- Adjust the recipes.
-	-- Recipes for bronze pole, small iron pole - leaving as-is.
-	Recipe.setIngredients("big-electric-pole", {
-		{"copper-cable-heavy", 2},
-		{"steel-beam", 4},
-		{"chromium-rod", 8},
-		{"electrum-plate-special", 1},
-	})
-	Recipe.setIngredients("substation", {
-		{"copper-cable", 4},
-		{"junction-box", 1},
-		{"steel-frame-small", 1},
-	})
-	Recipe.setIngredients("medium-electric-pole", { -- Small steel pole.
-		{"copper-cable", 1},
-		{"steel-rod", 2},
-	})
-	Recipe.setIngredients("big-wooden-pole", {
-		{"copper-cable", 2},
-		{"wood", 2},
-		{"iron-stick", 2},
-	})
 end
 
 return {
 	inData = inData,
+	inDataUpdates = inDataUpdates,
 	inDataFinalFixes = inDataFinalFixes,
 }

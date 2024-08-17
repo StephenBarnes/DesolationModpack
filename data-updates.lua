@@ -18,5 +18,7 @@ require("code.data.additions.endgame.resources")
 
 require("code.data.tweaks.intermodal-containers.packability-data-updates")
 
+require("code.data.tweaks.electric-poles").inDataUpdates()
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-updates")

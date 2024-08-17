@@ -60,7 +60,9 @@ require("code.data.tweaks.vehicles.long-range-delivery-drones")
 require("code.data.tweaks.beacon-rebalance")
 
 require("code.data.tweaks.electric-poles").inDataFinalFixes()
+--data.raw["electric-pole"]["big-wooden-pole"].next_upgrade = nil
 
+-- TODO change this to have separate functions, not this weird string-passing thing.
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")
 
