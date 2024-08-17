@@ -75,6 +75,7 @@ local forbiddenTypes = {
 }
 local namesBuildableAnywhere = {
 	["seismic-scanner"] = true,
+	["big-electric-pole"] = true,
 }
 
 local forbiddenPlacedTiles = {

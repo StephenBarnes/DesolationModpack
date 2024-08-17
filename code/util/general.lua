@@ -27,4 +27,17 @@ X.ifThenElse = function(condition, thenValue, elseValue)
 	end
 end
 
+X.trimAmt = function(original, trim)
+	if original < 0 then
+		return original + trim
+	else
+		return original - trim
+	end
+end
+X.trimBox = function(box, amt)
+	for i = 1, 2 do for j = 1, 2 do
+		box[i][j] = X.trimAmt(box[i][j], amt)
+	end end
+end
+
 return X

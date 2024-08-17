@@ -8,6 +8,8 @@
 -- * Previously, now obsolete: We want to avoid "dead ends" in the tech tree, because evolution depends on techs.
 --     This is now obsolete, because I decided to instead add evolution to specific milestone techs, not uniformly to all techs.
 
+-- TODO rather move each of these to its own, separate file for related changes. Rather collect the modpack's changes by theme/domain/subject (transport, ammo, etc.), not aspect/system (techs, recipes, items, etc.), since that's what I'm doing everywhere else.
+
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
 
@@ -261,11 +263,11 @@ local milestoneTechs = {
 	"ir-iron-smelting",
 	"ir-steam-power", -- Electricity
 	"ir-steel-smelting",
-	"ir-gold-milestone",
+	"ir-gold-smelting",
 	"ir-crude-oil-processing",
 	"ir-electronics-2",
 	"ir-washing-1",
-	"ir-brass-milestone",
+	"ir-brass-alloying",
 	"ir-electroplating",
 	"ir-electronics-3",
 	"uranium-processing",

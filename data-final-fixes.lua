@@ -15,7 +15,6 @@ require("code.data.terrain.tile-autoplace")
 require("code.data.additions.start-island-scan")
 
 require("code.data.tweaks.fluid-containers")
-require("code.data.tweaks.electric-poles")
 require("code.data.tweaks.fish")
 require("code.data.tweaks.alien-biomes")
 require("code.data.tweaks.trees")
@@ -59,6 +58,8 @@ require("code.data.tweaks.recipe-times")
 
 require("code.data.tweaks.vehicles.long-range-delivery-drones")
 require("code.data.tweaks.beacon-rebalance")
+
+require("code.data.tweaks.electric-poles").inDataFinalFixes()
 
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-final-fixes")

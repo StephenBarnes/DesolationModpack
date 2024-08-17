@@ -35,7 +35,7 @@ end
 local entitiesToAllowPacking = {
 	"transport-belt", "fast-transport-belt", "express-transport-belt",
 	"underground-belt", "fast-underground-belt", "express-underground-belt",
-	"small-electric-pole", "small-bronze-pole", "small-iron-pole",
+	"small-bronze-pole", "small-iron-pole", "medium-electric-pole", -- "small-electric-pole" is disabled. "medium-electric-pole" is actually small steel pole.
 	"copper-pipe", "steam-pipe", "pipe", "air-pipe",
 	"copper-pipe-to-ground", "steam-pipe-to-ground", "pipe-to-ground", "air-pipe-to-ground",
 	"copper-pipe-to-ground-short", "steam-pipe-to-ground-short", "pipe-to-ground-short", "air-pipe-to-ground-short",

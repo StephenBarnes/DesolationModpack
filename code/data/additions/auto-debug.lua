@@ -46,7 +46,11 @@ local function toposortTechsAndCache()
 				local allPrereqsAdded = true
 				local tech = data.raw.technology[techName]
 				local prereqs = Tech.getPrereqList(tech)
-				for _, prereqName in pairs(prereqs) do
+				if prereqs == nil or type(prereqs) ~= "table" then
+					log("ERROR: Tech "..techName.." has no prereqs.")
+					return false
+				end
+				for _, prereqName in pairs(prereqs or {}) do
 					if not techsAdded[prereqName] then
 						allPrereqsAdded = false
 						break
@@ -67,7 +71,7 @@ local function toposortTechsAndCache()
 				if not beenAdded then
 					local tech = data.raw.technology[techName]
 					local prereqs = Tech.getPrereqList(tech)
-					log("Could not rearch tech "..techName..", which has prereqs: "..serpent.line(prereqs))
+					log("Could not reach tech "..techName..", which has prereqs: "..serpent.line(prereqs))
 				end
 			end
 			log("Techs added: "..serpent.block(techsAdded))
