@@ -207,26 +207,28 @@ X.moistureBias = var("control-setting:moisture:bias") * 30
 
 X.oasisNoiseScaleSlider = slider("Desolation-start-island-oasis-noise", "frequency")
 X.oasisNoiseAmplitudeSlider = slider("Desolation-start-island-oasis-noise", "size")
-X.oasisNoiseAmplitude = X.oasisNoiseAmplitudeSlider * 12
-X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/300)
+X.oasisNoiseAmplitude = X.oasisNoiseAmplitudeSlider * 10
+X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/225)
 
 local spawnOasisMinRadSlider = tne(1) / slider("Desolation-spawn-oasis-rad", "frequency")
 local spawnOasisMinMaxSlider = slider("Desolation-spawn-oasis-rad", "size")
 
-X.spawnOasisMinRad = spawnOasisMinRadSlider * 50
+X.spawnOasisMinRad = spawnOasisMinRadSlider * 65
 X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 80
 X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 200
 
 local copperTinOasisMinRadSlider = tne(1) / slider("Desolation-coppertin-oasis-rad", "frequency")
 local copperTinOasisMinMaxSlider = slider("Desolation-coppertin-oasis-rad", "size")
 
-X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * 1.3
-X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 2.0
-X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * 5
+local arcBlobOasisSizeProfile = {4, 6, 10}
 
-X.ironCoalOasisMinRad = X.distIronToSecondCoal * 1.3
-X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 2.0
-X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * 5
+X.copperTinOasisMinRad = copperTinOasisMinRadSlider * X.distSecondCopperToTin * arcBlobOasisSizeProfile[1]
+X.copperTinOasisMidRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * arcBlobOasisSizeProfile[2]
+X.copperTinOasisMaxRad = X.copperTinOasisMinRad + copperTinOasisMinMaxSlider * X.distSecondCopperToTin * arcBlobOasisSizeProfile[3]
+
+X.ironCoalOasisMinRad = X.distIronToSecondCoal * arcBlobOasisSizeProfile[1]
+X.ironCoalOasisMidRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * arcBlobOasisSizeProfile[2]
+X.ironCoalOasisMaxRad = X.ironCoalOasisMinRad + X.distIronToSecondCoal * arcBlobOasisSizeProfile[3]
 
 ------------------------------------------------------------------------
 -- Starting patches
