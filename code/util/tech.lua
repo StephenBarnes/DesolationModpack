@@ -98,6 +98,28 @@ Tech.replacePrereq = function(techName, oldPrereq, newPrereq)
 	end
 end
 
+Tech.removePrereqForDifficulty = function(techDifficulty, oldPrereq)
+	for i, prereq in pairs(techDifficulty.prerequisites) do
+		if prereq == oldPrereq then
+			table.remove(techDifficulty.prerequisites, i)
+			return
+		end
+	end
+end
+
+Tech.removePrereq = function(techName, oldPrereq)
+	local tech = data.raw.technology[techName]
+	if tech.normal ~= nil then
+		Tech.removePrereqForDifficulty(tech.normal, oldPrereq)
+	end
+	if tech.expensive ~= nil then
+		Tech.removePrereqForDifficulty(tech.expensive, oldPrereq)
+	end
+	if tech.normal == nil and tech.expensive == nil then
+		Tech.removePrereqForDifficulty(tech, oldPrereq)
+	end
+end
+
 Tech.removeRecipeFromTechDifficulty = function(recipeName, techDifficulty)
 	for i, effect in pairs(techDifficulty.effects) do
 		if effect.type == "unlock-recipe" and effect.recipe == recipeName then

@@ -20,5 +20,7 @@ require("code.data.tweaks.intermodal-containers.packability-data-updates")
 
 require("code.data.tweaks.electric-poles").inDataUpdates()
 
+require("code.data.tweaks.no-solar-panels")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-updates")
