@@ -44,6 +44,7 @@ local entitiesToAllowPacking = {
 	"rail-signal", "rail-chain-signal",
 	"land-mine",
 	"stone-wall", "concrete-wall", "steel-plate-wall", "gate",
+	"construction-robot", "logistic-robot", "steambot",
 }
 for _, entityName in pairs(entitiesToAllowPacking) do
 	IC.generate_crates(entityName)

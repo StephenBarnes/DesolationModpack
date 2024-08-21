@@ -15,6 +15,8 @@ local forbidPacking = {
 	-- We could make that impossible by forbidding packing for those. But I don't think it's enough of a concern to justify that.
 	-- A weaker (non-cyclic) version of this exploit exists in the base game, by converting partially-consumed yellow mags to red mags and then uranium mags or military science packs.
 }
+local allowPacking = {
+}
 
 local function forcePackability(itemSpecifier, val)
 	local itemType
@@ -37,4 +39,7 @@ end
 
 for _, itemSpecifier in pairs(forbidPacking) do
 	forcePackability(itemSpecifier, false)
+end
+for _, itemSpecifier in pairs(allowPacking) do
+	forcePackability(itemSpecifier, true)
 end
