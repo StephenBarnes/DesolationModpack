@@ -5,8 +5,8 @@ local Recipe = require("code.util.recipe")
 -- But, with IR3, we only unlock advanced logistics chests at the end of the game.
 -- So, to prevent abusing these buildings, I'll make them expensive and place the tech after red circuits.
 
---Tech.setPrereqs("long-range-delivery-drone", {"ir-crude-oil-processing", "telemetry"})
 Tech.setPrereqs("long-range-delivery-drone", {"ir-electronics-2", "telemetry"})
+data.raw.technology["long-range-delivery-drone"].unit = table.deepcopy(data.raw.technology["ir-electronics-2"].unit)
 
 Recipe.setIngredients("long-range-delivery-drone", {
 	{"advanced-circuit", 1},

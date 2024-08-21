@@ -13,9 +13,6 @@
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
 
--- Glass bottle recipe unlocked by tech glass working (ir-glass-milestone).
-Tech.addRecipeToTech("glass-bottle", "ir-glass-milestone")
-
 -- Needed because I want the stacking beltboxes to be ordered correctly.
 -- Also, IR3 changes things so that logistics-2 is no longer a prereq for things like cars, like it is in vanilla.
 -- Actually not needed, bc it already depends on automation-2 indirectly.

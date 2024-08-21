@@ -7,6 +7,7 @@ Date: 21. 08. 2024
     - TODO Added autoplaces for trees, enemy nests, and gem-bearing boulders.
   Changes:
     - Removed solar panels and solar panel equipment. Added solar subassembly intermediate for satellites.
+    - Removed glass bottle, pending possible science rework.
     - Iron burner ice melter can consume barrels and canisters of liquid fuel.
     - TODO Shortened underground belts to length 1, which makes basic logistics much harder (alongside long inserter removal).
     - TODO Nerf flamethrower turrets somewhat

@@ -16,33 +16,38 @@ local id = {
 
 -- Register a new "glass bottle" item and recipe.
 -- Icon taken from: https://mods.factorio.com/mod/science-bottles
-data:extend({
-	{
-		type = "item",
-		name = "glass-bottle",-- Glass bottle recipe unlocked by tech glass working (ir-glass-milestone).,
-		stack_size = 50,
-		icon = "__Desolation__/graphics/bottle.png",
-		icon_size = 64,
-		icon_mipmaps = 4,
-		subgroup = "analysis",
-		order = "a",
-	},
-	{
-		type = "recipe",
-		name = "glass-bottle",
-		icon = "__Desolation__/graphics/bottle.png",
-		icon_size = 64,
-		icon_mipmaps = 4,
-		subgroup = "analysis",
-		order = "a",
-		category = "crafting",
-		enabled = false,
-		ingredients = {
-			{"glass", 1},
+local addGlassBottle = false -- Temporarily disabling bc science pack rework hasn't been done yet, maybe never.
+if addGlassBottle then
+	data:extend({
+		{
+			type = "item",
+			name = "glass-bottle",-- Glass bottle recipe unlocked by tech glass working (ir-glass-milestone).,
+			stack_size = 50,
+			icon = "__Desolation__/graphics/bottle.png",
+			icon_size = 64,
+			icon_mipmaps = 4,
+			subgroup = "analysis",
+			order = "a",
 		},
-		result = "glass-bottle",
-		result_count = 1,
-		energy_required = 1.0,
-	},
-})
+		{
+			type = "recipe",
+			name = "glass-bottle",
+			icon = "__Desolation__/graphics/bottle.png",
+			icon_size = 64,
+			icon_mipmaps = 4,
+			subgroup = "analysis",
+			order = "a",
+			category = "crafting",
+			enabled = false,
+			ingredients = {
+				{"glass", 1},
+			},
+			result = "glass-bottle",
+			result_count = 1,
+			energy_required = 1.0,
+		},
+	})
+
+	Tech.addRecipeToTech("glass-bottle", "ir-glass-milestone")
+end
 -- Molten glass doesn't exist, so no need for recipes for casting it into bottles.

@@ -106,6 +106,7 @@ local bulkyItems = {
 	"space-mirror",
 	"glass-bottle",
 	"rocket-control-unit",
+	"solar-subassembly",
 	"explosives",
 
 	"land-mine",
