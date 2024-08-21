@@ -2,6 +2,7 @@
 Version: 0.4.0
 Date: 21. 08. 2024
   Features:
+    - TODO Moved electric arc turrets and electric discharge equipment to shortly after electricity
     - Tweaks to electric poles. Pylons are now late-game and can cross cold tiles.
     - Tuned terrain generation and resource placement. Starting island warm patches are larger.
     - TODO Added autoplaces for trees, enemy nests, and gem-bearing boulders.
@@ -9,7 +10,7 @@ Date: 21. 08. 2024
     - Removed solar panels and solar panel equipment. Added solar subassembly intermediate for satellites.
     - Removed glass bottle, pending possible science rework.
     - Iron burner ice melter can consume barrels and canisters of liquid fuel.
-    - TODO Shortened underground belts to length 1, which makes basic logistics much harder (alongside long inserter removal).
+    - Shortened underground belts to length 1. Added dependency on Harder Basic Logistics to de-duplicate code.
     - TODO Nerf flamethrower turrets somewhat
   Bugfixes:
     - TODO

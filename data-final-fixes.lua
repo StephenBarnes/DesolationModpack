@@ -50,8 +50,6 @@ require("code.data.tweaks.searchlight-assault")
 
 require("code.data.tweaks.IR3.order-tweaks")
 
-require("code.data.tweaks.no-long-inserters")
-
 require("code.data.tweaks.intermodal-containers.packability-data-final-fixes")
 
 require("code.data.tweaks.recipe-times")
