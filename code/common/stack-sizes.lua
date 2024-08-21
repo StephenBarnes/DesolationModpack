@@ -371,7 +371,7 @@ local stackSizeGroups = {
 		items = extraBigBuildings,
 	},
 	robots = {
-		defaultStackSize = 40,
+		defaultStackSize = 40, -- In vanilla, this is 50.
 		items = robots,
 	},
 	vehicles = {

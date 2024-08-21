@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 21. 08. 2024
+  Features:
+    - Tweaks to electric poles. Pylons are now late-game and can cross cold tiles.
+    - Tuned terrain generation and resource placement. Starting island warm patches are larger.
+    - TODO Added autoplaces for trees, enemy nests, and gem-bearing boulders.
+  Changes:
+    - Removed solar panels and solar panel equipment. Added solar subassembly intermediate for satellites.
+    - Iron burner ice melter can consume barrels and canisters of liquid fuel.
+    - TODO Shortened underground belts to length 1, which makes basic logistics much harder (alongside long inserter removal).
+    - TODO Nerf flamethrower turrets somewhat
+  Bugfixes:
+    - TODO
+---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 16. 08. 2024
   Features:

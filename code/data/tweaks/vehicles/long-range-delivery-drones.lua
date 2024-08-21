@@ -1,21 +1,28 @@
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
 
-Tech.setPrereqs("long-range-delivery-drone", {"ir-crude-oil-processing", "telemetry"})
+-- The buildings added by Long-Range Delivery Drones mod are capable of functioning as advanced logistics chests.
+-- But, with IR3, we only unlock advanced logistics chests at the end of the game.
+-- So, to prevent abusing these buildings, I'll make them expensive and place the tech after red circuits.
+
+--Tech.setPrereqs("long-range-delivery-drone", {"ir-crude-oil-processing", "telemetry"})
+Tech.setPrereqs("long-range-delivery-drone", {"ir-electronics-2", "telemetry"})
+
 Recipe.setIngredients("long-range-delivery-drone", {
-	{"electronic-circuit", 1},
+	{"advanced-circuit", 1},
 	{"petroleum-gas-iron-canister", 1},
 	{"engine-unit", 1},
-	{"steel-plate", 10},
+	{"steel-plate", 20},
 })
 Recipe.setIngredients("long-range-delivery-drone-depot", {
-	{"computer-mk1", 1},
+	{"computer-mk2", 2},
 	{"steel-chest", 2},
-	{"steel-plate", 40},
+	{"steel-frame-large", 1},
 })
 Recipe.setIngredients("long-range-delivery-drone-request-depot", {
-	{"steel-chest", 2},
-	{"steel-plate", 20},
+	{"advanced-circuit", 1},
+	{"steel-chest", 1},
+	{"steel-frame-large", 1},
 })
 
 data.raw.item["long-range-delivery-drone"].localised_name={"item-name.long-range-delivery-drone"}
