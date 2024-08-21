@@ -9,6 +9,7 @@ local forbidPacking = {
 	"solar-assembly",
 	"quantum-satellite",
 	"empty-barrel",
+	"long-range-delivery-drone", -- Stack size is 1, so rather forbid it.
 
 	-- With tools like science packs or ammo, there's a bit of an exploit where we could partially use up one, then pack and unpack to get that durability back.
 	-- We could make that impossible by forbidding packing for those. But I don't think it's enough of a concern to justify that.
