@@ -1,4 +1,5 @@
 local Recipe = require("code.util.recipe")
+local Tech = require("code.util.tech")
 
 -- Considered: Make all small and large frames cost twice as much, to make infrastructure more expensive. Decided against because current costs already seem pretty expensive.
 
@@ -29,3 +30,14 @@ data.raw.resource["steam-fissure"].localised_name = {"entity-name.steam-fissure"
 
 -- Make coal a bit more visible on the dark terrain
 --data.raw.resource["coal"].map_color = {r=0.3, g=0.3, b=0.3}
+
+-- https://github.com/Deadlock989/IndustrialRevolution/issues/451
+-- The portable steam engine shouldn't have a combustion engine, since it just discharges steam cells, doesn't use burnable fuel.
+Tech.removePrereq("modular-armor", "engine")
+Recipe.setIngredients("iron-burner-generator-equipment", -- This ID is used for portable steam engine.
+	{
+		{"iron-frame-small", 1},
+		{"iron-stick", 4},
+		{"iron-gear-wheel", 8},
+		{"copper-cable", 2},
+	})
