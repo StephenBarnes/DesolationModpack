@@ -35,6 +35,8 @@ Tech.setPrereqs("night-vision-equipment", {"modular-armor"})
 --Tech.addRecipeToTech("heavy-armor", "ir-bronze-furnace")
 --Tech.hideTech("heavy-armor")
 
+Tech.addTechDependency("heavy-armor", "modular-armor")
+
 -- Change clockwork scatterbot to depend on the new heavy bronze plate tech.
 --Tech.replacePrereq("ir-scatterbot", "ir-bronze-milestone", "ir-bronze-furnace")
 

@@ -1,18 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 22. 08. 2024
-  Features:
-    - TODO Moved electric arc turrets and electric discharge equipment to shortly after electricity
+  Changes:
+    - Moved electric arc turrets and electric discharge equipment to early electric age.
     - Pylons are now late-game and can cross cold tiles. Tweaks to other electric poles. Wooden poles removed completely.
     - Tuned terrain generation and resource placement. Starting island warm patches are larger.
     - Moved ambient heat exchanger and polluted water filtration machines and recipes to geothermal tech and fluid handling tech, to make geothermal practical earlier.
-    - TODO Added autoplaces for trees, enemy nests, and gem-bearing boulders.
-  Changes:
     - Removed solar panels and solar panel equipment. Added solar subassembly intermediate for satellites.
-    - Removed glass bottle, pending possible science rework.
-    - Iron burner ice melter can consume barrels and canisters of liquid fuel.
     - Shortened underground belts to length 1. Added dependency on Harder Basic Logistics to de-duplicate code.
-    - TODO Nerf flamethrower turrets somewhat
+    - Iron burner ice melter can consume barrels and canisters of liquid fuel.
+    - Removed glass bottle, pending possible science rework.
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 16. 08. 2024

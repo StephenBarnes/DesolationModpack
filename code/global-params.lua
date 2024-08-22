@@ -1,6 +1,6 @@
 local G = require("code.util.general")
 
-local isDebug = true -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
+local isDebug = false -- Whether currently debugging; this changes multiple settings below. TODO set to false when releasing.
 
 return {
 	runIntroCutscene = not isDebug, -- Whether to run the IR3 intro cutscene.

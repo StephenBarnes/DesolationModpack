@@ -143,6 +143,4 @@ for _, itemName in pairs(pittableItems) do
 end
 
 local Tech = require("code.util.tech")
-Tech.addRecipeToTech("pit", "stone-wall") -- This is the stone-working tech.
-
--- TODO add pit to the stone tech
+Tech.addRecipeToTech("pit", "ir-basic-research") -- This is the stone-working tech.

@@ -22,5 +22,7 @@ require("code.data.tweaks.electric-poles").inDataUpdates()
 
 require("code.data.tweaks.no-solar-panels")
 
+require("code.data.tweaks.IR3.early-lightning")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-updates")
