@@ -409,7 +409,7 @@ setResourceAutoplace {
 	desiredAmount = 100000,
 	resourceType = "C",
 	outsideFade = C.resourceMinDist["uranium-ore"],
-	noiseMult = 2,
+	noiseMult = 3,
 }
 
 ------------------------------------------------------------------------
@@ -422,7 +422,7 @@ setResourceAutoplace {
 	desiredAmount = 300000,
 	resourceType = "B",
 	outsideFade = C.resourceMinDist["gold-ore"],
-	noiseMult = 2, -- For some reason the gold patches are extremely circular, more than the other resources. This should reduce that.
+	noiseMult = 3, -- For some reason the gold patches are extremely circular, more than the other resources. This should reduce that.
 }
 
 ------------------------------------------------------------------------
