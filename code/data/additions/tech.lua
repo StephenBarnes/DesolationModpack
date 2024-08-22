@@ -108,14 +108,6 @@ Tech.setPrereqs("ir-radar", {"telemetry"})
 Tech.disable("ir-airship-station")
 Tech.addRecipeToTech("airship-station", "ir-hydrogen-airship")
 
--- Geothermal and electric derrick
-data.raw.technology["ir-steel-derrick"].prerequisites = {"fluid-handling"}
-data.raw.technology["ir-steel-derrick"].unit = data.raw.technology["fluid-handling"].unit
-data.raw.technology["ir-geothermal-exchange"].prerequisites = {"ir-steel-derrick"}
-data.raw.technology["ir-geothermal-exchange"].unit = data.raw.technology["fluid-handling"].unit
-data.raw.recipe["steel-derrick"].ingredients = {{"pipe", 8}, {"iron-plate-heavy", 4}, {"iron-beam", 8}, {"iron-piston", 4}} -- Changed steel->iron, and reduced amounts.
-data.raw.recipe["iron-geothermal-exchanger"].ingredients = {{"iron-frame-small", 1}, {"pump", 1}, {"steam-pipe", 6}, {"pipe", 4}} -- Changed to include pump
-
 data.raw.technology["optics"].prerequisites = {"ir-steam-power"} -- Depend only on electricity, not surveying.
 
 -- Remove all the series of techs.

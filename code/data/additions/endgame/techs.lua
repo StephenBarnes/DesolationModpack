@@ -14,7 +14,6 @@ local elixirStoneTech = {
 	prerequisites = {
 		"ir-arc-furnace",
 		"ir-quantum-mining",
-		"ir-steel-derrick", -- Because it's technically possible to get to this tech without ever researching electric derricks. Immateria is the first time you actually NEED to harvest any sort of fissure.
 	},
 	effects = {
 		{type = "unlock-recipe", recipe = "elixir-stone"},

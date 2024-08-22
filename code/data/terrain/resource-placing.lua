@@ -473,8 +473,8 @@ data.raw.resource["natural-gas-fissure"].autoplace = nil
 
 setResourceAutoplace {
 	id = "dirty-steam-fissure",
-	outsideRad = 14,
-	outsideDensity = 0.3,
+	outsideRad = 18,
+	outsideDensity = 0.4,
 	desiredAmount = 1e9,
 	dots = true,
 	normalSpawnInStartIsland = true, -- So can spawn on starting island.
@@ -488,7 +488,7 @@ setResourceAutoplace {
 -- TODO does IR3 place these anywhere except at spawn? If not, maybe remove this.
 setResourceAutoplace {
 	id = "steam-fissure",
-	outsideRad = 8,
+	outsideRad = 10,
 	outsideDensity = 0.12,
 	desiredAmount = 5e8,
 	dots = true,
