@@ -30,7 +30,8 @@ Considering various fuel types:
 local Recipe = require("code.util.recipe")
 local Tech = require("code.util.tech")
 
-local barrelFluidMultFactor = 10
+local barrelFluidMultFactor = 10 -- Multiplier for the amount of fluid per barrel.
+local barrellingTimeMultFactor = 2 -- Could make barrelling take proportionally longer, but that seems unrealistic, so just make it slightly slower.
 
 -- Multiply fluid needed to fill, and fluid produced by emptying.
 for _, recipe in pairs(data.raw.recipe) do
@@ -40,14 +41,14 @@ for _, recipe in pairs(data.raw.recipe) do
 				ingredient.amount = ingredient.amount * barrelFluidMultFactor
 			end
 		end
-		recipe.energy_required = recipe.energy_required * barrelFluidMultFactor
+		recipe.energy_required = recipe.energy_required * barrellingTimeMultFactor
 	elseif recipe.subgroup == "empty-barrel" then
 		for _, product in pairs(recipe.results) do
 			if product.type == "fluid" then
 				product.amount = product.amount * barrelFluidMultFactor
 			end
 		end
-		recipe.energy_required = recipe.energy_required * barrelFluidMultFactor
+		recipe.energy_required = recipe.energy_required * barrellingTimeMultFactor
 	end
 end
 
@@ -108,3 +109,16 @@ Tech.addRecipeToTech("barrel-disassembly", "ir-barrelling", 2)
 
 -- Move high-pressure canister recipe to before the two barrel recipes.
 data.raw.recipe["empty-barrel"].order = "d"
+
+-- We need to increase the capacity of the filling machine's fluidbox, bc it's currently 500 fluid, which isn't enough for even one barrel.
+-- Fluid boxes have a base_area and height, then amount of fluid is 100 * base_area * height. For barrelling and unbarrelling machines, height is 1, base area is 5.
+-- Let's make it big enough for 2 barrels full.
+-- Only needed for the (iron) barrelling machine, not the copper one, since that one only fills steam cells and canisters, holding 100 and 200 steam respectively.
+data.raw.furnace["barrelling-machine"].fluid_boxes[1].base_area = 12
+data.raw.furnace["unbarrelling-machine"].fluid_boxes[1].base_area = 12
+
+-- Also adjust the crafting speeds of copper and iron filling machines, bc they're currently inconveniently non-round numbers.
+data.raw.furnace["steam-barrelling-machine"].crafting_speed = 0.5 -- 0.625 => 0.5
+data.raw.furnace["steam-unbarrelling-machine"].crafting_speed = 0.5 -- 0.625 => 0.5
+data.raw.furnace["barrelling-machine"].crafting_speed = 1 -- 1.25 => 1
+data.raw.furnace["unbarrelling-machine"].crafting_speed = 1 -- 1.25 => 1
