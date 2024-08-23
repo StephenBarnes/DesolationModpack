@@ -314,7 +314,7 @@ for _, techName in pairs({
 	"ir-copper-working-2",
 	--"ir-tin-working-2",
 	"ir-grinding-2",
-	"ir-concrete-2",
+	"ir-concrete-1", "ir-concrete-2",
 	"ir-electronics-2", "ir-electronics-3",
 	"ir-modules-2", "ir-modules-3",
 	"ir-washing-2",
@@ -332,6 +332,10 @@ for _, recipeName in pairs({
 }) do
 	data.raw.recipe[recipeName].localised_name = {"recipe-name."..recipeName}
 end
+
+-- For some reason there's a tech dependency concrete => steel. Remove it.
+-- No, it's necessary because after steel smelting you have an inspiration unlock to get the steel analysis pack, which requires concrete. 
+--Tech.removePrereq("ir-steel-smelting", "ir-concrete-1")
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")

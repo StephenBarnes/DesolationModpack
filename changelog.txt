@@ -4,11 +4,11 @@ Date: 23. 08. 2024
   Changes:
     - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly recipe.
     - Tweaked furnaces. Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits). Stone furnaces are slightly slower, so that bronze furnaces are superior.
-    - Tweaked mining drills. Advanced mining drills are now better than small electric drills.
+    - Analyzed and tweaked mining drills. Advanced mining drills are now better than small electric drills.
     - Container disassembly now conserves iron ingots on average.
     - Improved icons for robotics techs.
-    - Adjusted names and descriptions of technologies.
-    - Tweaked paving material costs and speeds.
+    - Adjusted names and descriptions of many technologies.
+    - Analyzed and tweaked paving material costs and speeds. All paving materials have roughly equal material costs.
     - TODO Nerfed flamethrower turrets because they trivialise defense.
     - TODO Added custom terrain gen for trees, enemy nests, and gem-bearing boulders.
     - TODO Added options to disable some inconveniences (short underground belts, no long inserters).
