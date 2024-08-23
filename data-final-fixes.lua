@@ -25,6 +25,7 @@ require("code.data.tweaks.IR3.starting-junkheaps")
 require("code.data.tweaks.IR3.misc")
 require("code.data.tweaks.IR3.furnaces")
 require("code.data.tweaks.IR3.geothermal")
+require("code.data.tweaks.IR3.miners")
 
 require("code.data.additions.transfer-plate-unlocks-tech")
 
