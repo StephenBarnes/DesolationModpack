@@ -24,6 +24,7 @@ require("code.data.additions.powered-pumps")
 require("code.data.tweaks.IR3.scatterbots")
 require("code.data.tweaks.IR3.starting-junkheaps")
 require("code.data.tweaks.IR3.misc")
+require("code.data.tweaks.IR3.furnaces")
 require("code.data.tweaks.IR3.geothermal")
 
 require("code.data.additions.transfer-plate-unlocks-tech")

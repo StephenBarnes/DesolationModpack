@@ -112,6 +112,9 @@ Tech.addRecipeToTech("airship-station", "ir-hydrogen-airship")
 
 data.raw.technology["optics"].prerequisites = {"ir-steam-power"} -- Depend only on electricity, not surveying.
 
+-- Remove prereq that's been made redundant due to boat tech (steel => boat => pumpjack => oil => graphite).
+Tech.removePrereq("ir-graphite", "ir-steel-milestone")
+
 -- Remove all the series of techs.
 local techSeriesToDisable = {
 	["physical-projectile-damage"] = {1, 2, 3, 4, 5, 6, 7},

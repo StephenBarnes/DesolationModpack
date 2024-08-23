@@ -105,7 +105,8 @@ data.raw.wall["ancient-wall"].minable = {
 
 -- Change map colors so it's visible against the mostly-snowy terrain.
 -- Originally all of them were 0.8, 0.85, 0.8.
-data.raw.wall["ancient-wall"].map_color = {r=0.55, g=0.55, b=0.55}
-data.raw.wall["stone-wall"].map_color = {r=0.55, g=0.55, b=0.55}
-data.raw.wall["concrete-wall"].map_color = {r=0.35, g=0.35, b=0.35}
-data.raw.wall["steel-plate-wall"].map_color = {r=0.2, g=0.2, b=0.2}
+-- TODO this was written back when building on snow/ice was permitted. Check again how the vanilla wall colors look now, against the volcanic/grassy terrain.
+--data.raw.wall["ancient-wall"].map_color = {r=0.55, g=0.55, b=0.55}
+--data.raw.wall["stone-wall"].map_color = {r=0.55, g=0.55, b=0.55}
+--data.raw.wall["concrete-wall"].map_color = {r=0.35, g=0.35, b=0.35}
+--data.raw.wall["steel-plate-wall"].map_color = {r=0.2, g=0.2, b=0.2}

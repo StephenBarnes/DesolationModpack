@@ -34,7 +34,7 @@ local function onSectorScanned(event)
 	if global.seismicScanners == nil then global.seismicScanners = {} end
 	if global.seismicScanners[force.index] == nil then global.seismicScanners[force.index] = {} end
 	if global.seismicScanners[force.index][chunkStr] == nil then
-		force.print(math.random(100, 999) .. "New seismic scanner, chunk str "..(chunkStr or "nil"))
+		--force.print(math.random(100, 999) .. "New seismic scanner, chunk str "..(chunkStr or "nil"))
 		global.seismicScanners[force.index][chunkStr] = {
 			hasFinished = false,
 			firstTick = game.tick,

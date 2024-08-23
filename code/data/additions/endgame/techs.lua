@@ -69,7 +69,7 @@ local longRangeTransmaterialisationTech = {
 	unit = {
 		ingredients = finalTechIngredients,
 		time = 60,
-		count = 1000000 / 20,
+		count = 1000000 / 20, -- Is this excessive? Maybe. TODO playtest.
 	},
 }
 

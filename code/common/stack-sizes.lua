@@ -140,7 +140,7 @@ local extraBigBuildings = {
 
 	-- Not actually buildings, but probably roughly the same size.
 	"quantum-satellite",
-	"satellite", -- Called "cosmic analysis sattelite" in IR3.
+	"satellite", -- Called "cosmic analysis satellite" in IR3.
 }
 local bigBuildings = {
 	"ic-containerization-machine-1", "ic-containerization-machine-2", "ic-containerization-machine-3",
@@ -335,7 +335,7 @@ local stackSizeGroups = {
 	},
 	standardizedIngotsBricks = {
 		defaultStackSize = 120,
-			-- Should be divisible by 4, and then again by 2, so that bundling and packing recipes have nice round numbers.
+			-- Should be divisible by 4, so that bundling recipes have round numbers.
 		items = standardizedIngotsBricks,
 	},
 	smallItems = {

@@ -1,11 +1,11 @@
--- This file implements code shared between start-island-scan.lua and seismic-scanning.lua.
+-- This file implements code shared between the three scan scripts (start island scan, seismic scanning, and ocean scanning).
 
 local globalParams = require("code.global-params")
 
 local X = {} -- Exported values.
 
 local function getChunkArea(chunkPos)
-	-- Given sth like {3, 5}, returns the bounding box {{3*32, 5*32}, {3*32 + 31, 5*32 + 31}}.
+	-- Given sth like {3, 5}, returns the chunk's bounding box {{3*32, 5*32}, {3*32 + 31, 5*32 + 31}}.
 	local x1 = chunkPos[1] * 32
 	local y1 = chunkPos[2] * 32
 	local x2 = x1 + 31
@@ -14,9 +14,11 @@ local function getChunkArea(chunkPos)
 end
 
 local function isChunkPermitted(chunkArea, minLandTiles, maxLandTiles)
+	-- Returns whether the given chunk area has a number of land tiles within the given range.
 	local landTileCount = game.surfaces[1].count_tiles_filtered{area = chunkArea, collision_mask = "ground-tile"}
-	-- Seems this sometimes incorrectly thinks land tile count is 0 in chunks that haven't been created yet. Only observed when using very high scan speeds (for debugging), shouldn't exist in normal gameplay.
-	-- This can cause ocean scanning pods to also scan land, and can also cause land scans (seismic or starting island) to fail to scan some land chunks.
+		-- Seems this sometimes incorrectly thinks land tile count is 0 in chunks that haven't been created yet. Only observed when using very high scan speeds (for debugging), shouldn't exist in normal gameplay.
+		-- This can cause ocean scanning pods to also scan land, and can also cause land scans (seismic or starting island) to fail to scan some land chunks.
+		-- TODO fix this, maybe by returning some kind of error code that pauses the scan for this round, waiting until the chunk is properly generated.
 	if minLandTiles ~= nil and landTileCount < minLandTiles then return false end
 	if maxLandTiles ~= nil and landTileCount > maxLandTiles then return false end
 	return true
@@ -60,7 +62,7 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 		force.print("Scanning " .. X.chunkToStr(chunkToScan))
 	end
 
-	-- Update the frontier, if this scanned chunk had a non-water tile at its center.
+	-- Function to add a chunk to the frontier, if it hasn't already been scanned.
 	local function maybeAddChunk(chunkToAdd)
 		local chunkStr = X.chunkToStr(chunkToAdd)
 		if not scanInfo.alreadyAddedChunks[chunkStr] then
@@ -68,6 +70,8 @@ function X.updateScanOnce(force, scanInfo, maxDist, minLandTiles, maxLandTiles)
 			scanInfo.alreadyAddedChunks[chunkStr] = true
 		end
 	end
+
+	-- Update the frontier, if this scanned chunk had the required number of water/land tiles.
 	if isChunkPermitted(chunkArea, minLandTiles, maxLandTiles) then
 		for _, adjacentChunk in pairs({
 			{chunkToScan[1] - 1, chunkToScan[2], chunkToScan[3]+1},

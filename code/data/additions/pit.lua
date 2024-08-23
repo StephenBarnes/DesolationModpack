@@ -1,6 +1,5 @@
--- Create a "furnace" that can be used to void ice, stone, gravel, silica, scrap, maybe more.
--- Use the images for IR3's "bottomless pit".
--- TODO add this to the set of machines that allow unlubricated loaders. And explain that in the descriptions.
+-- Create a "furnace" that can be used to void ice, stone, gravel, sand, scrap, etc.
+-- Uses the sprite for IR3's "bottomless pit".
 
 local pitIngredients = {{"stone-brick", 20}}
 
@@ -143,4 +142,4 @@ for _, itemName in pairs(pittableItems) do
 end
 
 local Tech = require("code.util.tech")
-Tech.addRecipeToTech("pit", "ir-basic-research") -- This is the stone-working tech.
+Tech.addRecipeToTech("pit", "ir-basic-research")
