@@ -18,11 +18,13 @@
 -- So instead, make the recipe produce 180.
 
 -- Create a recipe and recipe category for pumping water.
+local waterTimeFactor = 3 -- Divides recipe time and amount of water produced. Increasing this evens out water production more, but causes pipes to animate more, etc. 10 is too high, 1 is too low.
 local pumpWaterRecipeCategory = { name = "pumping-water", type = "recipe-category" }
 local pumpWaterRecipe = {
 	type = "recipe",
 	name = "pump-water",
 	category = "pumping-water",
+	localised_name = {"recipe-name.pump-water"},
 	hidden = true,
 	enabled = true,
 	hide_from_stats = false, -- Darkfrei is using false here, so assuming that's good.
@@ -32,8 +34,8 @@ local pumpWaterRecipe = {
 	subgroup = "fluid-recipes",
 	order = "a",
 	ingredients = {},
-	results = {{type = "fluid", name = "water", amount = 180}},
-	energy_required = 1,
+	results = {{type = "fluid", name = "water", amount = 180/waterTimeFactor}},
+	energy_required = 1/waterTimeFactor,
 }
 
 -- Create assembling machine that replaces the copper-pump, and requires burnable fuel.
