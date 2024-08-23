@@ -132,6 +132,8 @@ local techSeriesToDisable = {
 	["laser-shooting-speed"] = {1, 2, 3, 4, 5, 6, 7},
 	["braking-force"] = {1, 2, 3},
 	["research-speed"] = {1, 2, 3, 4, 5, 6},
+	["inserter-capacity-bonus"] = {1, 2, 3},
+	["ir-normal-inserter-capacity-bonus"] = {1, 2},
 }
 for techName, techNums in pairs(techSeriesToDisable) do
 	if data.raw.technology[techName] ~= nil then
