@@ -178,9 +178,10 @@ data:extend({
 		-- Doing that in adjust-scrap.lua.
 		-- TODO do the actual calculations again
 		results = {
-			{ name = "iron-plate", amount_min = 8, amount_max = 10 },
-			{ name = "iron-rivet", amount_min = 4, amount_max = 10 },
-			{ name = "iron-scrap", amount_min = 0, amount_max = 2 },
+			{ name = "iron-plate", amount_min = 8, amount_max = 10 }, -- Averages to 9 plates = 9 ingots.
+			{ name = "iron-rivet", amount_min = 8, amount_max = 10 }, -- Averages to 9 rivets = 4.5 ingots.
+			{ name = "iron-scrap", amount_min = 0, amount_max = 3 }, -- Averages to 1.5 scrap = 1.5 ingots.
+			-- So total is 9 + 4.5 + 1.5 = 15 ingots from disassembly.
 		},
 		main_product = "iron-plate",
 		localised_name = { "recipe-name.ic-container-disassembly" },
@@ -244,7 +245,8 @@ Recipe.setIngredients("ic-containerization-machine-3", {
 
 -- Change the localised_description fields to point to the same shared description, so I don't have to repeat them in the locale file.
 for i = 1, 3 do
-	data.raw.item["ic-containerization-machine-"..i].localised_description = {"shared-description.ic-containerization-machine-ALL", {"belt-tier-name."..i}}
+	data.raw["assembling-machine"]["ic-containerization-machine-"..i].localised_description = {
+		"shared-description.ic-containerization-machine-ALL", {"belt-tier-name.tier-"..i}}
 end
 
 -- Change tabs and ordering in crafting menu.
@@ -256,3 +258,5 @@ data.raw.item["ic-container"].order = "2-1"
 data.raw.item["ic-containerization-machine-1"].order = "1-1"
 data.raw.item["ic-containerization-machine-2"].order = "1-2"
 data.raw.item["ic-containerization-machine-3"].order = "1-3"
+
+-- TODO rather separate this file out into loaders file and containers file.

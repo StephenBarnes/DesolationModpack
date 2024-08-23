@@ -16,3 +16,8 @@ Petroleum:
 
 TODO I think this requires playtesting. Otherwise it's hard to know how reasonable it is to have eg 60 chrome plating solution per barrel, 600 per stack, etc.
 ]]
+
+--[[
+Barrels are the fluid equivalent of containers.
+TODO add disassembly recipe for barrels.
+]]

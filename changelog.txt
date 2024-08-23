@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 23. 08. 2024
+  Features:
+    - TODO Added custom terrain gen for trees, enemy nests, and gem-bearing boulders.
+    - TODO Added options to disable some inconveniences (short underground belts, no long inserters).
+    - TODO Added empty barrel disassembly recipe, analogous to container recipe.
+  Changes:
+    - TODO Doubled barrel fluid contents, and increased barrel stack size 10 -> 50, to compensate for 10x smaller ship/train inventories to balance containerization.
+    - Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits).
+    - Stone furnaces are slightly slower, so that bronze furnaces are superior.
+    - Container disassembly now conserves total iron ingots on average.
+    - TODO Nerfed flamethrower turrets because they trivialize defense.
+    - TODO Improved icons for robotics techs.
+---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 22. 08. 2024
   Changes:
