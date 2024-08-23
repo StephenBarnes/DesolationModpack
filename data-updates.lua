@@ -27,5 +27,7 @@ require("code.data.tweaks.IR3.early-lightning")
 
 require("code.data.tweaks.fluid-containers") -- This is in data-updates so that IR3 generates the right empty barrel scrapping recipe.
 
+require("code.data.tweaks.concrete")
+
 local adjustForStage = require("code.data.tweaks.stack-sizes")
 adjustForStage("data-updates")

@@ -63,6 +63,7 @@ Recipe.setIngredients("deadlock-floor-lamp", {
 })
 
 -- Move copper wire tech to earlier, bc I want to put it in the copper-lamp recipe.
+-- Put it in copper-working-1, not -2, bc -2 already has lots of stuff and anyway stuff like the copper piston isn't used till later either.
 Tech.addRecipeToTech("copper-cable", "ir-copper-working-1", 5)
 Tech.removeRecipeFromTech("copper-cable", "ir-steam-power")
 

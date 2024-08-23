@@ -31,9 +31,6 @@ data.raw.technology["ir-arc-furnace"].unit.count = 1000
 data.raw.technology["ir-arc-furnace-2"].unit = table.deepcopy(data.raw.technology["ir-blast-furnace"].unit)
 data.raw.technology["ir-arc-furnace-2"].unit.count = 1200
 
--- Add separate description for arc furnace 2 tech
-data.raw.technology["ir-arc-furnace-2"].localised_description = {"technology-description.ir-arc-furnace-2"}
-
 -- Recipe change since chromed frame (from blue circuits) is now no longer unlocked when we reach arc furnace 1 tech.
 -- Originally, recipe was 1 large chromed frame + 1 junction box + 3 graphite electrode + 80 silicon carbide brick + 80 reinforced chromed plate.
 Recipe.substituteIngredient("arc-furnace", "chromium-frame-large", "steel-frame-large")

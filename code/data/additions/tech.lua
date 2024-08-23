@@ -294,6 +294,45 @@ Tech.removeRecipeFromTech("cliff-explosives", "explosives")
 -- Base IR3 has gold smelting depend on mining 1. I want to add naval engineering prereq, bc you can only get gold from other islands, and I don't want to distract the player with techs that are useless at their current level.
 Tech.setPrereqs("ir-gold-smelting", {"water_transport", "ir-mining-1"})
 
+-- Add unique name and description to some tiered techs that re-use the same strings.
+for _, techName in pairs({
+	"ir-concrete-1", "ir-concrete-2",
+	"ir-ethanol-1", "ir-ethanol-2",
+	"plastics-2",
+	"ir-washing-1", "ir-washing-2",
+	"ir-arc-furnace-2",
+	"laser", "laser-2",
+	"ir-mining-1", "ir-mining-2",
+	"ir-research-1", "ir-research-2",
+}) do
+	data.raw.technology[techName].localised_name = {"technology-name."..techName}
+end
+for _, techName in pairs({
+	-- not logistics-2, automation-2, ir-inserters-2
+	"ir-ethanol-1", "ir-ethanol-2",
+	"plastics-2",
+	"ir-copper-working-2",
+	--"ir-tin-working-2",
+	"ir-grinding-2",
+	"ir-concrete-2",
+	"ir-electronics-2", "ir-electronics-3",
+	"ir-modules-2", "ir-modules-3",
+	"ir-washing-2",
+	"ir-arc-furnace-2",
+	"laser", "laser-2",
+	"ir-mining-1", "ir-mining-2",
+	"ir-research-1", "ir-research-2",
+}) do
+	data.raw.technology[techName].localised_description = {"technology-description."..techName}
+end
+-- Add unique names to recipes that re-use the same strings.
+for _, recipeName in pairs({
+	"ethanol", "ethanol-from-gas",
+	"plastic-bar", "plastic-bar-from-ethanol",
+}) do
+	data.raw.recipe[recipeName].localised_name = {"recipe-name."..recipeName}
+end
+
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")

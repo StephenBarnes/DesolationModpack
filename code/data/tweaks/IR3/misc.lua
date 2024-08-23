@@ -1,8 +1,6 @@
 local Recipe = require("code.util.recipe")
 local Tech = require("code.util.tech")
 
--- Considered: Make all small and large frames cost twice as much, to make infrastructure more expensive. Decided against because current costs already seem pretty expensive.
-
 -- Reduce copper boiler effectiveness, so you need more of them and you're more eager to upgrade to iron boilers.
 data.raw.boiler["copper-boiler"].energy_consumption = "300000W" -- changed 15000 -> 5000, or 900kW -> 300kW
 
