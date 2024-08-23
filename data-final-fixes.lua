@@ -14,7 +14,6 @@ require("code.data.terrain.tile-autoplace")
 
 require("code.data.additions.start-island-scan")
 
-require("code.data.tweaks.fluid-containers")
 require("code.data.tweaks.fish")
 require("code.data.tweaks.alien-biomes")
 require("code.data.tweaks.trees")

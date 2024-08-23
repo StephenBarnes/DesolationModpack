@@ -384,7 +384,7 @@ local stackSizeGroups = {
 		items = tiles,
 	},
 	canisters = {
-		defaultStackSize = 10, -- This is 10 in base IR3.
+		defaultStackSize = 20, -- This is 10 in base IR3.
 		items = canisters,
 	},
 	barrels = {

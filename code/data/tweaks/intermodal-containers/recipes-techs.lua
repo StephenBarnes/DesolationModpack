@@ -44,9 +44,9 @@ data:extend({
 		},
 		-- The file adjust-scrap.lua removes scrap from the recipe to create containers. Otherwise it would be possible to gain iron by making and disassembling containers.
 		results = {
-			{ name = "iron-plate", amount_min = 8, amount_max = 10 }, -- Averages to 9 plates = 9 ingots.
+			{ name = "iron-plate", amount_min = 9, amount_max = 10 }, -- Averages to 9.5 plates = 9.5 ingots.
 			{ name = "iron-rivet", amount_min = 8, amount_max = 10 }, -- Averages to 9 rivets = 4.5 ingots.
-			{ name = "iron-scrap", amount_min = 0, amount_max = 3 }, -- Averages to 1.5 scrap = 1.5 ingots.
+			{ name = "iron-scrap", amount_min = 0, amount_max = 2 }, -- Averages to 1 scrap = 1 ingot.
 			-- So total is 9 + 4.5 + 1.5 = 15 ingots from disassembly.
 		},
 		main_product = "iron-plate",
