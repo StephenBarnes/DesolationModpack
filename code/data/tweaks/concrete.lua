@@ -1,2 +1,0 @@
--- TODO adjust the recipe for refined concrete so it's cheaper. It has no uses other than paving the factory, so this just makes it more convenient, no recipe balance issues. Also just make all concrete cheaper, I think.
--- Also TODO just make concrete paving cheaper.
