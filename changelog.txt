@@ -1,17 +1,23 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.0
-Date: 23. 08. 2024
-  Changes:
-    - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly recipe.
+Date: 24. 08. 2024
+  Features:
+    - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly.
     - Tweaked furnaces. Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits). Stone furnaces are slightly slower, so that bronze furnaces are superior.
+    - IR3 loaders (except steam loader) no require lubricant, so that there's a reason to use fast and stack inserters. Adjusted tech progression and descriptions. (TODO additional tweaks for this)
     - Analyzed and tweaked mining drills. Advanced mining drills are now better than small electric drills.
-    - Container disassembly now conserves iron ingots on average.
+    - Analyzed and tweaked paving material costs and speeds. All paving options now have roughly equal material costs.
     - Improved icons for robotics techs.
-    - Adjusted names and descriptions of many technologies.
-    - Analyzed and tweaked paving material costs and speeds. All paving materials have roughly equal material costs.
-    - TODO Nerfed flamethrower turrets because they trivialise defense.
+    - TODO Analyzed and tweaked turrets. Nerfed flamethrower turrets because they trivialise defense. (?)
     - TODO Added custom terrain gen for trees, enemy nests, and gem-bearing boulders.
-    - TODO Added options to disable some inconveniences (short underground belts, no long inserters).
+  Changes:
+    - Container disassembly now conserves iron ingots on average.
+    - Adjusted names and descriptions of many technologies.
+    - TODO Made dependency on Harder Basic Logistics optional.
+    - Other minor changes and tweaks.
+  Bugfixes:
+    - Fixed crash caused by interaction of pylons and powered pumps.
+    - TODO Removed incorrect descriptions of packer speed.
 ---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 22. 08. 2024

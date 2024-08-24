@@ -161,3 +161,5 @@ for i = 1, 3 do
 	}
 	data.raw.technology["ir-inserters-"..i].icon = nil
 end
+
+-- TODO build a test setup to check that the packers can actually handle entire yellow/red/blue belts. (In fact, I don't think that even makes sense now, since each packing recipe uses a different number of the item. So TODO remove that from description.)

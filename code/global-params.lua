@@ -9,6 +9,7 @@ return {
 		-- I wanted to add a checkbox setting for whether Desolation should do this. But I don't think that's possible, bc the settings' values are only available in the data stage, but we need to adjust the other mods' settings in the settings stage.
 
 	printEveryIslandScanChunk = false, -- Whether to print a message for every chunk scanned by the starting island scan or seismic scanners.
+	enableStartIslandScan = not isDebug, -- Whether to enable the starting island scan.
 	scanStartIslandMaxDist = 500, -- How many chunks away from (0,0) we'll scan chunks in the starting island scan. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 	seismicScanMaxDist = 500, -- How many chunks away from a seismic scanner it will scan chunks. This is to avoid scanning forever, eg if the player has chosen terrain settings that connect all islands, or remove the sea, etc.
 	oceanScanMaxDist = 150, -- How many chunks away from an ocean scanner it will scan chunks. This is to avoid scanning forever, since the ocean is generally connected.

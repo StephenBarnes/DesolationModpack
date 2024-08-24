@@ -336,6 +336,10 @@ end
 -- For some reason there's a tech dependency concrete => steel. Remove it.
 -- No, it's necessary because after steel smelting you have an inspiration unlock to get the steel analysis pack, which requires concrete. 
 --Tech.removePrereq("ir-steel-smelting", "ir-concrete-1")
+-- By the same logic, electric labs should be prereq for ir-steel-smelting, since you need electric labs to use the steel analysis pack.
+Tech.addTechDependency("ir-research-1", "ir-steel-smelting")
+-- And then remove newly-redundant dependency from ir-research-1 to ir-research-2.
+Tech.removePrereq("ir-research-2", "ir-research-1")
 
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")

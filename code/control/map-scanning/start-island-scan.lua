@@ -4,6 +4,7 @@ local globalParams = require("code.global-params")
 local Common = require("code.control.map-scanning.common-island-scanning")
 
 local function onResearchFinished(event)
+	if not globalParams.enableStartIslandScan then return end
 	if event.research.name == "ir-bronze-telescope" then
 		local force = event.research.force
 		if force == nil then

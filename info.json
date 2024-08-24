@@ -41,6 +41,7 @@
 	, "HarderBasicLogistics >= 1.2.5"
 
 	, "! rso-mod"
+	, "! aai-loaders >= 0.1.4"
 	],
 	"description": "PRE-ALPHA, NOT QUITE PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
 }
