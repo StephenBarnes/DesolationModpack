@@ -30,3 +30,6 @@ Recipe.setIngredients("iron-burner-generator-equipment", -- This ID is used for 
 		{"iron-gear-wheel", 8},
 		{"copper-cable", 2},
 	})
+
+
+-- TODO add descriptions for the IR3 valve types, eg what is an overflow valve vs top-up valve vs one-way valve.

@@ -2,11 +2,11 @@
 Version: 0.5.0
 Date: 24. 08. 2024
   Features:
-    - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly.
-    - Tweaked furnaces. Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits). Stone furnaces are slightly slower, so that bronze furnaces are superior.
-    - Analyzed and tweaked loaders, bundlers, and inserters (TODO). Loaders (except steam) now require lubricant, so that there's a reason to use fast and stack inserters. Adjusted fuel consumption, tech progression, and descriptions.
+    - Analyzed and tweaked loaders, bundlers, and inserters. Loaders (except steam) now require lubricant, so that there's a reason to use fast and stack inserters. Adjusted fuel consumption, tech progression, and descriptions.
     - Analyzed and tweaked mining drills. Advanced mining drills are now better than small electric drills.
     - Analyzed and tweaked paving material costs and speeds. All paving options now have roughly equal material costs.
+    - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly.
+    - Tweaked furnaces. Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits). Stone furnaces are slightly slower, so that bronze furnaces are superior.
     - Improved icons for robotics techs.
     - TODO Analyzed and tweaked turrets. Nerfed flamethrower turrets because they trivialise defense. (?)
     - TODO Added custom terrain gen for trees, enemy nests, and gem-bearing boulders.

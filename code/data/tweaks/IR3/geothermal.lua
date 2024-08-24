@@ -46,12 +46,17 @@ Recipe.setIngredients("steel-cleaner", {
 })
 
 --[[
-Polluted steam vents produce between 120/sec polluted steam and zero. When they deplete, they get re-set to 100% -- see replenish_fissure function in control.lua.
-Looking at the geothermal exchange recipe, and the speed of geothermal exchanges (1.25), they produce 75 steam/sec.
-One vent supplies ~1 geothermal exchanger, which supplies ~2.5 steam engines, to produce 2.25 MW.
-My resource placement is currently placing ~9 polluted steam fissures in a batch, which can produce ~22MW.
-This is enough to power 44 electric mining drills (each 500kW), so it's significant.
-Alternatively, we could use the 75/sec steam from each exchanger to fill ~0.75/sec steam cell, which is 2.2MJ, so again ~22MW of stored steam.
+A polluted steam vent produces 0-120/sec polluted steam. When it depletes, it gets re-set to 100% -- see replenish_fissure function in control.lua.
+Looking at recipes, given 60 polluted steam, we can use it with 0.8 geothermal exchangers + 0.8 polluted water cleaners + 0.2 ambient heat exchangers (to make up the difference in water) to produce 60 steam, but minus 5 that has to go back into the ambient cooler.
+So basically we can turn 60 polluted steam into 55 clean steam, as per the geothermal exchange recipe.
+A steam engine produces 900kW from 30 steam/sec, so the 55 clean steam is equivalent to 1650kW.
+The machinery to do all this consumes 101kW, plus another 20kW for an inserter on the polluted water cleaner, so 121kW.
+So for every 60 polluted steam, we get a net of 1529kW.
+So each polluted steam fissure supplies 1.5MW on average, or 3MW at maximum.
+
+My resource placement is currently placing ~12 polluted steam fissures in a batch, which produces somewhere around 36MW max or 18MW average.
+This is enough to power 36 electric mining drills (each 500kW), so it's significant enough to matter.
+Main benefit of geothermal is to simplify power generation logistics.
 ]]
 
 --[[

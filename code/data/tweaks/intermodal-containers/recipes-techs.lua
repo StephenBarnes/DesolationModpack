@@ -174,3 +174,5 @@ Recipe.substituteIngredient("filter-inserter", "electronic-circuit", "advanced-c
 -- Blue circuits for stack and stack filter inserters.
 Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
 Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")
+
+-- TODO adjust the energy consumption for these, eg should the biggest one really have 100kW drain? That's higher than even cubic presses and arc furnaces.

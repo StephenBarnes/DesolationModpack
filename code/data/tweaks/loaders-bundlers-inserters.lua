@@ -357,7 +357,10 @@ Re the IR3 values:
 	I don't like that the IR3 energy consumption values aren't round numbers. Both per-second and per-item are irregular numbers.
 	I don't like that the energy per item is highest for the fast inserter. In the chain from inserter to fast inserter to stack inserter, energy per item goes up and then down.
 		I want to adjust energy consumption so there's economies of scale: faster-moving inserters use more energy per second, but less energy per item.
-	I want to adjust drain (inactive energy consumption) to be 5% of active energy consumption, except higher for stack inserters.
+
+I think filter inserters should have the same energy consumption as plain inserters, since you can already get their functionality without ongoing energy costs by just using a splitter, plus they already have an extra cost in materials (circuits).
+
+I'm adjusting the drain (inactive energy consumption) to be 5% of active energy consumption, and 10% for stack inserters.
 
 Note: In Desolation, I'm removing the inserter capacity increase techs, because I've added loaders, and because I don't like those incremental techs.
 ]]
@@ -372,12 +375,12 @@ local inserterStats = {
 	{name="steam-inserter", energyKW=25, descriptionKey="steam"}, -- Reduced 35kW -> 25kW
 	{name="long-handed-steam-inserter", energyKW=35}, -- Changed 52.5kW -> 35kW
 	{name="inserter", energyKW=20, drainKW=1}, -- Changed 17.9kW -> 20kW; increasing drain 0.4 -> 1kW, so 5% of operating.
-	{name="slow-filter-inserter", energyKW=25, drainKW=1.25}, -- Changed 17.9kW -> 25kW; increasing drain 0.4 -> 1.25kW, so 5% of operating.
+	{name="slow-filter-inserter", energyKW=20, drainKW=1}, -- Changed 17.9kW -> 20kW; increasing drain 0.4 -> 1kW, so 5% of operating.
 	{name="long-handed-inserter", energyKW=35, drainKW=1.75}, -- Changed 17.9kW -> 35kW; increasing drain 0.4 -> 1.75kW, so 5% of operating.
 	{name="fast-inserter", energyKW=30, drainKW=1.5}, -- Changed 49.5kW -> 30kW, increased drain 0.5 -> 1.5kW, so 5% of operating.
-	{name="filter-inserter", energyKW=35, drainKW=1.75}, -- This is the "fast filter inserter". Changed 56.5kW -> 35kW, increasing drain 0.5 -> 1.75kW, so 5% of operating.
+	{name="filter-inserter", energyKW=30, drainKW=1.5}, -- This is the "fast filter inserter". Changed 56.5kW -> 30kW, increasing drain 0.5 -> 1.5kW, so 5% of operating.
 	{name="stack-inserter", handSize=6, energyKW=120, drainKW=12}, -- Changed 141kW -> 120kW, increasing drain 1 -> 12kW, so 10% of operating.
-	{name="stack-filter-inserter", handSize=6, energyKW=150, drainKW=15}, -- Changed 141kW -> 150kW, increasing drain 1 -> 15kW, so 10% of operating.
+	{name="stack-filter-inserter", handSize=6, energyKW=120, drainKW=12}, -- Changed 141kW -> 120kW, increasing drain 1 -> 12kW, so 10% of operating.
 }
 
 --[[ Original IR3 inserter stats for comparison:
@@ -438,3 +441,6 @@ for _, effect in pairs(data.raw.technology["ir-inserters-3"].effects) do
 	end
 end
 data.raw.technology["ir-inserters-3"].effects = newEffects
+
+-- TODO adjust recipes for inserters.
+-- TODO eg I think filter inserters should be cheap.
