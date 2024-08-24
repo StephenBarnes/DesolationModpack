@@ -1,4 +1,4 @@
-require("code.data.tweaks.loaders-bundlers") -- This is in data-updates so ProductionScrapForIR3 can modify it correctly.
+require("code.data.tweaks.loaders-bundlers-inserters") -- This is in data-updates so ProductionScrapForIR3 can modify it correctly.
 require("code.data.tweaks.intermodal-containers.recipes-techs")
 
 require("code.data.additions.ore-compounds")

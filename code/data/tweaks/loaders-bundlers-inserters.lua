@@ -335,7 +335,106 @@ end
 
 ------------------------------------------------------------------------
 -- INSERTERS
--- In base IR3, inserters have weird non-round power consumption numbers, so change those. Also say the speed in the description, for player convenience.
+-- Adjusting inserter speeds and power consumptions.
 
--- TODO
--- TODO add speed description to inserters.
+--[[
+In vanilla:
+	burner inserters rotate at 216d/s, consume 94.2kW, move 0.6items/s.
+	inserters rotate 302d/s, 0.4-13.6kW, 0.8i/s.
+	fast inserters 864d/s, 0.5-46.7kW, 2.3i/s.
+	stack inserters 864d/s, 1-133kW, 4.5i/s. (This is hand size 1 with a +1 in the stack inserter tech.)
+	(All of these increase with the inserter capacity bonus techs.)
+In base IR3:
+	burner inserters 360d/s, 35kW, 1i/s.
+	steam inserters 360d/s, 35kW, 1i/s.
+	inserters 360d/s, 0.4-17.9kW, 1i/s.
+	fast inserters 720d/s, 0.5-59.5kW, 1.9i/s.
+	stack inserters 720d/s, 1-141kW, ~2*6=12i/s. (Tech comes with a +5 to capacity.)
+	(IR3 has techs to increase hand stack size for all of these.)
+
+Re the IR3 values:
+	I like that IR3 simplifies the rotation rate and therefore item throughput per inserter (making it 1 or 2 rotations per second instead of vanilla's 0.8 etc.).
+	I don't like that the IR3 energy consumption values aren't round numbers. Both per-second and per-item are irregular numbers.
+	I don't like that the energy per item is highest for the fast inserter. In the chain from inserter to fast inserter to stack inserter, energy per item goes up and then down.
+		I want to adjust energy consumption so there's economies of scale: faster-moving inserters use more energy per second, but less energy per item.
+	I want to adjust drain (inactive energy consumption) to be 5% of active energy consumption, except higher for stack inserters.
+
+Note: In Desolation, I'm removing the inserter capacity increase techs, because I've added loaders, and because I don't like those incremental techs.
+]]
+
+local inserterStats = {
+	-- Table of inserter names, with fields:
+	--   handSize (if not 1) (this isn't set here, but in the tech; here it's just for the description)
+	--   energyKW
+	--   drainKW (if nil, it's assumed to be 0)
+	--   descriptionKey (or nil to use shared) - locale key for description string
+	{name="burner-inserter", energyKW=25, descriptionKey="burner"}, -- Reduced 35kW -> 25kW
+	{name="steam-inserter", energyKW=25, descriptionKey="steam"}, -- Reduced 35kW -> 25kW
+	{name="long-handed-steam-inserter", energyKW=35}, -- Changed 52.5kW -> 35kW
+	{name="inserter", energyKW=20, drainKW=1}, -- Changed 17.9kW -> 20kW; increasing drain 0.4 -> 1kW, so 5% of operating.
+	{name="slow-filter-inserter", energyKW=25, drainKW=1.25}, -- Changed 17.9kW -> 25kW; increasing drain 0.4 -> 1.25kW, so 5% of operating.
+	{name="long-handed-inserter", energyKW=35, drainKW=1.75}, -- Changed 17.9kW -> 35kW; increasing drain 0.4 -> 1.75kW, so 5% of operating.
+	{name="fast-inserter", energyKW=30, drainKW=1.5}, -- Changed 49.5kW -> 30kW, increased drain 0.5 -> 1.5kW, so 5% of operating.
+	{name="filter-inserter", energyKW=35, drainKW=1.75}, -- This is the "fast filter inserter". Changed 56.5kW -> 35kW, increasing drain 0.5 -> 1.75kW, so 5% of operating.
+	{name="stack-inserter", handSize=6, energyKW=120, drainKW=12}, -- Changed 141kW -> 120kW, increasing drain 1 -> 12kW, so 10% of operating.
+	{name="stack-filter-inserter", handSize=6, energyKW=150, drainKW=15}, -- Changed 141kW -> 150kW, increasing drain 1 -> 15kW, so 10% of operating.
+}
+
+--[[ Original IR3 inserter stats for comparison:
+local inserterStats = {
+	{name="burner-inserter", energyKW=35, descriptionKey="burner"},
+	{name="steam-inserter", energyKW=35, descriptionKey="steam"},
+	{name="long-handed-steam-inserter", energyKW=52.5},
+	{name="inserter", energyKW=17.9, drainKW=0.4},
+	{name="slow-filter-inserter", energyKW=17.9, drainKW=0.4},
+	{name="long-handed-inserter", energyKW=17.9, drainKW=0.4},
+	{name="fast-inserter", energyKW=49.5, drainKW=0.5},
+	{name="filter-inserter", energyKW=56.5, drainKW=0.5},
+	{name="stack-inserter", handSize=6, energyKW=141, drainKW=1},
+	{name="stack-filter-inserter", handSize=6, energyKW=141, drainKW=1},
+}
+]]
+
+for _, inserterParams in pairs(inserterStats) do
+	local inserterEnt = data.raw.inserter[inserterParams.name]
+
+	-- Set new drain value
+	if inserterParams.drainKW ~= nil then
+		inserterEnt.energy_source.drain = inserterParams.drainKW .. "KW"
+	end
+
+	-- Compute items per second and energy per item
+	local rotationsPerSecond = inserterEnt.rotation_speed * 60
+	local itemsPerSecond = rotationsPerSecond * (inserterParams.handSize or 1)
+	local kJPerItem = inserterParams.energyKW / itemsPerSecond
+
+	-- Set new energy value.
+	-- I don't know why these magic number formulae work. I found them through guesswork plus trial and error.
+	-- There is no real documentation for energy_per_movement/rotation fields.
+	local magicNumber1 = inserterParams.energyKW - (inserterParams.drainKW or 0)
+	local magicNumber2 = 2 * magicNumber1 / (rotationsPerSecond * 7)
+	inserterEnt.energy_per_movement = magicNumber2 .. "KJ"
+	inserterEnt.energy_per_rotation = magicNumber2 .. "KJ"
+
+	local descriptionKey = inserterParams.descriptionKey or "SHARED"
+	inserterEnt.localised_description = {
+		"shared-description.inserter-"..descriptionKey,
+		itemsPerSecond,
+		kJPerItem,
+		(inserterParams.handSize or 1),
+	}
+
+	-- Give the stack inserters an inherent stack size bonus, without needing the effect on the research.
+	if inserterParams.handSize ~= nil then
+		inserterEnt.stack_size_bonus = inserterParams.handSize - 1
+	end
+end
+
+-- Remove the stack size bonus from the stack inserter tech, since I'm making it inherent instead.
+local newEffects = {}
+for _, effect in pairs(data.raw.technology["ir-inserters-3"].effects) do
+	if effect.type ~= "stack-inserter-capacity-bonus" then
+		table.insert(newEffects, effect)
+	end
+end
+data.raw.technology["ir-inserters-3"].effects = newEffects
