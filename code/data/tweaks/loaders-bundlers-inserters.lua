@@ -287,6 +287,10 @@ data.raw["loader-1x1"]["ir3-loader-steam"].localised_description = {
 -- Setting steam loader to consume 100kW. So a steam loader consumes 3x as much energy, to move 15x as many items per second.
 data.raw["loader-1x1"]["ir3-loader-steam"].energy_per_item = "6.6666667kJ" -- 6.667kJ per item * 15 items per second = 100kW.
 
+-- Can we remove the overlay icon in alt-mode?
+-- This line hides both the arrows and the fluid icon. Rather don't hide them.
+--data.raw["loader-1x1"]["ir3-loader-steam"].energy_source.fluid_box.hide_connection_info = true
+
 ------------------------------------------------------------------------
 -- ADD STEAM MINI-ICONS TO STEAM LOADER AND BUNDLER
 
@@ -442,5 +446,12 @@ for _, effect in pairs(data.raw.technology["ir-inserters-3"].effects) do
 end
 data.raw.technology["ir-inserters-3"].effects = newEffects
 
--- TODO adjust recipes for inserters.
--- TODO eg I think filter inserters should be cheap.
+-- Since we've moved the techs to after the circuits, seems better to use the new advanced circuits for the corresponding inserters.
+-- Red circuits for fast and filter inserters.
+-- Blue circuits for stack and stack filter inserters.
+-- Also make the filter inserters take 1 circuit instead of 2, so they're cheaper.
+Recipe.setIngredient("slow-filter-inserter", "electronic-circuit", {"electronic-circuit", 1})
+Recipe.substituteIngredient("fast-inserter", "electronic-circuit", "advanced-circuit")
+Recipe.setIngredient("filter-inserter", "electronic-circuit", {"advanced-circuit", 1})
+Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
+Recipe.setIngredient("stack-filter-inserter", "advanced-circuit", {"processing-unit", 1})

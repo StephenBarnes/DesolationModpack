@@ -50,8 +50,8 @@ A polluted steam vent produces 0-120/sec polluted steam. When it depletes, it ge
 Looking at recipes, given 60 polluted steam, we can use it with 0.8 geothermal exchangers + 0.8 polluted water cleaners + 0.2 ambient heat exchangers (to make up the difference in water) to produce 60 steam, but minus 5 that has to go back into the ambient cooler.
 So basically we can turn 60 polluted steam into 55 clean steam, as per the geothermal exchange recipe.
 A steam engine produces 900kW from 30 steam/sec, so the 55 clean steam is equivalent to 1650kW.
-The machinery to do all this consumes 101kW, plus another 20kW for an inserter on the polluted water cleaner, so 121kW.
-So for every 60 polluted steam, we get a net of 1529kW.
+The machinery to do all this consumes 80kW, plus another 20kW for an inserter on the polluted water cleaner, plus 50kW for the derrick, so 150kW.
+So for every 60 polluted steam, we get a new of 1650kW - 150kW = 1500kW, nice round number.
 So each polluted steam fissure supplies 1.5MW on average, or 3MW at maximum.
 
 My resource placement is currently placing ~12 polluted steam fissures in a batch, which produces somewhere around 36MW max or 18MW average.
@@ -100,3 +100,10 @@ for _, product in pairs(data.raw.recipe["dirty-water-cleaning"].results) do
 		break
 	end
 end
+
+-- Edit the electricity consumptions here to be more round numbers.
+--data.raw["assembling-machine"]["steel-cleaner"].energy_usage = "60KW" -- This is unchanged.
+data.raw["assembling-machine"]["steel-cleaner"].energy_source.drain = "0W" -- Changing 2.5kW -> zero
+--data.raw["assembling-machine"]["iron-geothermal-exchanger"].energy_usage = "60KW" -- This is unchanged.
+data.raw["assembling-machine"]["iron-geothermal-exchanger"].energy_source.drain = "0W" -- Changing 2.5kW -> zero
+data.raw["mining-drill"]["steel-derrick"].energy_usage = "50KW" -- Changing 62.5kW -> 50kW.

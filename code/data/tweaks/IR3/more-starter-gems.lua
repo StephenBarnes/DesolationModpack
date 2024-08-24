@@ -1,2 +1,4 @@
 -- TODO I want the gem-creating loops to require maybe like 10x as many gems to start with, so you have to venture out more to get them.
--- Also check if the boulders currently give more than 1 gem, if so reduce that.
+-- TODO Also reduce the number of gems from boulders, maybe.
+-- TODO also add some notes to item descriptions for the gems, to explain that you need to get them from enemy nests.
+-- TODO actually, maybe set the gem boulders' autoplaces to nil, and then rather write a control script to spawn gems when enemy nests are destroyed.

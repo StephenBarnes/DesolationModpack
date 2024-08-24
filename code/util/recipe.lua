@@ -57,33 +57,63 @@ Recipe.removeIngredient = function(recipeName, ingredientName)
 	end
 end
 
-Recipe.substituteIngredientForDifficulty = function(recipeDifficulty, ingredientName, newIngredientName)
-	for _, ingredient in pairs(recipeDifficulty.ingredients) do
-		if ingredient.name ~= nil then
-			if ingredientName == ingredient.name then
-				ingredient.name = newIngredientName
-				return
-			end
-		elseif ingredient[1] ~= nil then
-			if ingredientName == ingredient[1] then
-				ingredient[1] = newIngredientName
-				return
+-- TODO refactor these functions that operate on each recipe-difficulty, to just take in the per-difficulty function and produce the function for the whole recipe.
+
+Recipe.substituteIngredient = function(recipeName, ingredientName, newIngredientName)
+	local function substituteIngredientForDifficulty(recipeDifficulty)
+		for _, ingredient in pairs(recipeDifficulty.ingredients) do
+			if ingredient.name ~= nil then
+				if ingredientName == ingredient.name then
+					ingredient.name = newIngredientName
+					return
+				end
+			elseif ingredient[1] ~= nil then
+				if ingredientName == ingredient[1] then
+					ingredient[1] = newIngredientName
+					return
+				end
 			end
 		end
 	end
+
+	local recipe = data.raw.recipe[recipeName]
+	if recipe.normal ~= nil then substituteIngredientForDifficulty(recipe.normal) end
+	if recipe.expensive ~= nil then substituteIngredientForDifficulty(recipe.expensive) end
+	if recipe.normal == nil and recipe.expensive == nil then substituteIngredientForDifficulty(recipe) end
 end
 
-Recipe.substituteIngredient = function(recipeName, ingredientName, newIngredientName)
+Recipe.setIngredientFields = function(recipeName, ingredientName, fieldChanges)
+	local function setIngredientFieldsForDifficulty(recipeDifficulty)
+		for _, ingredient in pairs(recipeDifficulty.ingredients) do
+			if (ingredient.name or ingredient[1]) == ingredientName then
+				for fieldName, value in pairs(fieldChanges) do
+					ingredient[fieldName] = value
+				end
+			end
+		end
+	end
+
 	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then
-		Recipe.substituteIngredientForDifficulty(recipe.normal, ingredientName, newIngredientName)
+	if recipe.normal ~= nil then setIngredientFieldsForDifficulty(recipe.normal) end
+	if recipe.expensive ~= nil then setIngredientFieldsForDifficulty(recipe.expensive) end
+	if recipe.normal == nil and recipe.expensive == nil then setIngredientFieldsForDifficulty(recipe) end
+end
+
+Recipe.setIngredient = function(recipeName, ingredientName, newIngredient)
+	local function setIngredientForDifficulty(recipeDifficulty)
+		for i, ingredient in pairs(recipeDifficulty.ingredients) do
+			if (ingredient.name or ingredient[1]) == ingredientName then
+				recipeDifficulty.ingredients[i] = newIngredient
+				return
+			end
+		end
+		log("Warning: ingredient not found: "..ingredientName.." in recipe "..recipeName)
 	end
-	if recipe.expensive ~= nil then
-		Recipe.substituteIngredientForDifficulty(recipe.expensive, ingredientName, newIngredientName)
-	end
-	if recipe.normal == nil and recipe.expensive == nil then
-		Recipe.substituteIngredientForDifficulty(recipe, ingredientName, newIngredientName)
-	end
+
+	local recipe = data.raw.recipe[recipeName]
+	if recipe.normal ~= nil then setIngredientForDifficulty(recipe.normal) end
+	if recipe.expensive ~= nil then setIngredientForDifficulty(recipe.expensive) end
+	if recipe.normal == nil and recipe.expensive == nil then setIngredientForDifficulty(recipe) end
 end
 
 Recipe.setResults = function(recipeName, results)

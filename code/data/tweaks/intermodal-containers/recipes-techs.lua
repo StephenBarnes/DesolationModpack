@@ -89,23 +89,23 @@ Recipe.setIngredients("ic-containerization-machine-1", {
 	{"iron-frame-large", 1},
 	{"iron-gear-wheel", 8},
 	--{"electronic-circuit", 2}, -- No, large frame already has circuits.
-	{"iron-motor", 2}, -- the red (iron) motor
-	{"iron-beam", 2},
+	{"iron-motor", 4}, -- the red (iron) motor
+	{"iron-beam", 4},
 })
 Recipe.setIngredients("ic-containerization-machine-2", {
 	{"steel-frame-large", 1},
 	{"steel-gear-wheel", 8},
 	--{"advanced-circuit", 2}, -- red circuit
-	{"electric-engine-unit", 2}, -- the "advanced motor" ie blue/steel motor
-	{"steel-beam", 2},
+	{"electric-engine-unit", 4}, -- the "advanced motor" ie blue/steel motor
+	{"steel-beam", 4},
 })
 Recipe.setIngredients("ic-containerization-machine-3", {
 	{"chromium-frame-large", 1},
-	{"brass-gear-wheel", 8}, -- There's no chromium gear wheel?
+	{"brass-gear-wheel", 8}, -- There's no chromium gear wheel.
 	--{"processing-unit", 2}, -- blue circuit
 	--{"chromium-engine-unit", 2}, -- the "advanced engine" (looks like blue engine, not motor)
-	{"electric-engine-unit", 2}, -- Decided to rather use this, to match the other recipes. It's a motor, not an engine.
-	{"chromium-beam", 2},
+	{"electric-engine-unit", 6}, -- Decided to rather use this, to match the other recipes. It's a motor, not an engine. But increased the amount since it's 1.5x faster.
+	{"chromium-beam", 4},
 })
 
 -- Change the localised_description fields to point to the same shared description, so I don't have to repeat them in the locale file.
@@ -167,12 +167,19 @@ end
 Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
 Tech.setPrereqs("ir-inserters-2", {"electric-engine", "ir-electronics-2"}) -- originally only electric-engine
 
--- Since we've moved the techs to after the circuits, seems better to use the new advanced circuits for the corresponding inserters.
--- Red circuits for fast and filter inserters.
-Recipe.substituteIngredient("fast-inserter", "electronic-circuit", "advanced-circuit")
-Recipe.substituteIngredient("filter-inserter", "electronic-circuit", "advanced-circuit")
--- Blue circuits for stack and stack filter inserters.
-Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
-Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")
-
--- TODO adjust the energy consumption for these, eg should the biggest one really have 100kW drain? That's higher than even cubic presses and arc furnaces.
+------------------------------------------------------------------------
+--[[ Adjusting energy consumption, drain, and pollution for packer machines, bc otherwise it's too high/low compared to other machines in the modpack.
+For reference, IR3 supermagnet is 2MW, and biggest mining drill is 1.5MW.
+For reference, IR3 electric forestry consumes 45/min pollution, and assemblers produce 0/m pollution (because it's in the power gen instead).
+	So, I'm just going to make the packers produce zero pollution too.
+]]
+local machineParams = {
+	{maxKW=200, drainKW=10}, -- Originally 500, 50kW, 4/m pollution.
+	{maxKW=300, drainKW=15}, -- Originally 750, 75kW, 3/m pollution.
+	{maxKW=400, drainKW=20}, -- Originally 1000, 100kW, 2/m pollution.
+}
+for i, params in pairs(machineParams) do
+	data.raw["assembling-machine"]["ic-containerization-machine-"..i].energy_source.drain = params.drainKW .. "KW"
+	data.raw["assembling-machine"]["ic-containerization-machine-"..i].energy_usage = (params.maxKW - params.drainKW) .. "KW"
+	data.raw["assembling-machine"]["ic-containerization-machine-"..i].energy_source.emissions_per_minute = 0
+end
