@@ -1,169 +1,341 @@
--- This file tweaks the loaders and bundlers added by IR3 loaders and stacking mod.
+--[[ This file tweaks the loaders and bundlers added by IR3 loaders and stacking mod.
+
+The loader stuff here is the result of significant iteration. Things I've tried/considered:
+	Having no loaders.
+		Abandoned this because inserters aren't fast enough to use bundlers and packers fast enough, plus having 8 inserters feeding into a packer looks stupid.
+	Having only IR3 loaders, unmodified.
+		Abandoned this because then there's rarely any reason to use fast inserters and stack inserters.
+	Having only IR3 loaders, but with greater electric consumption.
+		Abandoned this because it's boring, and feels stupid to have a 1x1 simple machine that consumes a megawatt or whatever.
+	Having both IR3 loaders (steam and electric) and AAI loaders (consuming lubricant), with the IR3 loaders only allowed with specific machines like bundlers and packers.
+		This was done by implementing these restrictions in my other mod Harder Basic Logistics, and including that mod as a dependency.
+		Abandoned this idea because it's too complex having 2 sets of loaders and then having to explain in every description that a machine allows "unlubricated loaders", etc.
+	Having both IR3 loaders and AAI loaders, but disabling all IR3 loaders except the steam one, and having the AAI loaders require lubricant.
+		Abandoned this because it has two weirdly different systems for fluid consumption, with IR3 using it as fuel and AAI having control scripts with unknown performance implications, as well as different graphics and icons, and using vanilla pipe graphics that don't match IR3's pipes, etc.
+Ultimately, the solution I ended up with is:
+	Use only IR3 loaders.
+	Make the IR3 loaders (except steam) require lubricant as fuel, so they require extra logistics complexity vs inserters.
+		(Since Desolation has the factory spread across warm patches, shipping around lubricant is a challenge. Without the warm-patches system, you could just have one big base with a lubricant fluid network.)
+	Loaders (except steam) come after lubricant, in the tech progression. So you have to use inserters and steam loaders at least until after oil.
+		I'm creating "bulk logistics" techs for loaders and bundlers.
+	For steam loader, we can't require lubricant, so rather increase its power consumption somewhat.
+]]
+
+-- Checked that all loaders and bundlers can in fact handle entire yellow/red/blue belts. Including steam.
 
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
 
--- Change fast inserters to require red circuits, and stack inserters to require blue circuits, since logistics is generally harder and I want to encourage using the loaders.
--- IR3 has steel motor => fast inserter => stack inserter and automation 3. But there's no conflicts making it depend on red circuits, plus it matches the prereqs of the iron tier.
-Tech.setPrereqs("ir-inserters-2", {"electric-engine", "ir-electronics-2"})
-Recipe.substituteIngredient("fast-inserter", "electronic-circuit", "advanced-circuit")
-Recipe.substituteIngredient("filter-inserter", "electronic-circuit", "advanced-circuit")
--- IR3 has electroplating (and inserters-2) leading to inserters-3 (stack inserter). I'll change it to blue circuits (ir-electronics-3).
-Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
-Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
-Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")
+------------------------------------------------------------------------
+-- COMPUTE BELT SPEEDS
 
-Tech.addTechDependency("ir-iron-motor", "logistics-2")
+local beltTierNames = {
+	"transport-belt",
+	"fast-transport-belt",
+	"express-transport-belt",
+}
+local beltTierSpeeds = {} -- Speed per second
+for i, beltName in pairs(beltTierNames) do
+	-- The .speed field is 480 times higher than the items per second, see docs.
+	beltTierSpeeds[i] = data.raw["transport-belt"][beltName].speed * 480
+end
 
--- I don't want IR3 bundlers/loaders to have separate techs, rather just put them in a corresponding logistics tech or motor tech.
--- I also want to remove the circuit requirement for beltboxes and loaders. Keep them for inserters, which seem like they need more actual intelligence. I want beltboxes to be cheap, since they're limited to just ingots, and we want to encourage using beltboxes.
+------------------------------------------------------------------------
+-- ADJUST TECHS/PROGRESSION
+-- I think a separate tech for every loader and inserter is excessive, so rather unify some of them.
 
+-- Put steam loader and beltbox in one tech.
 Tech.hideTech("ir3-beltbox-steam")
-Tech.hideTech("ir3-loader-steam")
-Tech.addRecipeToTech("ir3-beltbox-steam", "logistics")
-Tech.addRecipeToTech("ir3-loader-steam", "logistics")
+Tech.addRecipeToTech("ir3-beltbox-steam", "ir3-loader-steam")
+-- Leaving the icon as-is.
+data.raw.technology["ir3-loader-steam"].localised_description = {"technology-description.ir3-loader-steam"}
 
-Tech.hideTech("ir3-beltbox")
-Tech.hideTech("ir3-loader")
-Tech.addRecipeToTech("ir3-beltbox", "ir-steam-power") -- electricity tech
-Tech.addRecipeToTech("ir3-loader", "ir-steam-power") -- electricity tech
-Recipe.removeIngredient("ir3-beltbox", "electronic-circuit")
-Recipe.removeIngredient("ir3-loader", "electronic-circuit")
+-- Unify yellow electric loader and bundler techs, and put it after lubricant.
+local yellowBulkLogisticsTech = {
+	type = "technology",
+	name = "bulk-logistics-1",
+	effects = {
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-loader",
+		},
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-beltbox",
+		},
+	},
+	prerequisites = {"lubricant", "ir3-loader-steam"},
+	unit = {
+		count = 500,
+		ingredients = {
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+		},
+		time = 60,
+	},
+	icons = data.raw.technology["ir3-loader"].icons,
+	icon = data.raw.technology["ir3-loader"].icon,
+	icon_size = data.raw.technology["ir3-loader"].icon_size,
+	icon_mipmaps = data.raw.technology["ir3-loader"].icon_mipmaps,
+}
+
+-- Unify red loader and bundler techs, and put it after the yellow tech and red belts.
+local redBulkLogisticsTech = {
+	type = "technology",
+	name = "bulk-logistics-2",
+	effects = {
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-fast-loader",
+		},
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-fast-beltbox",
+		},
+	},
+	prerequisites = {"logistics-2", "bulk-logistics-1"},
+	unit = {
+		count = 600,
+		ingredients = {
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+		},
+		time = 60,
+	},
+	icons = data.raw.technology["ir3-fast-loader"].icons,
+	icon = data.raw.technology["ir3-fast-loader"].icon,
+	icon_size = data.raw.technology["ir3-fast-loader"].icon_size,
+	icon_mipmaps = data.raw.technology["ir3-fast-loader"].icon_mipmaps,
+}
+
+-- Unify blue loader and bundler techs, and put it after the red bulk logistics tech and blue belts.
+local blueBulkLogisticsTech = {
+	type = "technology",
+	name = "bulk-logistics-3",
+	effects = {
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-express-loader",
+		},
+		{
+			type = "unlock-recipe",
+			recipe = "ir3-express-beltbox",
+		},
+	},
+	prerequisites = {"logistics-3", "bulk-logistics-2"},
+	unit = {
+		count = 1100,
+		ingredients = {
+			{"automation-science-pack", 1},
+			{"logistic-science-pack", 1},
+			{"chemical-science-pack", 1},
+		},
+		time = 60,
+	},
+	icons = data.raw.technology["ir3-express-loader"].icons,
+	icon = data.raw.technology["ir3-express-loader"].icon,
+	icon_size = data.raw.technology["ir3-express-loader"].icon_size,
+	icon_mipmaps = data.raw.technology["ir3-express-loader"].icon_mipmaps,
+}
+
+data:extend({yellowBulkLogisticsTech, redBulkLogisticsTech, blueBulkLogisticsTech})
+
+for _, techName in pairs({
+	"ir3-loader",
+	"ir3-beltbox",
+	"ir3-fast-loader",
+	"ir3-fast-beltbox",
+	"ir3-express-loader",
+	"ir3-express-beltbox",
+}) do
+	Tech.hideTech(techName)
+end
+
+------------------------------------------------------------------------
+-- RECIPE TWEAKS
+-- I don't want loaders or bundlers to require circuits.
+-- Beltboxes should be cheap because they're interesting and limited to ingots etc. Loaders should be cheap because they require lubricant.
+-- Keep circuits for inserters, which seem like they need more actual intelligence.
+
 Recipe.setIngredients("ir3-beltbox", {
+	-- Originally 1 green circuit + 1 small iron frame + 1 electric motor + 2 iron gears.
 	{"iron-frame-small", 1},
-	{"iron-piston", 2},
+	{"iron-motor", 1},
 	{"iron-gear-wheel", 4},
 })
-
-Tech.hideTech("ir3-fast-beltbox")
-Tech.hideTech("ir3-fast-loader")
-Tech.addRecipeToTech("ir3-fast-beltbox", "logistics-2")
-Tech.addRecipeToTech("ir3-fast-loader", "logistics-2")
+-- ir3-loader is 1 green circuit + 1 small iron frame + 1 transport belt + 2 iron piston.
+Recipe.removeIngredient("ir3-loader", "electronic-circuit")
+-- Rest of the recipes look fine, just remove circuits.
 Recipe.removeIngredient("ir3-fast-beltbox", "electronic-circuit")
 Recipe.removeIngredient("ir3-fast-loader", "electronic-circuit")
-
-Tech.hideTech("ir3-express-beltbox")
-Tech.hideTech("ir3-express-loader")
-Tech.addRecipeToTech("ir3-express-beltbox", "logistics-3")
-Tech.addRecipeToTech("ir3-express-loader", "logistics-3")
 Recipe.removeIngredient("ir3-express-beltbox", "advanced-circuit")
 Recipe.removeIngredient("ir3-express-loader", "advanced-circuit")
 
--- Move the bundlers to the next row, so we don't have an overlong row.
-local function setSubgroupOrder(itemName, subgroup, order)
-	data.raw.item[itemName].subgroup = subgroup
-	data.raw.item[itemName].order = order
-end
-for i, val in pairs({"beltbox-steam", "beltbox", "fast-beltbox", "express-beltbox"}) do
-	setSubgroupOrder("ir3-"..val, "containerization", "0"..i)
-end
-
--- Change the icon for IR3 steam loader. (Originally to distinguish from AAI loaders which were also in, but I've since removed them; keeping this though.)
-data.raw.item["ir3-loader-steam"].icons = {
-	data.raw.item["ir3-loader-steam"].icons[1] or data.raw.item["ir3-loader-steam"].icon,
-	{
-		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
-		icon_size = 64,
-		icon_mipmaps = 4,
-		scale = 0.25,
-		shift = {-7, 10},
-	},
-}
--- Could add electric lines to the unlubricated loaders, but I think it looks better without them.
---if false then
---	for _, val in pairs({"loader", "fast-loader", "express-loader"}) do
---		data.raw.item["ir3-"..val].icons = {
---			data.raw.item["ir3-"..val].icons[1] or data.raw.item["ir3-"..val].icon,
---			{
---				icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/heating-overlay-electric.png",
---				icon_size = 64,
---				icon_mipmaps = 4,
---				scale = 0.25,
---				shift = {-7, 10},
---			},
---		}
---	end
---end
-
--- Change the icon for IR3's steam bundler, to match the steam loader.
-data.raw.item["ir3-beltbox-steam"].icons = {
-	data.raw.item["ir3-beltbox-steam"].icons[1] or data.raw.item["ir3-beltbox-steam"].icon,
-	{
-		icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
-		icon_size = 64,
-		icon_mipmaps = 4,
-		scale = 0.25,
-		shift = {-7, 10},
-	},
-}
-
--- Change the localised_description fields to point to the same shared description, so I don't have to repeat them in the locale file.
-for name, beltTier in pairs({["beltbox-steam"] = 1, ["beltbox"] = 1, ["fast-beltbox"] = 2, ["express-beltbox"] = 3}) do
-	data.raw.furnace["ir3-"..name].localised_description = { -- The entities are registered as furnaces.
-		"shared-description.ir3-beltbox-ALL",
-		{"belt-tier-name.tier-"..beltTier},
-	}
-end
-for name, beltTier in pairs({["loader-steam"] = 1, ["loader"] = 1, ["fast-loader"] = 2, ["express-loader"] = 3}) do
-	data.raw["loader-1x1"]["ir3-"..name].localised_description = {
-		"shared-description.ir3-loader-ALL",
-		{"belt-tier-name.tier-"..beltTier},
-	}
-end
-
--- TODO check that the loaders and bundlers can actually handle entire yellow/red/blue belts.
--- TODO check power usage. Should be more than inserters, since loaders are faster.
--- TODO maybe add the AAI lubricant-requiring loaders back in. Because otherwise there's no reason to use stuff like fast loaders and stack loaders, ugh. And then dig up the last commit where I still had those. And correct things like the icons, etc.
-
 ------------------------------------------------------------------------
---- Trying out using AAI loaders with IR3 loader sprites
+-- TWEAKING IR3 LOADERS (EXCEPT STEAM)
+-- I'm changing the loaders to require lubricant, instead of electricity, so there's still good reasons to use fast and stack inserters.
+-- To do this, I'm giving lubricant a fuel value. (Could instead take the complex AAI Loaders approach of control scripts and invisible entities, etc., but that's unnecessarily complex.)
 
---data.raw["loader-1x1"]["aai-loader"].belt_animation_set = data.raw["loader-1x1"]["ir3-loader"].belt_animation_set -- TODO check if necessary?
---data.raw["loader-1x1"]["aai-loader"].structure = data.raw["loader-1x1"]["ir3-loader"].structure
--- So, this works, BUT the pipe isn't right, it's using vanilla pipe instead of IR3's pipe. Could probably fix that too.
-
-------------------------------------------------------------------------
---- Trying just modifying the other IR3 loaders to use lubricant
-
--- Set lubricant to have a fuel value, so loaders can use it as fuel.
-data.raw.fluid.lubricant.fuel_value = "100KJ"
+local lubricantKJ = 150 -- kJ per unit of fluid
+data.raw.fluid.lubricant.fuel_value = lubricantKJ .. "KJ"
 -- Note this allows the petrochem generator to accept lubricant. Can't see any way to prevent petrochem generator from burning a specific fluid.
 -- I think that's actually fine, since lubricant is flammable (according to some quick research).
--- For comparison, petroleum and ethanol are 400kJ per fluid unit. Petroleum cost in raw materials is similar to cost of lubricant, per fluid unit.
+-- For comparison, petroleum and ethanol are 400kJ per fluid unit.
+-- Per fluid unit, lubricant costs about 2 crude oil, while petroleum costs 1.5 crude oil. So petroleum is now both cheaper and has higher fuel value. So this value doesn't unbalance the game.
 
+--[[ How much lubricant should the loaders consume?
+In the AAI Loaders mod, loaders consume 0.1 or 0.15 or 0.2 lubricant per minute. That's 0.00333 to 0.001667 per second, or 0.000111 to 0.0000370370 per item.
+Doing some calculations, 1 refinery and 1 chemical plant can produce 750 lubricant per minute, enough to power 7500 yellow loaders.
+Looking at it another way, a train wagon has 10 slots, each holding 10 barrels of 600 lubricant. So a train wagon can hold 60,000 lubricant, enough to power 100 loaders for (60,000lube / 100) / (0.1lube/minute) = 6000 minutes = 100 hours.
+I think this lubricant consumption is too low. But also, they shouldn't be that great of a lubricant drain; their cost is extra logistics complexity to ship around lubricant, not extra resource strain from consuming large amounts of lubricant.
+So, let's make them consume 10x as much lubricant as in AAI Loaders.
+]]
+
+local lubedLoaderStats = {
+	{name="loader", beltTier=1, lubricantPerMinute=1},
+	{name="fast-loader", beltTier=2, lubricantPerMinute=1.5},
+	{name="express-loader", beltTier=3, lubricantPerMinute=2.0},
+}
+
+-- Function to set a loader to consume lubricant.
 local function setLoaderToConsumeLubricant(loaderName, lubricantPerItem)
 	local originalEnergySource = data.raw["loader-1x1"][loaderName].energy_source
 	if originalEnergySource == nil then
 		log("ERROR: Couldn't find original energy source for loader "..loaderName)
 		return
 	end
-	data.raw["loader-1x1"][loaderName].energy_source = table.deepcopy(data.raw["loader-1x1"]["ir3-loader-steam"].energy_source)
-	data.raw["loader-1x1"][loaderName].energy_source.smoke = originalEnergySource.smoke
-	data.raw["loader-1x1"][loaderName].energy_source.emissions_per_minute = originalEnergySource.emissions_per_minute
-	data.raw["loader-1x1"][loaderName].energy_source.fluid_box.filter = "lubricant"
+	local loader = data.raw["loader-1x1"][loaderName]
+	loader.energy_source = table.deepcopy(data.raw["loader-1x1"]["ir3-loader-steam"].energy_source)
+	loader.energy_source.smoke = originalEnergySource.smoke
+	loader.energy_source.emissions_per_minute = originalEnergySource.emissions_per_minute
+	loader.energy_source.fluid_box.filter = "lubricant"
 	---@diagnostic disable-next-line: undefined-global
-	data.raw["loader-1x1"][loaderName].energy_source.fluid_box.pipe_covers = DIR.pipe_covers.iron -- DIR defined in IR3.
-	data.raw["loader-1x1"][loaderName].energy_per_item = (lubricantPerItem * 100) .. "KJ"
+	loader.energy_source.fluid_box.pipe_covers = DIR.pipe_covers.iron -- DIR defined in IR3.
+	loader.energy_source.destroy_non_fuel_fluid = false -- So don't destroy other fluids moved into the loader.
+	loader.energy_per_item = (lubricantPerItem * lubricantKJ) .. "KJ"
 
 	-- IR3 steam loader has base area 0.5, so it can hold 100 steam. Lubricant-consuming loaders consume much less fluid than steam loaders, so reduce amount stored to 10.
-	data.raw["loader-1x1"][loaderName].energy_source.fluid_box.base_area = 0.05
+	loader.energy_source.fluid_box.base_area = 0.05
 
 	-- For steam loader, speed depends on steam temperature. For lubricant, we want it to instead calculate based on the fluid's fuel value, not temperature.
-	data.raw["loader-1x1"][loaderName].energy_source.burns_fluid = true
+	loader.energy_source.burns_fluid = true
 
-	-- TODO more things to do here? Change icon or something?
+	-- Add lubricant icon to loader's icon.
+	local loaderItem = data.raw.item[loaderName]
+	if loaderItem.icons == nil or #loaderItem.icons ~= 1 then
+		log("ERROR: Unexpected format for original icon for "..(loaderName or "nil")..": "..serpent.block(loaderItem))
+	else
+		local originalIcon = loaderItem.icons[1]
+		loaderItem.icons = {
+			{
+				icon = originalIcon.icon,
+				icon_size = originalIcon.icon_size,
+				icon_mipmaps = originalIcon.icon_mipmaps,
+				scale = 0.5,
+			},
+			{
+				icon = data.raw.fluid.lubricant.icon,
+				icon_size = data.raw.fluid.lubricant.icon_size,
+				icon_mipmaps = data.raw.fluid.lubricant.icon_mipmaps,
+				scale = 0.25,
+				shift = {-7, 10},
+			},
+		}
+	end
 end
 
--- AAI loaders consume 0.1 or 0.15 or 0.2 lubricant per minute. That's 0.00333 to 0.001667 per second, or 0.000111 to 0.0000370370 per item.
--- So for these loaders, maybe consume like 0.0002 per item, for all items.
-setLoaderToConsumeLubricant("ir3-loader", 0.0002)
-setLoaderToConsumeLubricant("ir3-fast-loader", 0.0002)
-setLoaderToConsumeLubricant("ir3-express-loader", 0.0002)
+for _, loader in pairs(lubedLoaderStats) do
+	-- Calculate lubricant per item.
+	local itemsPerMinute = beltTierSpeeds[loader.beltTier] * 60
+	local lubricantPerItem = loader.lubricantPerMinute / itemsPerMinute
 
--- TODO idea: we could make other machines consume lubricant too. Eg beltboxes, what else?
+	-- Call function to make the loader consume lubricant.
+	setLoaderToConsumeLubricant("ir3-"..loader.name, lubricantPerItem)
 
--- TODO update the descriptions of these loaders to note that they consume lubricant.
+	-- Set description of the loader, with these numbers.
+	-- Using shared description strings with parameters for these.
+	local itemsPerLubricant = 1 / lubricantPerItem
+	-- Format itemsPerLubricant to have commas between thousands.
+	local itemsPerLubricantString
+    if itemsPerLubricant >= 1000 then
+        itemsPerLubricantString = string.format("%d,%03d", itemsPerLubricant / 1000, itemsPerLubricant % 1000)
+    else
+        itemsPerLubricantString = string.format("%.0f", itemsPerLubricant)
+    end
+	data.raw["loader-1x1"]["ir3-"..loader.name].localised_description = {
+		"shared-description.ir3-loader-ALL",
+		{"belt-tier-name.tier-"..loader.beltTier},
+		loader.lubricantPerMinute,
+		itemsPerLubricantString,
+	}
+	-- Checked in-game that moving 900 items does in fact consume 1 lubricant with yellow loaders.
+end
 
--- TODO update description of lubricant, eg note that you can technically burn it in petrochem generator.
+------------------------------------------------------------------------
+-- STEAM LOADER
 
--- TODO make the steam loader maybe half as fast, like 7.5/sec instead of 10/sec. So the first lubricant-consuming loader is an upgrade.
+-- Steam loader uses a special description.
+data.raw["loader-1x1"]["ir3-loader-steam"].localised_description = {
+	"shared-description.ir3-loader-steam",
+	{"belt-tier-name.tier-1"},
+}
+
+-- Steam loader has unique energy consumption.
+-- For comparison, a steam inserter is 35kW and moves ~1 item per second (360 degrees per second).
+-- Setting steam loader to consume 100kW. So a steam loader consumes 3x as much energy, to move 15x as many items per second.
+data.raw["loader-1x1"]["ir3-loader-steam"].energy_per_item = "6.6666667kJ" -- 6.667kJ per item * 15 items per second = 100kW.
+
+------------------------------------------------------------------------
+-- ADD STEAM MINI-ICONS TO STEAM LOADER AND BUNDLER
+
+-- Change the icon for IR3 steam loader. (Originally to distinguish from AAI loaders which were also in, but I've since removed them; keeping this though.)
+for _, itemName in pairs({"ir3-loader-steam", "ir3-beltbox-steam"}) do
+	data.raw.item[itemName].icons = {
+		data.raw.item[itemName].icons[1],
+		{
+			icon = "__IndustrialRevolution3Assets1__/graphics/icons/64/steam.png",
+			icon_size = 64,
+			icon_mipmaps = 4,
+			scale = 0.25,
+			shift = {-7, 10},
+		},
+	}
+end
+
+------------------------------------------------------------------------
+-- BUNDLERS - ENERGY AND DESCRIPTIONS
+
+-- Re bundler energy consumption:
+-- An inserter is ~20kW, so ~20kJ per item. Currently bundlers are 60-120-180kW, so 4kJ per item.
+-- I want to add some economies of scale for higher-tier bundlers, same as I'm doing for lubricant consumption of loaders.
+-- So, going to change them to 6-4-3kJ per item, so power consumptions of 90-120-135kJ.
+-- This is 24 - 16 - 12 kJ per bundle.
+-- These usages scale with how much time the bundler spends active vs passive (since with less than a full belt of input it only runs some fraction of the time).
+
+local bundlerStats = {
+	{name="beltbox-steam", beltTier=1, kJPerBundle=24},
+	{name="beltbox", beltTier=1, kJPerBundle=24},
+	{name="fast-beltbox", beltTier=2, kJPerBundle=16},
+	{name="express-beltbox", beltTier=3, kJPerBundle=12},
+}
+
+for _, bundler in pairs(bundlerStats) do
+	-- Set energy consumption.
+	data.raw.furnace["ir3-"..bundler.name].energy_usage = (beltTierSpeeds[bundler.beltTier] * bundler.kJPerBundle / 4) .. "kW"
+
+	-- Set description.
+	data.raw.furnace["ir3-"..bundler.name].localised_description = { -- The entities are registered as furnaces.
+		"shared-description.ir3-beltbox-ALL",
+		{"belt-tier-name.tier-"..bundler.beltTier},
+		bundler.kJPerBundle,
+	}
+end
+
+------------------------------------------------------------------------
+-- INSERTERS
+-- In base IR3, inserters have weird non-round power consumption numbers, so change those. Also say the speed in the description, for player convenience.
+
+-- TODO
+-- TODO add speed description to inserters.

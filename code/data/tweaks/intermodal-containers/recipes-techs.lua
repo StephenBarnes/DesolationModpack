@@ -18,7 +18,6 @@ You could also scrap the container directly, or disassemble and then scrap. But 
 Comparing scrapping vs disassembly, scrapping loses material, but disassembly forces you to re-use the resulting iron.
 ]]
 
-
 Recipe.setIngredients("ic-container", { -- Ingredients chosen bc the box has 12 edges and 5 faces (excluding top), and we want to use IR3's intermediates.
 	{"iron-plate-heavy", 5},
 	{"iron-rivet", 5},
@@ -30,7 +29,7 @@ data:extend({
 		type = "item-subgroup",
 		name = "containerization",
 		group = "logistics",
-		order = "bc", -- After beltboxes row, but before inserter row.
+		order = "cb", -- After inserters row, before electric poles.
 	},
 	-- Add a recipe to disassemble containers at destination.
 	{
@@ -163,3 +162,15 @@ for i = 1, 3 do
 end
 
 -- TODO build a test setup to check that the packers can actually handle entire yellow/red/blue belts. (In fact, I don't think that even makes sense now, since each packing recipe uses a different number of the item. So TODO remove that from description.)
+
+-- Robotics techs should go after circuits, since I'm using the frames and bc it makes more intuitive sense.
+Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
+Tech.setPrereqs("ir-inserters-2", {"electric-engine", "ir-electronics-2"}) -- originally only electric-engine
+
+-- Since we've moved the techs to after the circuits, seems better to use the new advanced circuits for the corresponding inserters.
+-- Red circuits for fast and filter inserters.
+Recipe.substituteIngredient("fast-inserter", "electronic-circuit", "advanced-circuit")
+Recipe.substituteIngredient("filter-inserter", "electronic-circuit", "advanced-circuit")
+-- Blue circuits for stack and stack filter inserters.
+Recipe.substituteIngredient("stack-inserter", "advanced-circuit", "processing-unit")
+Recipe.substituteIngredient("stack-filter-inserter", "advanced-circuit", "processing-unit")

@@ -341,6 +341,9 @@ Tech.addTechDependency("ir-research-1", "ir-steel-smelting")
 -- And then remove newly-redundant dependency from ir-research-1 to ir-research-2.
 Tech.removePrereq("ir-research-2", "ir-research-1")
 
+-- Steel=>boat=>oil makes steel=>advanced motor (electric-engine) redundant.
+Tech.removePrereq("electric-engine", "ir-steel-milestone")
+
 if false then
 	Tech.addTechDependency("ir-heavy-picket", "spidertron")
 	Tech.addTechDependency("land-mine", "military-3")
@@ -353,3 +356,7 @@ end
 -- TODO fix the ordering of the techs. Currently some fairly late techs are shown quite early. Maybe just set order field for all of them to the same value, so the game automatically orders them.
 
 -- TODO use this to make IR3 tech overlays, for techs that unlock science pack recipes: 	DIR.add_tech_icon_overlay(tech_name, DIR.get_icon_path("analysis-pack-unlock"))
+
+-- TODO redo science pack sets, bc currently stuff after steel (like lubricant and pumpjacks and boat) don't require blue science.
+-- TODO also eg basic rail is only using red science, should also use green (iron).
+-- TODO try just making these tech changes in data-updates, so that IR3 in data-final-fixes can fix the science packs etc.
