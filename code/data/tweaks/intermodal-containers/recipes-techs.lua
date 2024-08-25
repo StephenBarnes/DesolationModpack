@@ -161,7 +161,7 @@ for i = 1, 3 do
 	data.raw.technology["ir-inserters-"..i].icon = nil
 end
 
--- TODO build a test setup to check that the packers can actually handle entire yellow/red/blue belts. (In fact, I don't think that even makes sense now, since each packing recipe uses a different number of the item. So TODO remove that from description.)
+-- I've tested that the packers do indeed process an entire belt of their tier, even though the packing recipes use a different number of items per container. This is done by adjusting the time of each packing recipe.
 
 -- Robotics techs should go after circuits, since I'm using the frames and bc it makes more intuitive sense.
 Tech.setPrereqs("ir-inserters-3", {"ir-electronics-3"})
