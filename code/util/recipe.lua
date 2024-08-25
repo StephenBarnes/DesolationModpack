@@ -5,7 +5,7 @@ local Recipe = {}
 Recipe.forEachRecipeDifficulty = function(recipe, f)
 	if recipe.normal ~= nil then f(recipe.normal) end
 	if recipe.expensive ~= nil then f(recipe.expensive) end
-	if recipe.normal == nil and recipe.expensive == nil then f(recipe) end
+	if recipe.normal == nil or recipe.expensive == nil then f(recipe) end
 end
 
 Recipe.setIngredients = function(recipeName, ingredients)

@@ -4,6 +4,12 @@ local Table = require("code.util.table")
 
 -- TODO refactor these functions that operate on each recipe-difficulty, to just take in the per-difficulty function and produce the function for the whole recipe.
 
+Tech.forEachTechDifficulty = function(tech, f)
+	if tech.normal ~= nil then f(tech.normal) end
+	if tech.expensive ~= nil then f(tech.expensive) end
+	if tech.normal == nil or tech.expensive == nil then f(tech) end
+end
+
 Tech.addRecipeToTech = function(recipeName, techName, index)
 	local unlock = {
 		type = "unlock-recipe",
@@ -14,15 +20,17 @@ Tech.addRecipeToTech = function(recipeName, techName, index)
 		log("ERROR: Couldn't find tech "..techName.." to add recipe "..recipeName.." to.")
 		return
 	end
-	if not tech.effects then
-		tech.effects = {unlock}
-	else
-		if index == nil then
-			table.insert(tech.effects, unlock)
+	Tech.forEachTechDifficulty(tech, function(td)
+		if not td.effects then
+			td.effects = {unlock}
 		else
-			table.insert(tech.effects, index, unlock)
+			if index == nil then
+				table.insert(td.effects, unlock)
+			else
+				table.insert(td.effects, index, unlock)
+			end
 		end
-	end
+	end)
 end
 
 Tech.hideTech = function(techName)
@@ -31,16 +39,10 @@ Tech.hideTech = function(techName)
 		log("Couldn't find tech "..techName.." to hide.")
 		return
 	end
-	if tech.normal then
-		tech.normal.enabled = false
-		tech.normal.hidden = true
-	end
-	if tech.expensive then
-		tech.expensive.enabled = false
-		tech.expensive.hidden = true
-	end
-	tech.enabled = false
-	tech.hidden = true
+	Tech.forEachTechDifficulty(tech, function(td)
+		td.enabled = false
+		td.hidden = true
+	end)
 end
 
 Tech.addTechDependency = function(firstTech, secondTech)
@@ -49,10 +51,12 @@ Tech.addTechDependency = function(firstTech, secondTech)
 		log("ERROR: Couldn't find tech "..secondTech.." to add dependency "..firstTech.." to.")
 		return
 	end
-	if secondTechData.prerequisites == nil then
-		secondTechData.prerequisites = {}
-	end
-	table.insert(data.raw.technology[secondTech].prerequisites, firstTech)
+	Tech.forEachTechDifficulty(secondTechData, function(td)
+		if td.prerequisites == nil then
+			td.prerequisites = {}
+		end
+		table.insert(td.prerequisites, firstTech)
+	end)
 end
 
 Tech.tryAddTechDependency = function(firstTech, secondTech)
@@ -75,73 +79,51 @@ Tech.copyCosts = function(firstTech, secondTech)
 end
 
 Tech.setPrereqs = function(techName, prereqs)
-	data.raw.technology[techName].prerequisites = prereqs
-end
-
-Tech.replacePrereqForDifficulty = function(techDifficulty, oldPrereq, newPrereq)
-	for i, prereq in pairs(techDifficulty.prerequisites) do
-		if prereq == oldPrereq then
-			techDifficulty.prerequisites[i] = newPrereq
-			return
-		end
-	end
+	Tech.forEachTechDifficulty(data.raw.technology[techName], function(td)
+		td.prerequisites = prereqs
+	end)
 end
 
 Tech.replacePrereq = function(techName, oldPrereq, newPrereq)
-	local tech = data.raw.technology[techName]
-	if tech.normal ~= nil then
-		Tech.replacePrereqForDifficulty(tech.normal, oldPrereq, newPrereq)
-	end
-	if tech.expensive ~= nil then
-		Tech.replacePrereqForDifficulty(tech.expensive, oldPrereq, newPrereq)
-	end
-	if tech.normal == nil and tech.expensive == nil then
-		Tech.replacePrereqForDifficulty(tech, oldPrereq, newPrereq)
-	end
-end
-
-Tech.removePrereqForDifficulty = function(techDifficulty, oldPrereq)
-	for i, prereq in pairs(techDifficulty.prerequisites) do
-		if prereq == oldPrereq then
-			table.remove(techDifficulty.prerequisites, i)
-			return
+	Tech.forEachTechDifficulty(
+		data.raw.technology[techName],
+		function(td)
+			for i, prereq in pairs(td.prerequisites) do
+				if prereq == oldPrereq then
+					td.prerequisites[i] = newPrereq
+					return
+				end
+			end
 		end
-	end
+	)
 end
 
 Tech.removePrereq = function(techName, oldPrereq)
-	local tech = data.raw.technology[techName]
-	if tech.normal ~= nil then
-		Tech.removePrereqForDifficulty(tech.normal, oldPrereq)
-	end
-	if tech.expensive ~= nil then
-		Tech.removePrereqForDifficulty(tech.expensive, oldPrereq)
-	end
-	if tech.normal == nil and tech.expensive == nil then
-		Tech.removePrereqForDifficulty(tech, oldPrereq)
-	end
-end
-
-Tech.removeRecipeFromTechDifficulty = function(recipeName, techDifficulty)
-	for i, effect in pairs(techDifficulty.effects) do
-		if effect.type == "unlock-recipe" and effect.recipe == recipeName then
-			table.remove(techDifficulty.effects, i)
-			return
+	Tech.forEachTechDifficulty(
+		data.raw.technology[techName],
+		function(td)
+			for i, prereq in pairs(td.prerequisites) do
+				if prereq == oldPrereq then
+					table.remove(td.prerequisites, i)
+					return
+				end
+			end
 		end
-	end
+	)
 end
 
 Tech.removeRecipeFromTech = function(recipeName, techName)
-	local tech = data.raw.technology[techName]
-	if tech.normal ~= nil then
-		Tech.removeRecipeFromTechDifficulty(recipeName, tech.normal)
-	end
-	if tech.expensive ~= nil then
-		Tech.removeRecipeFromTechDifficulty(recipeName, tech.expensive)
-	end
-	if tech.normal == nil and tech.expensive == nil then
-		Tech.removeRecipeFromTechDifficulty(recipeName, tech)
-	end
+	Tech.forEachTechDifficulty(
+		data.raw.technology[techName],
+		function(td)
+			for i, effect in pairs(td.effects) do
+				if effect.type == "unlock-recipe" and effect.recipe == recipeName then
+					table.remove(td.effects, i)
+					return
+				end
+			end
+		end
+	)
 end
 
 Tech.disable = function(techName)
@@ -150,27 +132,29 @@ Tech.disable = function(techName)
 		log("Couldn't find tech "..techName.." to disable.")
 		return
 	end
-	if tech.normal ~= nil then
-		tech.normal.enabled = false
-		tech.normal.hidden = true
-		if tech.expensive ~= nil then
-			tech.expensive.enabled = false
-			tech.expensive.hidden = true
+	Tech.forEachTechDifficulty(tech, function(td)
+		td.enabled = false
+		td.hidden = true
+	end)
+end
+
+Tech.addEffect = function(tech, effect)
+	Tech.forEachTechDifficulty(tech, function(td)
+		if not td.effects then
+			td.effects = {effect}
+		else
+			table.insert(td.effects, effect)
 		end
-	else
-		tech.enabled = false
-		tech.hidden = true
-	end
+	end)
 end
 
 Tech.addEvolutionEffect = function(techName, evolutionPercent)
 	local tech = data.raw.technology[techName]
-	if tech == nil then
-		log("ERROR: Couldn't find tech "..techName.." to add evolution effect to.")
+	if not tech then
+		log("ERROR: Couldn't find tech "..techName.." to add evolution effect to. Tech: "..serpent.block(tech))
 		return
 	end
 
-	-- Add effect to tech.effects.
 	local effect = {
 		type = "nothing",
 		icon = "__Desolation__/graphics/evolution.png",
@@ -179,15 +163,7 @@ Tech.addEvolutionEffect = function(techName, evolutionPercent)
 		effect_description = {"effect-description.evolution", evolutionPercent},
 			-- We use this localised string to store the evolution percent. Because there's no other way to store it on the tech, and I don't want to have like a file that gets imported in both the data and control stages.
 	}
-	if tech.normal ~= nil then
-		table.insert(tech.normal.effects, effect)
-	end
-	if tech.expensive ~= nil then
-		table.insert(tech.expensive.effects, effect)
-	end
-	if tech.effects ~= nil then
-		table.insert(tech.effects, effect)
-	end
+	Tech.addEffect(tech, effect)
 
 	-- Add small icon in the corner of the tech.
 	if tech.icons == nil then -- First, if it has one icon, switch to icons list.
@@ -202,7 +178,7 @@ Tech.addEvolutionEffect = function(techName, evolutionPercent)
 end
 
 Tech.getPrereqList = function(tech)
-	return tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or {}
+	return tech.prerequisites or Table.maybeGet(tech.normal, "prerequisites") or Table.maybeGet(tech.expensive, "prerequisites") or {}
 end
 
 Tech.isEvolutionEffect = function(effect)
@@ -211,8 +187,9 @@ end
 
 Tech.getEvolutionPercent = function(tech)
 	-- Given a tech, returns an int with the evolution percent from that tech's effects, or 0 if none.
-	if tech.effects == nil then return 0 end
-	for _, effect in pairs(tech.effects) do
+	local effectList = tech.effects or Table.maybeGet(tech.normal, "effects") or Table.maybeGet(tech.expensive, "effects")
+	if effectList == nil then return 0 end
+	for _, effect in pairs(effectList) do
 		if Tech.isEvolutionEffect(effect) then
 			return effect.effect_description[2]
 		end
@@ -223,6 +200,7 @@ end
 Tech.getRecursivePrereqs = function(rootTechId)
 	-- Given a tech ID, returns a set of tech IDs that are prereqs of that tech, or prereqs of its prereqs, etc.
 	-- Returns nil if there's an error.
+	local maxLoops = 10000
 	local foundPrereqs = {} -- Set of prereqs, mapped to true.
 	local frontier = {} -- List of tech IDs to check.
 	-- Add initial prereqs
@@ -232,7 +210,7 @@ Tech.getRecursivePrereqs = function(rootTechId)
 	local loops = 0 -- To prevent infinite loops.
 	while #frontier > 0 do
 		loops = loops + 1
-		if loops > 1000 then
+		if loops > maxLoops then
 			log("ERROR: Too many iterations when finding prereqs of tech "..rootTechId..".")
 			return nil
 		end
