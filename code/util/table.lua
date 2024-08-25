@@ -7,6 +7,7 @@ Table.extend = function(t, l)
 end
 
 Table.concat = function(tables)
+	-- Given a list of lists, returns a new list with all elements from all lists, in order.
 	local result = {}
 	for _, t in pairs(tables) do
 		for _, v in pairs(t) do
@@ -32,15 +33,6 @@ Table.stringProduct = function(strings1, strings2)
 		end
 	end
 	return result
-end
-
-Table.copy = function(t)
-	-- TODO delete this, should rather use that existing deepcopy function. Not sure if this is being used anywhere.
-	local new = {}
-	for k, v in pairs(t) do
-		new[k] = v
-	end
-	return new
 end
 
 Table.overwriteInto = function(a, b)
@@ -82,6 +74,17 @@ Table.copyAndEdit = function(t, edits)
 		new[k] = v
 	end
 	return new
+end
+
+Table.filter = function(l, filter)
+	-- Given a list, returns a new list with only elements matching the filter.
+	local result = {}
+	for _, v in pairs(l) do
+		if filter(v) then
+			table.insert(result, v)
+		end
+	end
+	return result
 end
 
 return Table

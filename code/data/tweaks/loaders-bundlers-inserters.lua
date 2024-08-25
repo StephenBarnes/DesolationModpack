@@ -25,6 +25,7 @@ Ultimately, the solution I ended up with is:
 
 local Tech = require("code.util.tech")
 local Recipe = require("code.util.recipe")
+local Table = require("code.util.table")
 
 ------------------------------------------------------------------------
 -- COMPUTE BELT SPEEDS
@@ -438,13 +439,10 @@ for _, inserterParams in pairs(inserterStats) do
 end
 
 -- Remove the stack size bonus from the stack inserter tech, since I'm making it inherent instead.
-local newEffects = {}
-for _, effect in pairs(data.raw.technology["ir-inserters-3"].effects) do
-	if effect.type ~= "stack-inserter-capacity-bonus" then
-		table.insert(newEffects, effect)
-	end
-end
-data.raw.technology["ir-inserters-3"].effects = newEffects
+data.raw.technology["ir-inserters-3"].effects = Table.filter(
+	data.raw.technology["ir-inserters-3"].effects,
+	function(effect) return effect.type ~= "stack-inserter-capacity-bonus" end
+)
 
 -- Since we've moved the techs to after the circuits, seems better to use the new advanced circuits for the corresponding inserters.
 -- Red circuits for fast and filter inserters.

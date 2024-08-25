@@ -2,131 +2,124 @@ local Table = require("code.util.table")
 
 local Recipe = {}
 
+Recipe.forEachRecipeDifficulty = function(recipe, f)
+	if recipe.normal ~= nil then f(recipe.normal) end
+	if recipe.expensive ~= nil then f(recipe.expensive) end
+	if recipe.normal == nil and recipe.expensive == nil then f(recipe) end
+end
+
 Recipe.setIngredients = function(recipeName, ingredients)
-	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then
-		recipe.normal.ingredients = ingredients
-	end
-	if recipe.expensive ~= nil then
-		recipe.expensive.ingredients = ingredients
-	end
-	if recipe.normal == nil and recipe.expensive == nil then
-		recipe.ingredients = ingredients
-	end
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			rd.ingredients = ingredients
+		end
+	)
 end
 
 Recipe.copyIngredients = function(firstRecipeName, secondRecipeName)
+	-- Copy ingredients of first recipe to second recipe.
 	local first = data.raw.recipe[firstRecipeName]
 	local second = data.raw.recipe[secondRecipeName]
 	if first.normal ~= nil then
-		second.normal = Table.copy(first.normal)
+		second.normal = table.deepcopy(first.normal)
 	end
 	if first.expensive ~= nil then
-		second.expensive = Table.copy(first.expensive)
+		second.expensive = table.deepcopy(first.expensive)
 	end
 	if first.normal == nil and first.expensive == nil then
-		second.ingredients = Table.copy(first.ingredients)
+		second.ingredients = table.deepcopy(first.ingredients)
 	end
 end
 
 Recipe.addIngredients = function(recipeName, extraIngredients)
 	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then
-		Table.extend(recipe.normal.ingredients, extraIngredients)
-	end
-	if recipe.expensive ~= nil then
-		Table.extend(recipe.expensive.ingredients, extraIngredients)
-	end
-	if recipe.normal == nil and recipe.expensive == nil then
-		Table.extend(recipe.ingredients, extraIngredients)
-	end
+	Recipe.forEachRecipeDifficulty(
+		recipe,
+		function(rd)
+			Table.extend(rd.ingredients, extraIngredients)
+		end
+	)
 end
 
 Recipe.copyIngredientsAndAdd = function(firstRecipeName, secondRecipeName, extraIngredients)
+	-- Copy ingredients from first recipe to second recipe, then add extra ingredients to second recipe.
 	Recipe.copyIngredients(firstRecipeName, secondRecipeName)
 	Recipe.addIngredients(secondRecipeName, extraIngredients)
 end
 
 Recipe.removeIngredient = function(recipeName, ingredientName)
-	local recipe = data.raw.recipe[recipeName]
-	for i, ingredient in pairs(recipe.ingredients) do
-		if ingredientName == (ingredient.name or ingredient[1]) then
-			table.remove(recipe.ingredients, i)
-			return
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			rd.ingredients = Table.filter(
+				rd.ingredients,
+				function(ingredient)
+					return ingredientName ~= (ingredient.name or ingredient[1])
+				end
+			)
 		end
-	end
+	)
 end
 
--- TODO refactor these functions that operate on each recipe-difficulty, to just take in the per-difficulty function and produce the function for the whole recipe.
-
 Recipe.substituteIngredient = function(recipeName, ingredientName, newIngredientName)
-	local function substituteIngredientForDifficulty(recipeDifficulty)
-		for _, ingredient in pairs(recipeDifficulty.ingredients) do
-			if ingredient.name ~= nil then
-				if ingredientName == ingredient.name then
-					ingredient.name = newIngredientName
-					return
-				end
-			elseif ingredient[1] ~= nil then
-				if ingredientName == ingredient[1] then
-					ingredient[1] = newIngredientName
-					return
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			for _, ingredient in pairs(rd.ingredients) do
+				if ingredient.name ~= nil then
+					if ingredientName == ingredient.name then
+						ingredient.name = newIngredientName
+						return
+					end
+				elseif ingredient[1] ~= nil then
+					if ingredientName == ingredient[1] then
+						ingredient[1] = newIngredientName
+						return
+					end
 				end
 			end
 		end
-	end
-
-	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then substituteIngredientForDifficulty(recipe.normal) end
-	if recipe.expensive ~= nil then substituteIngredientForDifficulty(recipe.expensive) end
-	if recipe.normal == nil and recipe.expensive == nil then substituteIngredientForDifficulty(recipe) end
+	)
 end
 
 Recipe.setIngredientFields = function(recipeName, ingredientName, fieldChanges)
-	local function setIngredientFieldsForDifficulty(recipeDifficulty)
-		for _, ingredient in pairs(recipeDifficulty.ingredients) do
-			if (ingredient.name or ingredient[1]) == ingredientName then
-				for fieldName, value in pairs(fieldChanges) do
-					ingredient[fieldName] = value
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			for _, ingredient in pairs(rd.ingredients) do
+				if (ingredient.name or ingredient[1]) == ingredientName then
+					for fieldName, value in pairs(fieldChanges) do
+						ingredient[fieldName] = value
+					end
 				end
 			end
 		end
-	end
-
-	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then setIngredientFieldsForDifficulty(recipe.normal) end
-	if recipe.expensive ~= nil then setIngredientFieldsForDifficulty(recipe.expensive) end
-	if recipe.normal == nil and recipe.expensive == nil then setIngredientFieldsForDifficulty(recipe) end
+	)
 end
 
 Recipe.setIngredient = function(recipeName, ingredientName, newIngredient)
-	local function setIngredientForDifficulty(recipeDifficulty)
-		for i, ingredient in pairs(recipeDifficulty.ingredients) do
-			if (ingredient.name or ingredient[1]) == ingredientName then
-				recipeDifficulty.ingredients[i] = newIngredient
-				return
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			for i, ingredient in pairs(rd.ingredients) do
+				if (ingredient.name or ingredient[1]) == ingredientName then
+					rd.ingredients[i] = newIngredient
+					return
+				end
 			end
+			log("Warning: ingredient not found: "..ingredientName.." in recipe "..recipeName)
 		end
-		log("Warning: ingredient not found: "..ingredientName.." in recipe "..recipeName)
-	end
-
-	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then setIngredientForDifficulty(recipe.normal) end
-	if recipe.expensive ~= nil then setIngredientForDifficulty(recipe.expensive) end
-	if recipe.normal == nil and recipe.expensive == nil then setIngredientForDifficulty(recipe) end
+	)
 end
 
 Recipe.setResults = function(recipeName, results)
-	local recipe = data.raw.recipe[recipeName]
-	if recipe.normal ~= nil then
-		recipe.normal.results = results
-	end
-	if recipe.expensive ~= nil then
-		recipe.expensive.results = results
-	end
-	if recipe.normal == nil and recipe.expensive == nil then
-		recipe.results = results
-	end
+	Recipe.forEachRecipeDifficulty(
+		data.raw.recipe[recipeName],
+		function(rd)
+			rd.results = results
+		end
+	)
 end
 
 Recipe.getResults = function(recipe)
@@ -192,9 +185,8 @@ Recipe.hide = function(recipeName)
 		if recipe.normal then -- Recipe has separate normal and expensive
 			recipe.normal.hidden = true
 			recipe.expensive.hidden = true
-		else
-			recipe.hidden = true
 		end
+		recipe.hidden = true
 	end
 end
 

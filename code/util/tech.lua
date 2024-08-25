@@ -2,6 +2,8 @@ local Tech = {}
 
 local Table = require("code.util.table")
 
+-- TODO refactor these functions that operate on each recipe-difficulty, to just take in the per-difficulty function and produce the function for the whole recipe.
+
 Tech.addRecipeToTech = function(recipeName, techName, index)
 	local unlock = {
 		type = "unlock-recipe",
