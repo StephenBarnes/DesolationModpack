@@ -40,6 +40,8 @@
 
 	, "HarderBasicLogistics >= 1.2.5"
 
+	, "better-victory-screen >= 0.3.1"
+
 	, "! rso-mod"
 	, "! aai-loaders >= 0.1.4"
 	],
