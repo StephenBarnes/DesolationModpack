@@ -1,12 +1,18 @@
--- This file adds new science packs and their recipes, and also changes many parts of the tech tree, eg tech dependencies and their unlocks.
+--[[ This file adds new science packs and their recipes, and also changes many parts of the tech tree, eg tech dependencies and their unlocks.
 
--- Several reasons:
--- * Move various techs around to different places, to fit with the new progression introduced by the modpack, eg geothermal energy should come early.
--- * Compat between the various mods. Eg we want to insert steam locomotives and cargo ships in the right places.
--- * Add more complexity in early game, by introducing multiple science packs early on.
--- * Consolidate/simplify techs that seem too inconsequential. Eg I don't want to have a separate tech for each tier of IR3 stacking beltbox, or containerization machine. And I don't want to have 10 techs that give +2 to robot follower count or whatever.
--- * Previously, now obsolete: We want to avoid "dead ends" in the tech tree, because evolution depends on techs.
---     This is now obsolete, because I decided to instead add evolution to specific milestone techs, not uniformly to all techs.
+Several reasons:
+* Move various techs around to different places, to fit with the new progression introduced by the modpack, eg geothermal energy should come early.
+* Compat between the various mods. Eg we want to insert steam locomotives and cargo ships in the right places.
+* Consolidate/simplify techs that seem too inconsequential. Eg I don't want to have a separate tech for each tier of IR3 stacking beltbox, or containerization machine. And I don't want to have 10 techs that give +2 to robot follower count or whatever.
+
+Note that IR3 does a tech recosting/rebuild stage in data-updates, which:
+* Changes the unit.ingredients of every tech to include every science pack that's a recursive prereq of that tech.
+* Changes the unit.count of every tech according to its tree depth.
+* Assigns order to techs according to their tree depth.
+
+This file gets run in data-final-fixes stage. So our changes are made after IR3 recost/rebuild has run.
+However, techs we create in other files will sometimes happen before the IR3 recost/rebuild. So we might need to modify them again here.
+]]
 
 -- TODO rather move each of these to its own, separate file for related changes. Rather collect the modpack's changes by theme/domain/subject (transport, ammo, etc.), not aspect/system (techs, recipes, items, etc.), since that's what I'm doing everywhere else.
 
@@ -69,7 +75,11 @@ Tech.disable("automated_bridges")
 Tech.disable("tank_ship")
 Tech.disable("cargo_ships")
 Tech.disable("water_transport_signals")
-Tech.disable("deep_sea_oil_extraction") -- shouldn't be necessary; only shows up if settings are wrong.
+if data.raw.technology["deep_sea_oil_extraction"] ~= nil then
+	-- We're forcing a setting that disables this tech, so setting here shouldn't be necessary. But just in case.
+	Tech.disable("deep_sea_oil_extraction")
+end
+
 -- Move cargo ships, buoys, ports all to the same tech.
 Tech.addRecipeToTech("cargo_ship", "automated_water_transport", 1)
 Tech.addRecipeToTech("buoy", "automated_water_transport")

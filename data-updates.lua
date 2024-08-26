@@ -29,5 +29,4 @@ require("code.data.tweaks.fluid-containers") -- This is in data-updates so that 
 
 require("code.data.tweaks.paving")
 
-local adjustForStage = require("code.data.tweaks.stack-sizes")
-adjustForStage("data-updates")
+require("code.data.tweaks.stack-sizes").inDataUpdates()

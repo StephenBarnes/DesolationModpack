@@ -54,3 +54,9 @@ data.raw.recipe["mortar-bomb"].ingredients = {
 ------------------------------------------------------------------------
 -- Movement params
 
+-- TODO
+
+
+------------------------------------------------------------------------
+-- Cargo ships mod makes pumps placeable on water, and changes their description to say that.
+-- TODO fix that by adding the water collision layer back to them, and changing the description.

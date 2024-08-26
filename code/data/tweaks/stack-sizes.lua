@@ -75,4 +75,7 @@ local function adjustForStage(stage)
 	end
 end
 
-return adjustForStage
+return {
+	inDataUpdates = (function() adjustForStage("data-updates") end),
+	inDataFinalFixes = (function() adjustForStage("data-final-fixes") end),
+}

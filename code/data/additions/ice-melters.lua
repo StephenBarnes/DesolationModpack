@@ -271,11 +271,7 @@ data:extend({
 		source_inventory_size = 1,
 		result_inventory_size = 0, -- No item results. Game automatically adds 2 slots for the fluids.
 		energy_usage = "1MW", -- For comparison, electric boiler is 1.25MW, copper boiler is 300kW.
-		energy_source = Table.copyAndEdit(data.raw.boiler.boiler.energy_source, {
-			fuel_inventory_size = 2,
-			burnt_inventory_size = 2,
-			fuel_categories = {"chemical", "coke", "canister", "barrel"},
-		}),
+		energy_source = data.raw.boiler.boiler.energy_source,
 		crafting_speed = 4,
 		crafting_categories = {"ice-melting"},
 		icons = ironMelterIcons,

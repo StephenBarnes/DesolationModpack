@@ -101,9 +101,9 @@ for _, product in pairs(data.raw.recipe["dirty-water-cleaning"].results) do
 	end
 end
 
--- Edit the electricity consumptions here to be more round numbers.
---data.raw["assembling-machine"]["steel-cleaner"].energy_usage = "60KW" -- This is unchanged.
-data.raw["assembling-machine"]["steel-cleaner"].energy_source.drain = "0W" -- Changing 2.5kW -> zero
---data.raw["assembling-machine"]["iron-geothermal-exchanger"].energy_usage = "60KW" -- This is unchanged.
-data.raw["assembling-machine"]["iron-geothermal-exchanger"].energy_source.drain = "0W" -- Changing 2.5kW -> zero
+-- Edit the electricity consumptions and speeds here to be more round numbers.
+data.raw["assembling-machine"]["steel-cleaner"].energy_usage = "47.5kW" -- Changed 60kW => 47.5kW, plus 2.5kW drain.
+data.raw["assembling-machine"]["iron-geothermal-exchanger"].energy_usage = "47.5KW" -- Changed 60kW => 47.5kW, plus 2.5kW drain.
 data.raw["mining-drill"]["steel-derrick"].energy_usage = "50KW" -- Changing 62.5kW -> 50kW.
+data.raw["assembling-machine"]["steel-cleaner"].crafting_speed = 1 -- Changed speed 1.25 => 1.
+data.raw["assembling-machine"]["iron-geothermal-exchanger"].crafting_speed = 1 -- Changed speed 1.25 => 1.

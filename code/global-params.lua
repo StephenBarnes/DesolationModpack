@@ -36,5 +36,5 @@ return {
 	inverseWaterScale = 1/3,
 
 	victoryOnFinalTech = true, -- Whether to enable victory on the final tech.
-	victoryMinTicks = 60 * 60, -- Final tech won't give victory if researched within this many ticks; this is for sandbox games.
+	victoryMinTicks = 0, --60 * 60, -- Final tech won't give victory if researched within this many ticks; this is for sandbox games.
 }

@@ -23,6 +23,7 @@ require("code.data.additions.powered-pumps")
 require("code.data.tweaks.IR3.scatterbots")
 require("code.data.tweaks.IR3.starting-junkheaps")
 require("code.data.tweaks.IR3.misc")
+require("code.data.tweaks.IR3.metal-casting")
 require("code.data.tweaks.IR3.furnaces")
 require("code.data.tweaks.IR3.geothermal")
 require("code.data.tweaks.IR3.miners")
@@ -59,11 +60,8 @@ require("code.data.tweaks.vehicles.long-range-delivery-drones")
 require("code.data.tweaks.beacon-rebalance")
 
 require("code.data.tweaks.electric-poles").inDataFinalFixes()
---data.raw["electric-pole"]["big-wooden-pole"].next_upgrade = nil
 
--- TODO change this to have separate functions, not this weird string-passing thing.
-local adjustForStage = require("code.data.tweaks.stack-sizes")
-adjustForStage("data-final-fixes")
+require("code.data.tweaks.stack-sizes").inDataFinalFixes()
 
 -- TODO move some of these to the data-updates stage instead, so that they can generate scrap etc.
 
