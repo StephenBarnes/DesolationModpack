@@ -145,20 +145,15 @@ data.raw.recipe["air-purification"].energy_required = 3 -- Changed 4 to 3.
 
 data.raw["assembling-machine"]["steel-cryo-tower"].crafting_speed = 1 -- Changed speed 1.25 => 1.
 
-data.raw["assembling-machine"]["steel-vaporiser"].crafting_speed = 1 -- Changed speed 1.25 => 1.
+data.raw.furnace["steel-vaporiser"].crafting_speed = 1 -- Changed speed 1.25 => 1.
 
 -- TODO the heat exchanger is doing 103/s fluid, should probably be 100/s.
 
-data.raw["assembling-machine"]["centrifuge"].energy_usage = "375kW" -- Changed 350kW => 375kW, plus 15kW drain.
+data.raw["assembling-machine"]["centrifuge"].energy_usage = "385kW" -- Changed 350kW => 385kW, plus 15kW drain.
 
 -- TODO the searchlights use 332kW, should be 300kW or something.
 -- TODO laser turrets are 2.42MW, should be sth else
 -- TODO electric arc turrets are 1.02MW max, should be 1MW
--- TOO 
-
-
-
-
 
 -- TODO check clockwork construction bot speed - why does it seem to be the same as the electric bots?
 -- TODO clockwork construction bot description mentions speed researches, which I've removed, fix it.

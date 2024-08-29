@@ -213,9 +213,9 @@ X.oasisNoiseScale = X.oasisNoiseScaleSlider * (1/225)
 local spawnOasisMinRadSlider = tne(1) / slider("Desolation-spawn-oasis-rad", "frequency")
 local spawnOasisMinMaxSlider = slider("Desolation-spawn-oasis-rad", "size")
 
-X.spawnOasisMinRad = spawnOasisMinRadSlider * 65
-X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 80
-X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 200
+X.spawnOasisMinRad = spawnOasisMinRadSlider * 45
+X.spawnOasisMidRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 60
+X.spawnOasisMaxRad = X.spawnOasisMinRad + spawnOasisMinMaxSlider * 150
 
 local copperTinOasisMinRadSlider = tne(1) / slider("Desolation-coppertin-oasis-rad", "frequency")
 local copperTinOasisMinMaxSlider = slider("Desolation-coppertin-oasis-rad", "size")

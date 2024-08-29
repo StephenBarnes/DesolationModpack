@@ -339,7 +339,7 @@ local stackSizeGroups = {
 		items = standardizedIngotsBricks,
 	},
 	smallItems = {
-		defaultStackSize = 80,
+		defaultStackSize = 60,
 		items = smallItems,
 	},
 	bulkyItems = {
