@@ -10,7 +10,6 @@ Date: 29. 08. 2024
     - Tweaked barrels. Increased barrel fluid contents 10x, to compensate for 10x smaller ship/train inventories (to balance containerization). Added barrel disassembly recipe, analogous to container disassembly.
     - Tweaked furnaces. Moved arc furnace to earlier (after chrome and cryogenics, instead of after blue circuits). Stone furnaces are slightly slower, so that bronze furnaces are superior.
     - Improved icons for robotics techs.
-    - Added Bulk Rail Loader mod as dependency.
   Changes:
     - Gold requires water for mining.
     - Adjusted names and descriptions of many technologies.

@@ -35,26 +35,4 @@ Recipe.setIngredients("helium-airship", {
 	{"chromium-beam", 40}, -- unchanged
 	{type="fluid", name="helium-gas", amount=2000}, -- unchanged
 })
--- Could adjust airship station recipe.
-
--- Make a new row in the crafting menu for airships and cargo transmats (partly to make room for bulk rail loaders next to train stuff).
-data:extend({
-	{
-		type = "item-subgroup",
-		name = "airship-cargo-transmat",
-		group = "logistics",
-		order = "f2",
-	},
-})
-data.raw.item["chrome-transmat"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["chrome-transmat"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["chrome-transmat"].order = "z1"
-data.raw.item["cargo-transmat"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["cargo-transmat"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["cargo-transmat"].order = "z2"
-data.raw.item["airship-station"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["airship-station"].subgroup = "airship-cargo-transmat"
-data.raw["spider-vehicle"]["hydrogen-airship"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["hydrogen-airship"].subgroup = "airship-cargo-transmat"
-data.raw["spider-vehicle"]["helium-airship"].subgroup = "airship-cargo-transmat"
-data.raw.recipe["helium-airship"].subgroup = "airship-cargo-transmat"
+-- Could adjust airship station recipe. - TODO
