@@ -38,7 +38,7 @@
 
 	, "wret-beacon-rebalance-mod >= 1.0.15"
 
-	, "HarderBasicLogistics >= 1.2.5"
+	, "? HarderBasicLogistics >= 1.2.5"
 
 	, "better-victory-screen >= 0.3.1"
 
