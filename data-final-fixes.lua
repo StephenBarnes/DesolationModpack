@@ -59,6 +59,8 @@ require("code.data.tweaks.recipe-times")
 require("code.data.tweaks.vehicles.long-range-delivery-drones")
 require("code.data.tweaks.beacon-rebalance")
 
+require("code.data.tweaks.bulk-rail-loaders") -- Must run after vehicles.inventory-sizes.
+
 require("code.data.tweaks.electric-poles").inDataFinalFixes()
 
 require("code.data.tweaks.stack-sizes").inDataFinalFixes()

@@ -17,6 +17,7 @@
 	, "IR3_steam_locomotive >= 0.1.2"
 	, "cargo-ships >= 0.2.7"
 	, "aai-vehicles-ironclad >= 0.6.8"
+	, "railloader >= 1.1.6"
 
 	, "alien-biomes >= 0.6.8"
 	, "? alien-biomes-hr-terrain"
@@ -43,7 +44,10 @@
 	, "better-victory-screen >= 0.3.1"
 
 	, "! rso-mod"
-	, "! aai-loaders >= 0.1.4"
+	, "! aai-loaders"
+	, "! Rampant"
+	, "! space-exploration"
+	, "! Krastorio2"
 	],
 	"description": "PRE-ALPHA, NOT QUITE PLAYABLE YET. Modpack inspired by Freight Forwarding, built around Industrial Revolution 3."
 }
