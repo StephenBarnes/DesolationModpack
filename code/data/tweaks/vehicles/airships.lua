@@ -35,4 +35,35 @@ Recipe.setIngredients("helium-airship", {
 	{"chromium-beam", 40}, -- unchanged
 	{type="fluid", name="helium-gas", amount=2000}, -- unchanged
 })
--- Could adjust airship station recipe. - TODO
+
+-- Make a new row in the crafting menu for airships, cargo transmats, drones.
+data:extend({
+	{
+		type = "item-subgroup",
+		name = "air-transport",
+		group = "logistics",
+		order = "f2",
+	},
+})
+data.raw.item["chrome-transmat"].subgroup = "air-transport"
+data.raw.recipe["chrome-transmat"].subgroup = "air-transport"
+data.raw.recipe["chrome-transmat"].order = "z1"
+data.raw.item["cargo-transmat"].subgroup = "air-transport"
+data.raw.recipe["cargo-transmat"].subgroup = "air-transport"
+data.raw.recipe["cargo-transmat"].order = "z2"
+data.raw.item["airship-station"].subgroup = "air-transport"
+data.raw.recipe["airship-station"].subgroup = "air-transport"
+data.raw["spider-vehicle"]["hydrogen-airship"].subgroup = "air-transport"
+data.raw.recipe["hydrogen-airship"].subgroup = "air-transport"
+data.raw["spider-vehicle"]["helium-airship"].subgroup = "air-transport"
+data.raw.recipe["helium-airship"].subgroup = "air-transport"
+data.raw.item["long-range-delivery-drone-depot"].order = "a1"
+data.raw.item["long-range-delivery-drone-depot"].subgroup = "air-transport"
+data.raw.recipe["long-range-delivery-drone-depot"].subgroup = "air-transport"
+data.raw.item["long-range-delivery-drone-request-depot"].order = "a2"
+data.raw.item["long-range-delivery-drone-request-depot"].subgroup = "air-transport"
+data.raw.recipe["long-range-delivery-drone-request-depot"].subgroup = "air-transport"
+data.raw.item["long-range-delivery-drone"].order = "a3"
+data.raw.item["long-range-delivery-drone"].subgroup = "air-transport"
+data.raw.recipe["long-range-delivery-drone"].subgroup = "air-transport"
+data.raw["item-subgroup"]["transport"].order = "dc"
