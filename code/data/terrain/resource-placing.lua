@@ -558,6 +558,18 @@ local gemNameFactor = {
 	["diamond"] = var("Desolation-resource-A-ramp01-inverted"),
 	["ruby"] = var("Desolation-resource-A-ramp01"),
 }
+local gemBoulderResults = {
+	diamond = {
+		{name="stone", amount_min=10, amount_max=25},
+		{name="diamond-gem", amount_min=1, amount_max=2},
+	},
+	ruby = {
+		{name="stone", amount_min=10, amount_max=25},
+		{name="ruby-gem", amount_min=1, amount_max=2},
+		{name="diamond-gem", amount=1, probability=0.4},
+			-- Make the ruby boulders also give diamonds sometimes, bc you need diamonds to kick off the cycle, and I'm worried people won't be able to find any.
+	},
+}
 
 for gemName, gemFactor in pairs(gemNameFactor) do
 	data.raw["simple-entity"]["gem-rock-"..gemName].autoplace = {
@@ -566,8 +578,5 @@ for gemName, gemFactor in pairs(gemNameFactor) do
 		order = "zzz",
 		tile_restriction = C.coldTiles,
 	}
-	data.raw["simple-entity"]["gem-rock-"..gemName].minable.results = {
-		{name="stone", amount_min=10, amount_max=25},
-		{name=gemName.."-gem", amount=1},
-	}
+	data.raw["simple-entity"]["gem-rock-"..gemName].minable.results = gemBoulderResults[gemName]
 end
