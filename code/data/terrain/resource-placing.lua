@@ -2,9 +2,6 @@ local noise = require "noise"
 local tne = noise.to_noise_expression
 local litexp = noise.literal_expression
 local var = noise.var
-local lt = noise.less_than
-
-local resourceAutoplace = require("resource-autoplace")
 
 local U = require("code.data.terrain.util")
 local C = require("code.data.terrain.constants")
@@ -19,7 +16,7 @@ U.nameNoiseExpr("apply-start-island-resources", noise.less_than(var("dist-to-sta
 -- We start by deciding a sorta-random vector, by picking random x and y. Then rotate by 90 degrees to get the other axis for that resource layer.
 -- Rotating by 90 degrees means swapping x and y, and then negating one of them.
 
--- We use resource A for copper+iron, and coal+tin (inverted).
+-- We use resource A for copper+iron+ruby, and coal+tin+diamond (inverted).
 -- We use resource B for gold+fossilgas, and oil+sourgas (inverted).
 -- We use resource C for uranium, and magic-fissure (inverted).
 -- We don't use any of these quadrant restrictions for polluted steam.
@@ -32,17 +29,21 @@ local function makeResourceType()
 	return factor1 * factor2
 end
 
-local resourceA = makeResourceType()
-U.nameNoiseExpr("Desolation-resource-A-ramp01",
-	U.ramp(resourceA, -40, 40, 0, 1))
+-- Thresholds for the resource layers.
+-- Maps layer name (letter A, B, C) to the thresholds of the makeResourceType() above where the resource starts and reaches max.
+local resourceLayerThresholds = {
+	A = {20, 40},
+	B = {40, 80},
+	C = {100, 200},
+}
 
-local resourceB = makeResourceType()
-U.nameNoiseExpr("Desolation-resource-B-ramp01",
-	U.ramp(resourceB, -80, 80, 0, 1))
-
-local resourceC = makeResourceType()
-U.nameNoiseExpr("Desolation-resource-C-ramp01",
-	U.ramp(resourceC, -200, 200, 0, 1))
+for resourceLayerName, thresholds in pairs(resourceLayerThresholds) do
+	local resourceLayer = makeResourceType()
+	U.nameNoiseExpr("Desolation-resource-"..resourceLayerName.."-ramp01",
+		U.ramp(resourceLayer, thresholds[1], thresholds[2], 0, 1))
+	U.nameNoiseExpr("Desolation-resource-"..resourceLayerName.."-ramp01-inverted",
+		U.ramp(resourceLayer, -thresholds[2], -thresholds[1], 1, 0))
+end
 
 ------------------------------------------------------------------------
 -- Map colors
@@ -236,9 +237,11 @@ local function setResourceAutoplace(params)
 
 	-- Apply resource type filters, to make it only spawn in two opposite quadrants of the map.
 	if resourceType ~= nil then
-		local resourceTypeVar = var("Desolation-resource-"..resourceType.."-ramp01")
+		local resourceTypeVar
 		if resourceTypeInverted then
-			resourceTypeVar = 1 - resourceTypeVar
+			resourceTypeVar = var("Desolation-resource-"..resourceType.."-ramp01-inverted")
+		else
+			resourceTypeVar = var("Desolation-resource-"..resourceType.."-ramp01")
 		end
 		possibleRegions = possibleRegions * resourceTypeVar
 	end
@@ -525,17 +528,11 @@ setResourceAutoplace {
 }
 
 ------------------------------------------------------------------------
--- Enemy bases
-
--- TODO
-
-------------------------------------------------------------------------
 -- Trees
 
--- TODO
-
--- For now, just set the snowy tree to also spawn on volcanic terrain, so player doesn't have to run out of starting warm patch to find first wood.
--- TODO this is a quick fix, rather solve this by adding extra trees near spawn or something, or altering some other tree type to spawn in these volcanic regions.
+-- For now, setting the snowy tree to also spawn on volcanic terrain, so player doesn't have to run out of starting warm patch to find first wood.
+-- This is a quick fix, could rather solve this by adding extra trees near spawn or something, or altering some other tree type to spawn in these volcanic regions.
+-- TODO possibly, in the future: some better, custom autplace. But it's not a high priority.
 table.insert(data.raw.tree["tree-snow-a"].autoplace.tile_restriction, "volcanic-orange-heat-1")
 table.insert(data.raw.tree["tree-snow-a"].autoplace.tile_restriction, "volcanic-orange-heat-2")
 for _, peak in pairs(data.raw.tree["tree-snow-a"].autoplace.peaks) do
@@ -544,9 +541,33 @@ for _, peak in pairs(data.raw.tree["tree-snow-a"].autoplace.peaks) do
 end
 
 ------------------------------------------------------------------------
+-- Enemy bases
+
+-- Leaving this as-is. It's defined in __base__/prototypes/entity/enemy-autoplace-utils.lua.
+-- Defines a noise expression enemy-base-intensity, which I'll use for the gem rocks.
+
+------------------------------------------------------------------------
 -- Gem-bearing rocks
 -- (Called gem-rock-diamond, gem-rock-ruby.)
 -- Maybe place them on certain ores, like IR3 does. Or maybe just place them randomly on frigid terrain.
--- TODO Maybe spawn them only close to enemy bases!
+-- Decided to spawn them close to enemy bases, instead.
+-- TODO make some adjustment in case player turns off enemy bases?
+-- TODO change name of the enemy setting so player doesn't adjust it.
 
--- TODO
+local gemNameFactor = {
+	["diamond"] = var("Desolation-resource-A-ramp01-inverted"),
+	["ruby"] = var("Desolation-resource-A-ramp01"),
+}
+
+for gemName, gemFactor in pairs(gemNameFactor) do
+	data.raw["simple-entity"]["gem-rock-"..gemName].autoplace = {
+		probability_expression = var("enemy_base_probability") * 0.2 * gemFactor,
+		richness_expression = tne(1),
+		order = "zzz",
+		tile_restriction = C.coldTiles,
+	}
+	data.raw["simple-entity"]["gem-rock-"..gemName].minable.results = {
+		{name="stone", amount_min=10, amount_max=25},
+		{name=gemName.."-gem", amount=1},
+	}
+end

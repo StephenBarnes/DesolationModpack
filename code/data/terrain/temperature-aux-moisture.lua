@@ -26,7 +26,7 @@ local function clamp_temperature(raw_temperature)
 end
 
 -- Start with a base layer of noise.
-local tempNoise = U.multiBasisNoise(8, 2, 2,
+local tempNoise = U.multiBasisNoise(7, 2, 2,
 	C.temperatureScale / var("scale"),
 	C.temperatureAmplitude)
 local temperature = tempNoise

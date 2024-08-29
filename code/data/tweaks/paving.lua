@@ -77,7 +77,6 @@ local vehicleFriction = {
 	["refined-hazard-concrete-right"] = 0.7,
 }
 for tileName, walkSpeed in pairs(walkSpeeds) do
-	log("Changing walk speed of "..tileName.." to "..walkSpeed)
 	data.raw.tile[tileName].walking_speed_modifier = walkSpeed
 end
 for tileName, friction in pairs(vehicleFriction) do

@@ -20,6 +20,7 @@ X.terrainScaleSlider = slider("Desolation-scale", "frequency")
 X.artifactShift = 20000 -- Added to a coordinate, to get rid of fractal symmetry.
 
 X.buildableTiles = {"volcanic-orange-heat-1", "volcanic-orange-heat-2", "vegetation-turquoise-grass-1", "vegetation-turquoise-grass-2"}
+X.coldTiles = {"frozen-snow-0", "frozen-snow-1", "frozen-snow-2", "frozen-snow-3", "frozen-snow-4", "frozen-snow-5", "frozen-snow-6", "frozen-snow-7", "frozen-snow-8", "frozen-snow-9"}
 
 X.temperatureThresholdForSnow = 15
 X.temperatureBoundaryVolcanic1And2 = 35
@@ -187,8 +188,8 @@ X.distSecondCopperToTin = (X.secondCopperPatchMidRad + X.secondTinPatchMidRad) *
 
 X.temperatureScaleSlider = slider("Desolation-temperature", "frequency")
 X.temperatureAmplitudeSlider = slider("Desolation-temperature", "size")
-X.temperatureAmplitude = X.temperatureAmplitudeSlider * 45
-X.temperatureScale = X.temperatureScaleSlider * (1/600)
+X.temperatureAmplitude = X.temperatureAmplitudeSlider * 25
+X.temperatureScale = X.temperatureScaleSlider * (1/800)
 
 X.auxScaleSlider = slider("Desolation-aux", "frequency") * slider("Desolation-aux", "frequency")
 X.auxAmplitudeSlider = slider("Desolation-aux", "size")
@@ -257,7 +258,7 @@ X.oilPatchDesiredAmount = 100000
 X.copperPatchDesiredAmount = 1000000
 X.tinPatchDesiredAmount = 1000000
 X.coalPatchDesiredAmount = 1000000
-X.stonePatchDesiredAmount = 5000000
+X.stonePatchDesiredAmount = 50000000
 -- TODO these should be put into a table indexed by resource name, same as resourceMinDist below.
 
 ------------------------------------------------------------------------
